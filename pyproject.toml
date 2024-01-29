@@ -16,10 +16,12 @@ classifiers = [
     "Operating System :: OS Independent",
     "License :: OSI Approved :: Apache Software License"
 ]
-
 dependencies = []
 dynamic = ["version", "description"]
 keywords = ["circular-array", "circular_array", "circular array"]
+
+[project.optional-dependencies]
+test = ["pytest >=7.4"]
 
 [project.urls]
 Source = "https://github.com/grscheller/circular-array"
@@ -36,6 +38,9 @@ report_progress = true
 
 [tool.ruff]
 target-version = "py311"
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
 
 [tool.ruff.format]
 quote-style = "single"
