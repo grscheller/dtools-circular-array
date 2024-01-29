@@ -14,11 +14,15 @@ Semantic Versioning will be used:
     * PyPI API additions, PyPI bugfixes or minor changes
     * Significant documentation updates
 
-## Veresion v0.1.0 - PyPI release date 2024-02-??
+## Veresion v0.1.0 - PyPI release date 2024-01-28
 
-* TODO
 * initial PyPI grscheller.circular-array release
 * migrated Circulararray class from grscheller.datastrucutes
+* update docstrings to reflect current nomenclature
+
+## Version 0.0.3 - commit date 2024-01-28
+
+* got gh-pages working for the repo
 
 ## Version 0.0.2 - commit date 2024-01-28
 

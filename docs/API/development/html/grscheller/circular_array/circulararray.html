@@ -77,7 +77,7 @@ class CircularArray:
     __slots__ = &#39;_count&#39;, &#39;_capacity&#39;, &#39;_front&#39;, &#39;_rear&#39;, &#39;_list&#39;
 
     def __init__(self, *data):
-        &#34;&#34;&#34;Construct a double sided queue&#34;&#34;&#34;
+        &#34;&#34;&#34;Construct a double sided indexible queue.&#34;&#34;&#34;
         size = len(data)
         capacity = size + 2
         self._count = size
@@ -123,15 +123,15 @@ class CircularArray:
         return &#34;(|&#34; + &#34;, &#34;.join(map(repr, self)) + &#34;|)&#34;
 
     def __bool__(self):
-        &#34;&#34;&#34;Returns true if circular array is not empty&#34;&#34;&#34;
+        &#34;&#34;&#34;Returns true if the CircularArray is not empty.&#34;&#34;&#34;
         return self._count &gt; 0
 
     def __len__(self):
-        &#34;&#34;&#34;Returns current number of values in the circlular array&#34;&#34;&#34;
+        &#34;&#34;&#34;Returns current number of values in the CirclularArray.&#34;&#34;&#34;
         return self._count
 
     def __getitem__(self, index: int) -&gt; Any:
-        &#34;&#34;&#34;Get value at a valid index, otherwise raise IndexError&#34;&#34;&#34;
+        &#34;&#34;&#34;Get value at a valid index, otherwise raise IndexError.&#34;&#34;&#34;
         cnt = self._count
         if 0 &lt;= index &lt; cnt:
             return self._list[(self._front + index) % self._capacity]
@@ -149,7 +149,7 @@ class CircularArray:
                 raise IndexError(msg0)
 
     def __setitem__(self, index: int, value: Any) -&gt; Any:
-        &#34;&#34;&#34;Set value at a valid index, otherwise raise IndexError&#34;&#34;&#34;
+        &#34;&#34;&#34;Set value at a valid index, otherwise raise IndexError.&#34;&#34;&#34;
         cnt = self._count
         if 0 &lt;= index &lt; cnt:
             self._list[(self._front + index) % self._capacity] = value
@@ -187,7 +187,7 @@ class CircularArray:
         return True
 
     def _double(self) -&gt; None:
-        &#34;&#34;&#34;Double capacity of circular array&#34;&#34;&#34;
+        &#34;&#34;&#34;Double the capacity of the CircularArray.&#34;&#34;&#34;
         if self._front &gt; self._rear:
             data  = self._list[self._front:]
             data += self._list[:self._rear+1]
@@ -200,7 +200,7 @@ class CircularArray:
         data,       2 * self._capacity, 0,           self._count - 1
 
     def compact(self) -&gt; None:
-        &#34;&#34;&#34;Compact the datastructure as much as possible&#34;&#34;&#34;
+        &#34;&#34;&#34;Compact the CircularArray as much as possible.&#34;&#34;&#34;
         match self._count:
             case 0:
                 self._list, self._capacity, self._front, self._rear = [None]*2, 2, 0, 1
@@ -216,13 +216,14 @@ class CircularArray:
                 self._list, self._capacity, self._front, self._rear = data, self._count, 0, self._capacity - 1
 
     def copy(self) -&gt; CircularArray:
+        &#34;&#34;&#34;Return a shallow copy of the CircularArray.&#34;&#34;&#34;
         return CircularArray(*self)
 
     def reverse(self) -&gt; CircularArray:
         return CircularArray(*reversed(self))
 
     def pushR(self, d: Any) -&gt; None:
-        &#34;&#34;&#34;Push data on rear of circle&#34;&#34;&#34;
+        &#34;&#34;&#34;Push data onto the rear of the CircularArray.&#34;&#34;&#34;
         if self._count == self._capacity:
             self._double()
         self._rear = (self._rear + 1) % self._capacity
@@ -230,7 +231,7 @@ class CircularArray:
         self._count += 1
 
     def pushL(self, d: Any) -&gt; None:
-        &#34;&#34;&#34;Push data on front of circle&#34;&#34;&#34;
+        &#34;&#34;&#34;Push data onto the front of the CircularArray.&#34;&#34;&#34;
         if self._count == self._capacity:
             self._double()
         self._front = (self._front - 1) % self._capacity
@@ -238,7 +239,7 @@ class CircularArray:
         self._count += 1
 
     def popR(self) -&gt; Any:
-        &#34;&#34;&#34;Pop data off rear of circle array, returns None if empty&#34;&#34;&#34;
+        &#34;&#34;&#34;Pop data off the rear of the CirclularArray, returns None if empty.&#34;&#34;&#34;
         if self._count == 0:
             return None
         else:
@@ -250,7 +251,7 @@ class CircularArray:
             return d
 
     def popL(self) -&gt; Any:
-        &#34;&#34;&#34;Pop data off front of circle array, returns None if empty&#34;&#34;&#34;
+        &#34;&#34;&#34;Pop data off the front of the CirclularArray , returns None if empty.&#34;&#34;&#34;
         if self._count == 0:
             return None
         else:
@@ -262,14 +263,14 @@ class CircularArray:
             return d
 
     def map(self, f: Callable[[Any], Any]) -&gt; CircularArray:
-        &#34;&#34;&#34;Apply function over the circular array&#39;s contents and return new
-        circular array.
+        &#34;&#34;&#34;Apply function f over the CircularArray&#39;s contents and return
+        the results in a new CircularArray.
         &#34;&#34;&#34;
         return CircularArray(*map(f, self))
 
     def mapSelf(self, f: Callable[[Any], Any]) -&gt; None:
-        &#34;&#34;&#34;Apply function over the circular array&#39;s contents mutatng the
-        circular array, don&#39;t return anything.
+        &#34;&#34;&#34;Apply function f over the CircularArray&#39;s contents mutating the
+        CircularArray, don&#39;t return anything.
         &#34;&#34;&#34;
         ca  = CircularArray(*map(f, self))
         self._count, self._capacity, self._front, self._rear, self._list = \
@@ -278,20 +279,20 @@ class CircularArray:
     # House keeping methods
 
     def empty(self) -&gt; None:
-        &#34;&#34;&#34;Empty circular array, keep current capacity&#34;&#34;&#34;
+        &#34;&#34;&#34;Empty the CircularArray, keep current capacity.&#34;&#34;&#34;
         self._list, self._front, self._rear = \
             [None]*self._capacity, 0, self._capacity-1
 
     def capacity(self) -&gt; int:
-        &#34;&#34;&#34;Returns current capacity of circle array&#34;&#34;&#34;
+        &#34;&#34;&#34;Returns current capacity of the CircularArray.&#34;&#34;&#34;
         return self._capacity
 
     def fractionFilled(self) -&gt; float:
-        &#34;&#34;&#34;Returns current capacity of circle array&#34;&#34;&#34;
+        &#34;&#34;&#34;Returns fractional capacity of the CircularArray.&#34;&#34;&#34;
         return self._count/self._capacity
 
     def resize(self, addCapacity = 0) -&gt; None:
-        &#34;&#34;&#34;Compact circle array and add extra capacity&#34;&#34;&#34;
+        &#34;&#34;&#34;Compact the CircularArray and add extra capacity.&#34;&#34;&#34;
         self.compact()
         if addCapacity &gt; 0:
             self._list = self._list + [None]*addCapacity
@@ -327,7 +328,7 @@ Note: Use in a boolean context to determine if empty
 Note: A Circulararray will resize itself as needed
 Note: For now, Circulararrays are not sliceable</p>
 <p>Raises: IndexError</p>
-<p>Construct a double sided queue</p></div>
+<p>Construct a double sided indexible queue.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -349,7 +350,7 @@ Note: For now, Circulararrays are not sliceable</p>
     __slots__ = &#39;_count&#39;, &#39;_capacity&#39;, &#39;_front&#39;, &#39;_rear&#39;, &#39;_list&#39;
 
     def __init__(self, *data):
-        &#34;&#34;&#34;Construct a double sided queue&#34;&#34;&#34;
+        &#34;&#34;&#34;Construct a double sided indexible queue.&#34;&#34;&#34;
         size = len(data)
         capacity = size + 2
         self._count = size
@@ -395,15 +396,15 @@ Note: For now, Circulararrays are not sliceable</p>
         return &#34;(|&#34; + &#34;, &#34;.join(map(repr, self)) + &#34;|)&#34;
 
     def __bool__(self):
-        &#34;&#34;&#34;Returns true if circular array is not empty&#34;&#34;&#34;
+        &#34;&#34;&#34;Returns true if the CircularArray is not empty.&#34;&#34;&#34;
         return self._count &gt; 0
 
     def __len__(self):
-        &#34;&#34;&#34;Returns current number of values in the circlular array&#34;&#34;&#34;
+        &#34;&#34;&#34;Returns current number of values in the CirclularArray.&#34;&#34;&#34;
         return self._count
 
     def __getitem__(self, index: int) -&gt; Any:
-        &#34;&#34;&#34;Get value at a valid index, otherwise raise IndexError&#34;&#34;&#34;
+        &#34;&#34;&#34;Get value at a valid index, otherwise raise IndexError.&#34;&#34;&#34;
         cnt = self._count
         if 0 &lt;= index &lt; cnt:
             return self._list[(self._front + index) % self._capacity]
@@ -421,7 +422,7 @@ Note: For now, Circulararrays are not sliceable</p>
                 raise IndexError(msg0)
 
     def __setitem__(self, index: int, value: Any) -&gt; Any:
-        &#34;&#34;&#34;Set value at a valid index, otherwise raise IndexError&#34;&#34;&#34;
+        &#34;&#34;&#34;Set value at a valid index, otherwise raise IndexError.&#34;&#34;&#34;
         cnt = self._count
         if 0 &lt;= index &lt; cnt:
             self._list[(self._front + index) % self._capacity] = value
@@ -459,7 +460,7 @@ Note: For now, Circulararrays are not sliceable</p>
         return True
 
     def _double(self) -&gt; None:
-        &#34;&#34;&#34;Double capacity of circular array&#34;&#34;&#34;
+        &#34;&#34;&#34;Double the capacity of the CircularArray.&#34;&#34;&#34;
         if self._front &gt; self._rear:
             data  = self._list[self._front:]
             data += self._list[:self._rear+1]
@@ -472,7 +473,7 @@ Note: For now, Circulararrays are not sliceable</p>
         data,       2 * self._capacity, 0,           self._count - 1
 
     def compact(self) -&gt; None:
-        &#34;&#34;&#34;Compact the datastructure as much as possible&#34;&#34;&#34;
+        &#34;&#34;&#34;Compact the CircularArray as much as possible.&#34;&#34;&#34;
         match self._count:
             case 0:
                 self._list, self._capacity, self._front, self._rear = [None]*2, 2, 0, 1
@@ -488,13 +489,14 @@ Note: For now, Circulararrays are not sliceable</p>
                 self._list, self._capacity, self._front, self._rear = data, self._count, 0, self._capacity - 1
 
     def copy(self) -&gt; CircularArray:
+        &#34;&#34;&#34;Return a shallow copy of the CircularArray.&#34;&#34;&#34;
         return CircularArray(*self)
 
     def reverse(self) -&gt; CircularArray:
         return CircularArray(*reversed(self))
 
     def pushR(self, d: Any) -&gt; None:
-        &#34;&#34;&#34;Push data on rear of circle&#34;&#34;&#34;
+        &#34;&#34;&#34;Push data onto the rear of the CircularArray.&#34;&#34;&#34;
         if self._count == self._capacity:
             self._double()
         self._rear = (self._rear + 1) % self._capacity
@@ -502,7 +504,7 @@ Note: For now, Circulararrays are not sliceable</p>
         self._count += 1
 
     def pushL(self, d: Any) -&gt; None:
-        &#34;&#34;&#34;Push data on front of circle&#34;&#34;&#34;
+        &#34;&#34;&#34;Push data onto the front of the CircularArray.&#34;&#34;&#34;
         if self._count == self._capacity:
             self._double()
         self._front = (self._front - 1) % self._capacity
@@ -510,7 +512,7 @@ Note: For now, Circulararrays are not sliceable</p>
         self._count += 1
 
     def popR(self) -&gt; Any:
-        &#34;&#34;&#34;Pop data off rear of circle array, returns None if empty&#34;&#34;&#34;
+        &#34;&#34;&#34;Pop data off the rear of the CirclularArray, returns None if empty.&#34;&#34;&#34;
         if self._count == 0:
             return None
         else:
@@ -522,7 +524,7 @@ Note: For now, Circulararrays are not sliceable</p>
             return d
 
     def popL(self) -&gt; Any:
-        &#34;&#34;&#34;Pop data off front of circle array, returns None if empty&#34;&#34;&#34;
+        &#34;&#34;&#34;Pop data off the front of the CirclularArray , returns None if empty.&#34;&#34;&#34;
         if self._count == 0:
             return None
         else:
@@ -534,14 +536,14 @@ Note: For now, Circulararrays are not sliceable</p>
             return d
 
     def map(self, f: Callable[[Any], Any]) -&gt; CircularArray:
-        &#34;&#34;&#34;Apply function over the circular array&#39;s contents and return new
-        circular array.
+        &#34;&#34;&#34;Apply function f over the CircularArray&#39;s contents and return
+        the results in a new CircularArray.
         &#34;&#34;&#34;
         return CircularArray(*map(f, self))
 
     def mapSelf(self, f: Callable[[Any], Any]) -&gt; None:
-        &#34;&#34;&#34;Apply function over the circular array&#39;s contents mutatng the
-        circular array, don&#39;t return anything.
+        &#34;&#34;&#34;Apply function f over the CircularArray&#39;s contents mutating the
+        CircularArray, don&#39;t return anything.
         &#34;&#34;&#34;
         ca  = CircularArray(*map(f, self))
         self._count, self._capacity, self._front, self._rear, self._list = \
@@ -550,20 +552,20 @@ Note: For now, Circulararrays are not sliceable</p>
     # House keeping methods
 
     def empty(self) -&gt; None:
-        &#34;&#34;&#34;Empty circular array, keep current capacity&#34;&#34;&#34;
+        &#34;&#34;&#34;Empty the CircularArray, keep current capacity.&#34;&#34;&#34;
         self._list, self._front, self._rear = \
             [None]*self._capacity, 0, self._capacity-1
 
     def capacity(self) -&gt; int:
-        &#34;&#34;&#34;Returns current capacity of circle array&#34;&#34;&#34;
+        &#34;&#34;&#34;Returns current capacity of the CircularArray.&#34;&#34;&#34;
         return self._capacity
 
     def fractionFilled(self) -&gt; float:
-        &#34;&#34;&#34;Returns current capacity of circle array&#34;&#34;&#34;
+        &#34;&#34;&#34;Returns fractional capacity of the CircularArray.&#34;&#34;&#34;
         return self._count/self._capacity
 
     def resize(self, addCapacity = 0) -&gt; None:
-        &#34;&#34;&#34;Compact circle array and add extra capacity&#34;&#34;&#34;
+        &#34;&#34;&#34;Compact the CircularArray and add extra capacity.&#34;&#34;&#34;
         self.compact()
         if addCapacity &gt; 0:
             self._list = self._list + [None]*addCapacity
@@ -577,13 +579,13 @@ Note: For now, Circulararrays are not sliceable</p>
 <span>def <span class="ident">capacity</span></span>(<span>self) ‑> int</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Returns current capacity of circle array</p></div>
+<div class="desc"><p>Returns current capacity of the CircularArray.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def capacity(self) -&gt; int:
-    &#34;&#34;&#34;Returns current capacity of circle array&#34;&#34;&#34;
+    &#34;&#34;&#34;Returns current capacity of the CircularArray.&#34;&#34;&#34;
     return self._capacity</code></pre>
 </details>
 </dd>
@@ -591,13 +593,13 @@ Note: For now, Circulararrays are not sliceable</p>
 <span>def <span class="ident">compact</span></span>(<span>self) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Compact the datastructure as much as possible</p></div>
+<div class="desc"><p>Compact the CircularArray as much as possible.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def compact(self) -&gt; None:
-    &#34;&#34;&#34;Compact the datastructure as much as possible&#34;&#34;&#34;
+    &#34;&#34;&#34;Compact the CircularArray as much as possible.&#34;&#34;&#34;
     match self._count:
         case 0:
             self._list, self._capacity, self._front, self._rear = [None]*2, 2, 0, 1
@@ -617,12 +619,13 @@ Note: For now, Circulararrays are not sliceable</p>
 <span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.circular_array.circulararray.CircularArray" href="#grscheller.circular_array.circulararray.CircularArray">CircularArray</a></span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Return a shallow copy of the CircularArray.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def copy(self) -&gt; CircularArray:
+    &#34;&#34;&#34;Return a shallow copy of the CircularArray.&#34;&#34;&#34;
     return CircularArray(*self)</code></pre>
 </details>
 </dd>
@@ -630,13 +633,13 @@ Note: For now, Circulararrays are not sliceable</p>
 <span>def <span class="ident">empty</span></span>(<span>self) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Empty circular array, keep current capacity</p></div>
+<div class="desc"><p>Empty the CircularArray, keep current capacity.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def empty(self) -&gt; None:
-    &#34;&#34;&#34;Empty circular array, keep current capacity&#34;&#34;&#34;
+    &#34;&#34;&#34;Empty the CircularArray, keep current capacity.&#34;&#34;&#34;
     self._list, self._front, self._rear = \
         [None]*self._capacity, 0, self._capacity-1</code></pre>
 </details>
@@ -645,13 +648,13 @@ Note: For now, Circulararrays are not sliceable</p>
 <span>def <span class="ident">fractionFilled</span></span>(<span>self) ‑> float</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Returns current capacity of circle array</p></div>
+<div class="desc"><p>Returns fractional capacity of the CircularArray.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def fractionFilled(self) -&gt; float:
-    &#34;&#34;&#34;Returns current capacity of circle array&#34;&#34;&#34;
+    &#34;&#34;&#34;Returns fractional capacity of the CircularArray.&#34;&#34;&#34;
     return self._count/self._capacity</code></pre>
 </details>
 </dd>
@@ -659,15 +662,15 @@ Note: For now, Circulararrays are not sliceable</p>
 <span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any]) ‑> <a title="grscheller.circular_array.circulararray.CircularArray" href="#grscheller.circular_array.circulararray.CircularArray">CircularArray</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Apply function over the circular array's contents and return new
-circular array.</p></div>
+<div class="desc"><p>Apply function f over the CircularArray's contents and return
+the results in a new CircularArray.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def map(self, f: Callable[[Any], Any]) -&gt; CircularArray:
-    &#34;&#34;&#34;Apply function over the circular array&#39;s contents and return new
-    circular array.
+    &#34;&#34;&#34;Apply function f over the CircularArray&#39;s contents and return
+    the results in a new CircularArray.
     &#34;&#34;&#34;
     return CircularArray(*map(f, self))</code></pre>
 </details>
@@ -676,15 +679,15 @@ circular array.</p></div>
 <span>def <span class="ident">mapSelf</span></span>(<span>self, f: Callable[[Any], Any]) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Apply function over the circular array's contents mutatng the
-circular array, don't return anything.</p></div>
+<div class="desc"><p>Apply function f over the CircularArray's contents mutating the
+CircularArray, don't return anything.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def mapSelf(self, f: Callable[[Any], Any]) -&gt; None:
-    &#34;&#34;&#34;Apply function over the circular array&#39;s contents mutatng the
-    circular array, don&#39;t return anything.
+    &#34;&#34;&#34;Apply function f over the CircularArray&#39;s contents mutating the
+    CircularArray, don&#39;t return anything.
     &#34;&#34;&#34;
     ca  = CircularArray(*map(f, self))
     self._count, self._capacity, self._front, self._rear, self._list = \
@@ -695,13 +698,13 @@ circular array, don't return anything.</p></div>
 <span>def <span class="ident">popL</span></span>(<span>self) ‑> Any</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Pop data off front of circle array, returns None if empty</p></div>
+<div class="desc"><p>Pop data off the front of the CirclularArray , returns None if empty.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def popL(self) -&gt; Any:
-    &#34;&#34;&#34;Pop data off front of circle array, returns None if empty&#34;&#34;&#34;
+    &#34;&#34;&#34;Pop data off the front of the CirclularArray , returns None if empty.&#34;&#34;&#34;
     if self._count == 0:
         return None
     else:
@@ -717,13 +720,13 @@ circular array, don't return anything.</p></div>
 <span>def <span class="ident">popR</span></span>(<span>self) ‑> Any</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Pop data off rear of circle array, returns None if empty</p></div>
+<div class="desc"><p>Pop data off the rear of the CirclularArray, returns None if empty.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def popR(self) -&gt; Any:
-    &#34;&#34;&#34;Pop data off rear of circle array, returns None if empty&#34;&#34;&#34;
+    &#34;&#34;&#34;Pop data off the rear of the CirclularArray, returns None if empty.&#34;&#34;&#34;
     if self._count == 0:
         return None
     else:
@@ -739,13 +742,13 @@ circular array, don't return anything.</p></div>
 <span>def <span class="ident">pushL</span></span>(<span>self, d: Any) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Push data on front of circle</p></div>
+<div class="desc"><p>Push data onto the front of the CircularArray.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def pushL(self, d: Any) -&gt; None:
-    &#34;&#34;&#34;Push data on front of circle&#34;&#34;&#34;
+    &#34;&#34;&#34;Push data onto the front of the CircularArray.&#34;&#34;&#34;
     if self._count == self._capacity:
         self._double()
     self._front = (self._front - 1) % self._capacity
@@ -757,13 +760,13 @@ circular array, don't return anything.</p></div>
 <span>def <span class="ident">pushR</span></span>(<span>self, d: Any) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Push data on rear of circle</p></div>
+<div class="desc"><p>Push data onto the rear of the CircularArray.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def pushR(self, d: Any) -&gt; None:
-    &#34;&#34;&#34;Push data on rear of circle&#34;&#34;&#34;
+    &#34;&#34;&#34;Push data onto the rear of the CircularArray.&#34;&#34;&#34;
     if self._count == self._capacity:
         self._double()
     self._rear = (self._rear + 1) % self._capacity
@@ -775,13 +778,13 @@ circular array, don't return anything.</p></div>
 <span>def <span class="ident">resize</span></span>(<span>self, addCapacity=0) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Compact circle array and add extra capacity</p></div>
+<div class="desc"><p>Compact the CircularArray and add extra capacity.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def resize(self, addCapacity = 0) -&gt; None:
-    &#34;&#34;&#34;Compact circle array and add extra capacity&#34;&#34;&#34;
+    &#34;&#34;&#34;Compact the CircularArray and add extra capacity.&#34;&#34;&#34;
     self.compact()
     if addCapacity &gt; 0:
         self._list = self._list + [None]*addCapacity

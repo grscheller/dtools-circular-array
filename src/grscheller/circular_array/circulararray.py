@@ -45,7 +45,7 @@ class CircularArray:
     __slots__ = '_count', '_capacity', '_front', '_rear', '_list'
 
     def __init__(self, *data):
-        """Construct a double sided queue"""
+        """Construct a double sided indexible queue."""
         size = len(data)
         capacity = size + 2
         self._count = size
@@ -91,15 +91,15 @@ class CircularArray:
         return "(|" + ", ".join(map(repr, self)) + "|)"
 
     def __bool__(self):
-        """Returns true if circular array is not empty"""
+        """Returns true if the CircularArray is not empty."""
         return self._count > 0
 
     def __len__(self):
-        """Returns current number of values in the circlular array"""
+        """Returns current number of values in the CirclularArray."""
         return self._count
 
     def __getitem__(self, index: int) -> Any:
-        """Get value at a valid index, otherwise raise IndexError"""
+        """Get value at a valid index, otherwise raise IndexError."""
         cnt = self._count
         if 0 <= index < cnt:
             return self._list[(self._front + index) % self._capacity]
@@ -117,7 +117,7 @@ class CircularArray:
                 raise IndexError(msg0)
 
     def __setitem__(self, index: int, value: Any) -> Any:
-        """Set value at a valid index, otherwise raise IndexError"""
+        """Set value at a valid index, otherwise raise IndexError."""
         cnt = self._count
         if 0 <= index < cnt:
             self._list[(self._front + index) % self._capacity] = value
@@ -155,7 +155,7 @@ class CircularArray:
         return True
 
     def _double(self) -> None:
-        """Double capacity of circular array"""
+        """Double the capacity of the CircularArray."""
         if self._front > self._rear:
             data  = self._list[self._front:]
             data += self._list[:self._rear+1]
@@ -168,7 +168,7 @@ class CircularArray:
         data,       2 * self._capacity, 0,           self._count - 1
 
     def compact(self) -> None:
-        """Compact the datastructure as much as possible"""
+        """Compact the CircularArray as much as possible."""
         match self._count:
             case 0:
                 self._list, self._capacity, self._front, self._rear = [None]*2, 2, 0, 1
@@ -184,13 +184,14 @@ class CircularArray:
                 self._list, self._capacity, self._front, self._rear = data, self._count, 0, self._capacity - 1
 
     def copy(self) -> CircularArray:
+        """Return a shallow copy of the CircularArray."""
         return CircularArray(*self)
 
     def reverse(self) -> CircularArray:
         return CircularArray(*reversed(self))
 
     def pushR(self, d: Any) -> None:
-        """Push data on rear of circle"""
+        """Push data onto the rear of the CircularArray."""
         if self._count == self._capacity:
             self._double()
         self._rear = (self._rear + 1) % self._capacity
@@ -198,7 +199,7 @@ class CircularArray:
         self._count += 1
 
     def pushL(self, d: Any) -> None:
-        """Push data on front of circle"""
+        """Push data onto the front of the CircularArray."""
         if self._count == self._capacity:
             self._double()
         self._front = (self._front - 1) % self._capacity
@@ -206,7 +207,7 @@ class CircularArray:
         self._count += 1
 
     def popR(self) -> Any:
-        """Pop data off rear of circle array, returns None if empty"""
+        """Pop data off the rear of the CirclularArray, returns None if empty."""
         if self._count == 0:
             return None
         else:
@@ -218,7 +219,7 @@ class CircularArray:
             return d
 
     def popL(self) -> Any:
-        """Pop data off front of circle array, returns None if empty"""
+        """Pop data off the front of the CirclularArray , returns None if empty."""
         if self._count == 0:
             return None
         else:
@@ -230,14 +231,14 @@ class CircularArray:
             return d
 
     def map(self, f: Callable[[Any], Any]) -> CircularArray:
-        """Apply function over the circular array's contents and return new
-        circular array.
+        """Apply function f over the CircularArray's contents and return
+        the results in a new CircularArray.
         """
         return CircularArray(*map(f, self))
 
     def mapSelf(self, f: Callable[[Any], Any]) -> None:
-        """Apply function over the circular array's contents mutatng the
-        circular array, don't return anything.
+        """Apply function f over the CircularArray's contents mutating the
+        CircularArray, don't return anything.
         """
         ca  = CircularArray(*map(f, self))
         self._count, self._capacity, self._front, self._rear, self._list = \
@@ -246,20 +247,20 @@ class CircularArray:
     # House keeping methods
 
     def empty(self) -> None:
-        """Empty circular array, keep current capacity"""
+        """Empty the CircularArray, keep current capacity."""
         self._list, self._front, self._rear = \
             [None]*self._capacity, 0, self._capacity-1
 
     def capacity(self) -> int:
-        """Returns current capacity of circle array"""
+        """Returns current capacity of the CircularArray."""
         return self._capacity
 
     def fractionFilled(self) -> float:
-        """Returns current capacity of circle array"""
+        """Returns fractional capacity of the CircularArray."""
         return self._count/self._capacity
 
     def resize(self, addCapacity = 0) -> None:
-        """Compact circle array and add extra capacity"""
+        """Compact the CircularArray and add extra capacity."""
         self.compact()
         if addCapacity > 0:
             self._list = self._list + [None]*addCapacity

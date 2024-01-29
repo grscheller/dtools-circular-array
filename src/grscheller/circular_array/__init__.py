@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Python class implementing a Circular Array datastructure"""
+"""Python class implementing a Circular Array data structure."""
 
-__version__ = "0.0.3"
+__version__ = "0.1.0"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
