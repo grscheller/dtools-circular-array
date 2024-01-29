@@ -20,6 +20,11 @@ Semantic Versioning will be used:
 * initial PyPI grscheller.circular-array release
 * migrated Circulararray class from grscheller.datastrucutes
 
+## Version 0.0.2 - commit date 2024-01-28
+
+* pushed repo up to GitHub
+* created README.md file for project
+
 ## Version 0.0.1 - commit date 2024-01-28
 
 * decided to split Circulararray class out of datastructures
