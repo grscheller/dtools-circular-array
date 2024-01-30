@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module grscheller.circulararray.circulararray - circlar array datastructure
+"""Module grscheller.circular_array - circlar array datastructure
 
 Module implementing a stateful circular array data structures with amortized O(1)
 pushing and popping from either end and O(1) indexing. Implemented with a Python List,
@@ -21,6 +21,7 @@ this data structure will resize itself as needed.
 
 from __future__ import annotations
 
+__version__ = "0.1.0.4"
 __all__ = ['CircularArray']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
