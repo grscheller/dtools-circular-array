@@ -59,6 +59,7 @@ __copyright__ = &#34;Copyright (c) 2023-2024 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
 from typing import Any, Callable
+from itertools import chain
 
 class CircularArray:
     &#34;&#34;&#34;An auto-resizing, indexable, double sided queue data structure. O(1) indexing
@@ -93,10 +94,8 @@ class CircularArray:
         the CircularArray.
         &#34;&#34;&#34;
         if self._count &gt; 0:
-            cap = self._capacity
-            rear = self._rear
-            pos = self._front
-            currList = self._list.copy()
+            cap, rear, pos, currList = \
+                self._capacity, self._rear, self._front, self._list.copy()
             while pos != rear:
                 yield currList[pos]
                 pos = (pos + 1) % cap
@@ -107,10 +106,8 @@ class CircularArray:
         the CircularArray in reversed order.
         &#34;&#34;&#34;
         if self._count &gt; 0:
-            cap = self._capacity
-            front = self._front
-            pos = self._rear
-            currList = self._list.copy()
+            cap, front, pos, currList = \
+                self._capacity, self._front, self._rear, self._list.copy()
             while pos != front:
                 yield currList[pos]
                 pos = (pos - 1) % cap
@@ -199,22 +196,6 @@ class CircularArray:
         self._list, self._capacity,     self._front, self._rear = \
         data,       2 * self._capacity, 0,           self._count - 1
 
-    def compact(self) -&gt; None:
-        &#34;&#34;&#34;Compact the CircularArray as much as possible.&#34;&#34;&#34;
-        match self._count:
-            case 0:
-                self._list, self._capacity, self._front, self._rear = [None]*2, 2, 0, 1
-            case 1:
-                data = [self._list[self._front], None]
-                self._list, self._capacity, self._front, self._rear = data, 2, 0, 0
-            case _:
-                if self._front &gt; self._rear:
-                    data  = self._list[self._front:]
-                    data += self._list[:self._rear+1]
-                else:
-                    data  = self._list[self._front:self._rear+1]
-                self._list, self._capacity, self._front, self._rear = data, self._count, 0, self._capacity - 1
-
     def copy(self) -&gt; CircularArray:
         &#34;&#34;&#34;Return a shallow copy of the CircularArray.&#34;&#34;&#34;
         return CircularArray(*self)
@@ -276,7 +257,61 @@ class CircularArray:
         self._count, self._capacity, self._front, self._rear, self._list = \
             ca._count, ca._capacity, ca._front, ca._rear, ca._list
 
+    def foldL(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
+        &#34;&#34;&#34;Fold left with an optional initial value. The first argument of f
+        is the accumulated value. If CircularArray is empty and no initial value
+        given, return None.
+        &#34;&#34;&#34;
+        if self._count == 0:
+            return initial
+        
+        if initial is None:
+            vs = iter(self)
+        else:
+            vs = chain((initial,), self)
+
+        value = next(vs)
+        for v in vs:
+            value = f(value, v)
+
+        return value
+
+    def foldR(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
+        &#34;&#34;&#34;Fold right with an optional initial value. The second argument of f
+        is the accumulated value. If CircularArray is empty and no initial
+        value given, return None.
+        &#34;&#34;&#34;
+        if self._count == 0:
+            return initial
+        
+        if initial is None:
+            vs = reversed(self)
+        else:
+            vs = chain((initial,), reversed(self))
+
+        value = next(vs)
+        for v in vs:
+            value = f(v, value)
+
+        return value
+
     # House keeping methods
+
+    def compact(self) -&gt; None:
+        &#34;&#34;&#34;Compact the CircularArray as much as possible.&#34;&#34;&#34;
+        match self._count:
+            case 0:
+                self._list, self._capacity, self._front, self._rear = [None]*2, 2, 0, 1
+            case 1:
+                data = [self._list[self._front], None]
+                self._list, self._capacity, self._front, self._rear = data, 2, 0, 0
+            case _:
+                if self._front &gt; self._rear:
+                    data  = self._list[self._front:]
+                    data += self._list[:self._rear+1]
+                else:
+                    data  = self._list[self._front:self._rear+1]
+                self._list, self._capacity, self._front, self._rear = data, self._count, 0, self._capacity - 1
 
     def empty(self) -&gt; None:
         &#34;&#34;&#34;Empty the CircularArray, keep current capacity.&#34;&#34;&#34;
@@ -366,10 +401,8 @@ Note: For now, Circulararrays are not sliceable</p>
         the CircularArray.
         &#34;&#34;&#34;
         if self._count &gt; 0:
-            cap = self._capacity
-            rear = self._rear
-            pos = self._front
-            currList = self._list.copy()
+            cap, rear, pos, currList = \
+                self._capacity, self._rear, self._front, self._list.copy()
             while pos != rear:
                 yield currList[pos]
                 pos = (pos + 1) % cap
@@ -380,10 +413,8 @@ Note: For now, Circulararrays are not sliceable</p>
         the CircularArray in reversed order.
         &#34;&#34;&#34;
         if self._count &gt; 0:
-            cap = self._capacity
-            front = self._front
-            pos = self._rear
-            currList = self._list.copy()
+            cap, front, pos, currList = \
+                self._capacity, self._front, self._rear, self._list.copy()
             while pos != front:
                 yield currList[pos]
                 pos = (pos - 1) % cap
@@ -472,22 +503,6 @@ Note: For now, Circulararrays are not sliceable</p>
         self._list, self._capacity,     self._front, self._rear = \
         data,       2 * self._capacity, 0,           self._count - 1
 
-    def compact(self) -&gt; None:
-        &#34;&#34;&#34;Compact the CircularArray as much as possible.&#34;&#34;&#34;
-        match self._count:
-            case 0:
-                self._list, self._capacity, self._front, self._rear = [None]*2, 2, 0, 1
-            case 1:
-                data = [self._list[self._front], None]
-                self._list, self._capacity, self._front, self._rear = data, 2, 0, 0
-            case _:
-                if self._front &gt; self._rear:
-                    data  = self._list[self._front:]
-                    data += self._list[:self._rear+1]
-                else:
-                    data  = self._list[self._front:self._rear+1]
-                self._list, self._capacity, self._front, self._rear = data, self._count, 0, self._capacity - 1
-
     def copy(self) -&gt; CircularArray:
         &#34;&#34;&#34;Return a shallow copy of the CircularArray.&#34;&#34;&#34;
         return CircularArray(*self)
@@ -549,7 +564,61 @@ Note: For now, Circulararrays are not sliceable</p>
         self._count, self._capacity, self._front, self._rear, self._list = \
             ca._count, ca._capacity, ca._front, ca._rear, ca._list
 
+    def foldL(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
+        &#34;&#34;&#34;Fold left with an optional initial value. The first argument of f
+        is the accumulated value. If CircularArray is empty and no initial value
+        given, return None.
+        &#34;&#34;&#34;
+        if self._count == 0:
+            return initial
+        
+        if initial is None:
+            vs = iter(self)
+        else:
+            vs = chain((initial,), self)
+
+        value = next(vs)
+        for v in vs:
+            value = f(value, v)
+
+        return value
+
+    def foldR(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
+        &#34;&#34;&#34;Fold right with an optional initial value. The second argument of f
+        is the accumulated value. If CircularArray is empty and no initial
+        value given, return None.
+        &#34;&#34;&#34;
+        if self._count == 0:
+            return initial
+        
+        if initial is None:
+            vs = reversed(self)
+        else:
+            vs = chain((initial,), reversed(self))
+
+        value = next(vs)
+        for v in vs:
+            value = f(v, value)
+
+        return value
+
     # House keeping methods
+
+    def compact(self) -&gt; None:
+        &#34;&#34;&#34;Compact the CircularArray as much as possible.&#34;&#34;&#34;
+        match self._count:
+            case 0:
+                self._list, self._capacity, self._front, self._rear = [None]*2, 2, 0, 1
+            case 1:
+                data = [self._list[self._front], None]
+                self._list, self._capacity, self._front, self._rear = data, 2, 0, 0
+            case _:
+                if self._front &gt; self._rear:
+                    data  = self._list[self._front:]
+                    data += self._list[:self._rear+1]
+                else:
+                    data  = self._list[self._front:self._rear+1]
+                self._list, self._capacity, self._front, self._rear = data, self._count, 0, self._capacity - 1
 
     def empty(self) -&gt; None:
         &#34;&#34;&#34;Empty the CircularArray, keep current capacity.&#34;&#34;&#34;
@@ -642,6 +711,68 @@ Note: For now, Circulararrays are not sliceable</p>
     &#34;&#34;&#34;Empty the CircularArray, keep current capacity.&#34;&#34;&#34;
     self._list, self._front, self._rear = \
         [None]*self._capacity, 0, self._capacity-1</code></pre>
+</details>
+</dd>
+<dt id="grscheller.circular_array.circulararray.CircularArray.foldL"><code class="name flex">
+<span>def <span class="ident">foldL</span></span>(<span>self, f: Callable[[Any, Any], Any], initial: Any = None) ‑> Any</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Fold left with an optional initial value. The first argument of f
+is the accumulated value. If CircularArray is empty and no initial value
+given, return None.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def foldL(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
+    &#34;&#34;&#34;Fold left with an optional initial value. The first argument of f
+    is the accumulated value. If CircularArray is empty and no initial value
+    given, return None.
+    &#34;&#34;&#34;
+    if self._count == 0:
+        return initial
+    
+    if initial is None:
+        vs = iter(self)
+    else:
+        vs = chain((initial,), self)
+
+    value = next(vs)
+    for v in vs:
+        value = f(value, v)
+
+    return value</code></pre>
+</details>
+</dd>
+<dt id="grscheller.circular_array.circulararray.CircularArray.foldR"><code class="name flex">
+<span>def <span class="ident">foldR</span></span>(<span>self, f: Callable[[Any, Any], Any], initial: Any = None) ‑> Any</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Fold right with an optional initial value. The second argument of f
+is the accumulated value. If CircularArray is empty and no initial
+value given, return None.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def foldR(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
+    &#34;&#34;&#34;Fold right with an optional initial value. The second argument of f
+    is the accumulated value. If CircularArray is empty and no initial
+    value given, return None.
+    &#34;&#34;&#34;
+    if self._count == 0:
+        return initial
+    
+    if initial is None:
+        vs = reversed(self)
+    else:
+        vs = chain((initial,), reversed(self))
+
+    value = next(vs)
+    for v in vs:
+        value = f(v, value)
+
+    return value</code></pre>
 </details>
 </dd>
 <dt id="grscheller.circular_array.circulararray.CircularArray.fractionFilled"><code class="name flex">
@@ -831,6 +962,8 @@ CircularArray, don't return anything.</p></div>
 <li><code><a title="grscheller.circular_array.circulararray.CircularArray.compact" href="#grscheller.circular_array.circulararray.CircularArray.compact">compact</a></code></li>
 <li><code><a title="grscheller.circular_array.circulararray.CircularArray.copy" href="#grscheller.circular_array.circulararray.CircularArray.copy">copy</a></code></li>
 <li><code><a title="grscheller.circular_array.circulararray.CircularArray.empty" href="#grscheller.circular_array.circulararray.CircularArray.empty">empty</a></code></li>
+<li><code><a title="grscheller.circular_array.circulararray.CircularArray.foldL" href="#grscheller.circular_array.circulararray.CircularArray.foldL">foldL</a></code></li>
+<li><code><a title="grscheller.circular_array.circulararray.CircularArray.foldR" href="#grscheller.circular_array.circulararray.CircularArray.foldR">foldR</a></code></li>
 <li><code><a title="grscheller.circular_array.circulararray.CircularArray.fractionFilled" href="#grscheller.circular_array.circulararray.CircularArray.fractionFilled">fractionFilled</a></code></li>
 <li><code><a title="grscheller.circular_array.circulararray.CircularArray.map" href="#grscheller.circular_array.circulararray.CircularArray.map">map</a></code></li>
 <li><code><a title="grscheller.circular_array.circulararray.CircularArray.mapSelf" href="#grscheller.circular_array.circulararray.CircularArray.mapSelf">mapSelf</a></code></li>

@@ -194,3 +194,36 @@ class TestCircularArray:
         assert c1 != c2
         assert c2.popL() == 'a'
         assert c1 == c2
+
+    def test_foldL(self):
+        c1 = CircularArray()
+        assert c1.foldL(lambda x, y: x + y) == None
+        assert c1.foldL(lambda x, y: x + y, initial=42) == 42
+
+        c2 = CircularArray(*range(1, 11))
+        assert c2.foldL(lambda x, y: x + y) == 55
+        assert c2.foldL(lambda x, y: x + y, initial=10) == 65
+        c3 = CircularArray(*range(5))
+
+        def f(vs: list[int], v: int) -> list[int]:
+            vs.append(v)
+            return vs
+
+        assert c3.foldL(f, initial=[]) == [0, 1, 2, 3, 4]
+
+    def test_foldR(self):
+        c1 = CircularArray()
+        assert c1.foldR(lambda x, y: x * y) == None
+        assert c1.foldR(lambda x, y: x * y, initial=42) == 42
+
+        c2 = CircularArray(*range(1, 6))
+        assert c2.foldR(lambda x, y: x * y) == 120
+        assert c2.foldR(lambda x, y: x * y, initial=10) == 1200
+
+        def f(v: int, vs: list[int]) -> list[int]:
+            vs.append(v)
+            return vs
+
+        c3 = CircularArray(*range(5))
+        assert c3.foldR(f, initial=[]) == [4, 3, 2, 1, 0]
+

@@ -27,6 +27,7 @@ __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
 from typing import Any, Callable
+from itertools import chain
 
 class CircularArray:
     """An auto-resizing, indexable, double sided queue data structure. O(1) indexing
@@ -61,10 +62,8 @@ class CircularArray:
         the CircularArray.
         """
         if self._count > 0:
-            cap = self._capacity
-            rear = self._rear
-            pos = self._front
-            currList = self._list.copy()
+            cap, rear, pos, currList = \
+                self._capacity, self._rear, self._front, self._list.copy()
             while pos != rear:
                 yield currList[pos]
                 pos = (pos + 1) % cap
@@ -75,10 +74,8 @@ class CircularArray:
         the CircularArray in reversed order.
         """
         if self._count > 0:
-            cap = self._capacity
-            front = self._front
-            pos = self._rear
-            currList = self._list.copy()
+            cap, front, pos, currList = \
+                self._capacity, self._front, self._rear, self._list.copy()
             while pos != front:
                 yield currList[pos]
                 pos = (pos - 1) % cap
@@ -167,22 +164,6 @@ class CircularArray:
         self._list, self._capacity,     self._front, self._rear = \
         data,       2 * self._capacity, 0,           self._count - 1
 
-    def compact(self) -> None:
-        """Compact the CircularArray as much as possible."""
-        match self._count:
-            case 0:
-                self._list, self._capacity, self._front, self._rear = [None]*2, 2, 0, 1
-            case 1:
-                data = [self._list[self._front], None]
-                self._list, self._capacity, self._front, self._rear = data, 2, 0, 0
-            case _:
-                if self._front > self._rear:
-                    data  = self._list[self._front:]
-                    data += self._list[:self._rear+1]
-                else:
-                    data  = self._list[self._front:self._rear+1]
-                self._list, self._capacity, self._front, self._rear = data, self._count, 0, self._capacity - 1
-
     def copy(self) -> CircularArray:
         """Return a shallow copy of the CircularArray."""
         return CircularArray(*self)
@@ -244,7 +225,61 @@ class CircularArray:
         self._count, self._capacity, self._front, self._rear, self._list = \
             ca._count, ca._capacity, ca._front, ca._rear, ca._list
 
+    def foldL(self, f: Callable[[Any, Any], Any], initial: Any=None) -> Any:
+        """Fold left with an optional initial value. The first argument of f
+        is the accumulated value. If CircularArray is empty and no initial value
+        given, return None.
+        """
+        if self._count == 0:
+            return initial
+        
+        if initial is None:
+            vs = iter(self)
+        else:
+            vs = chain((initial,), self)
+
+        value = next(vs)
+        for v in vs:
+            value = f(value, v)
+
+        return value
+
+    def foldR(self, f: Callable[[Any, Any], Any], initial: Any=None) -> Any:
+        """Fold right with an optional initial value. The second argument of f
+        is the accumulated value. If CircularArray is empty and no initial
+        value given, return None.
+        """
+        if self._count == 0:
+            return initial
+        
+        if initial is None:
+            vs = reversed(self)
+        else:
+            vs = chain((initial,), reversed(self))
+
+        value = next(vs)
+        for v in vs:
+            value = f(v, value)
+
+        return value
+
     # House keeping methods
+
+    def compact(self) -> None:
+        """Compact the CircularArray as much as possible."""
+        match self._count:
+            case 0:
+                self._list, self._capacity, self._front, self._rear = [None]*2, 2, 0, 1
+            case 1:
+                data = [self._list[self._front], None]
+                self._list, self._capacity, self._front, self._rear = data, 2, 0, 0
+            case _:
+                if self._front > self._rear:
+                    data  = self._list[self._front:]
+                    data += self._list[:self._rear+1]
+                else:
+                    data  = self._list[self._front:self._rear+1]
+                self._list, self._capacity, self._front, self._rear = data, self._count, 0, self._capacity - 1
 
     def empty(self) -> None:
         """Empty the CircularArray, keep current capacity."""
