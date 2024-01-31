@@ -19,4 +19,4 @@ from grscheller.circular_array.circulararray import CircularArray
 
 ---
 
-[1]: https://grscheller.github.io/circular-array/API/development/html/grscheller/circular_array/index.html
+[1]: https://grscheller.github.io/circular-array/API/development/html/grscheller/circular_array.html
