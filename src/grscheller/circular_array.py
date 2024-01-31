@@ -21,11 +21,11 @@ this data structure will resize itself as needed.
 
 from __future__ import annotations
 
-__version__ = "0.1.1.0"
+__version__ = "0.1.1.1"
 __all__ = ['CircularArray']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
-__license__ = "Appache License 2.0"
+__license__ = "Apache License 2.0"
 
 from typing import Any, Callable
 from itertools import chain
