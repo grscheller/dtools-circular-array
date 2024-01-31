@@ -14,6 +14,11 @@ Semantic Versioning will be used:
     * PyPI API additions, PyPI bugfixes or minor changes
     * Significant documentation updates
 
+## Veresion v0.1.1 - PyPI release date 2024-01-30
+
+* changed circular-array from a package to just a module
+* gave CircularArray class foldL & foldR methods
+
 ## Veresion v0.1.0 - PyPI release date 2024-01-28
 
 * initial PyPI grscheller.circular-array release
