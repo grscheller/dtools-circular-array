@@ -1,6 +1,9 @@
 # PyPI grscheller.circular-array Project
 
-Python package containing the CircularArray data structure.
+Python module implementing a CircularArray data structure.
+
+* See the [grscheller.circular-array][1] project on PyPI
+* Detailed [API documentation][2]
 
 ## Overview
 
@@ -11,12 +14,11 @@ a has-a relationship by grscheller.datastructure when implementing other
 data structures where its functionality is more likely restricted than
 augmented.
 
-For detailed API documentation click [here][1].
-
 ## Usage
 
-from grscheller.circular_array.circulararray import CircularArray
+from grscheller.circular_array.circular_array import CircularArray
 
 ---
 
-[1]: https://grscheller.github.io/circular-array/API/development/html/grscheller/circular_array/index.html
+[1]: https://pypi.org/project/grscheller.circular-array/
+[2]: https://grscheller.github.io/circular-array/API/development/html/grscheller/circular_array/index.html
