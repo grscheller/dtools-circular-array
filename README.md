@@ -21,4 +21,4 @@ from grscheller.circular_array.circular_array import CircularArray
 ---
 
 [1]: https://pypi.org/project/grscheller.circular-array/
-[2]: https://grscheller.github.io/circular-array/API/development/html/grscheller/circular_array/index.html
+[2]: https://grscheller.github.io/circular-array/API/development/html/grscheller/circular_array.html
