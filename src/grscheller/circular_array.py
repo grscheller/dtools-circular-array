@@ -107,7 +107,7 @@ class CircularArray:
             low = -cnt
             high = cnt - 1
             msg = f'Out of bounds: index = {index} not between {low} and {high}'
-            msg += 'while getting value.'
+            msg += ' while getting value.'
             msg0 = 'Trying to get value from an empty data structure.'
             if cnt > 0:
                 raise IndexError(msg)
