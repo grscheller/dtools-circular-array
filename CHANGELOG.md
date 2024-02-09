@@ -3,7 +3,7 @@
 Changelog for the grscheller.circular-array PyPI project.
 Version numbers for PyPI releases begin with a `v`.
 
-Semantic Versioning will be used:
+**Semantic Versioning will be used:**
 
 * Semantic versioning for PyPI releases:
   * first digit means
@@ -14,12 +14,16 @@ Semantic Versioning will be used:
     * PyPI API additions, PyPI bugfixes or minor changes
     * Significant documentation updates
 
-## Veresion v0.1.1 - PyPI release date 2024-01-30
+## Place holded for version v1.0.0
+
+* first stable release
+
+## Version v0.1.1 - PyPI release date 2024-01-30
 
 * changed circular-array from a package to just a module
 * gave CircularArray class foldL & foldR methods
 
-## Veresion v0.1.0 - PyPI release date 2024-01-28
+## Version v0.1.0 - PyPI release date 2024-01-28
 
 * initial PyPI grscheller.circular-array release
 * migrated Circulararray class from grscheller.datastrucutes
