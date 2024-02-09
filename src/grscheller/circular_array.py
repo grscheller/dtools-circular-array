@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module grscheller.circular_array - circlar array datastructure
+"""Module implementing an indexable circlar array data structure
 
 Module implementing a stateful circular array data structures with amortized O(1)
 pushing and popping from either end and O(1) indexing. Implemented with a Python List,
@@ -21,7 +21,7 @@ this data structure will resize itself as needed.
 
 from __future__ import annotations
 
-__version__ = "0.1.1.1"
+__version__ = "0.1.1.2"
 __all__ = ['CircularArray']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
@@ -37,9 +37,13 @@ class CircularArray:
     data structures where its functionality is more likely restricted than augmented.
 
     Note: Indexing, pushing & popping and size determination are all O(1) operations
+
     Note: Popping from an empty Circulararray returns None
+
     Note: Use in a boolean context to determine if empty
+
     Note: A Circulararray will resize itself as needed
+
     Note: For now, Circulararrays are not sliceable
 
     Raises: IndexError
@@ -72,7 +76,7 @@ class CircularArray:
 
     def __reversed__(self):
         """Generator yielding the cached contents of the current state of
-        the CircularArray in reversed order.
+        the CircularArray in reverse order.
         """
         if self._count > 0:
             cap, front, pos, currList = \
@@ -201,7 +205,7 @@ class CircularArray:
             return d
 
     def popL(self) -> Any:
-        """Pop data off the front of the CirclularArray , returns None if empty."""
+        """Pop data off the front of the CirclularArray, returns None if empty."""
         if self._count == 0:
             return None
         else:

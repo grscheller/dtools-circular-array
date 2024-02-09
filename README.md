@@ -1,6 +1,6 @@
 # PyPI grscheller.circular-array Project
 
-Python module implementing a CircularArray data structure.
+Python module implementing an indexable circular array data structure.
 
 * See the [grscheller.circular-array][1] project on PyPI
 * Detailed [API documentation][2]
@@ -16,7 +16,7 @@ augmented.
 
 ## Usage
 
-from grscheller.circular_array.circular_array import CircularArray
+from grscheller.circular_array import CircularArray
 
 ---
 

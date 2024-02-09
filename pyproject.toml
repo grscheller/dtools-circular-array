@@ -9,16 +9,21 @@ authors = [
 ]
 license = { file = "LICENSE" }
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.10"
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
     "License :: OSI Approved :: Apache Software License"
 ]
 dependencies = []
 dynamic = ["version", "description"]
-keywords = ["circular-array", "circular_array", "circular array"]
+keywords = [
+    "circular-array", "circular array", "O(1)",
+    "popL", "popR", "pushL", "pushR",
+    "popLeft", "popRight", "pushLeft", "pushRight",
+    "popFront", "popRear", "pushFront", "pushRear"
+]
 
 [project.optional-dependencies]
 test = ["pytest >=7.4"]
