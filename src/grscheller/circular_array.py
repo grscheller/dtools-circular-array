@@ -21,7 +21,7 @@ this data structure will resize itself as needed.
 
 from __future__ import annotations
 
-__version__ = "0.1.1.2"
+__version__ = "1.0.0"
 __all__ = ['CircularArray']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
@@ -31,8 +31,8 @@ from typing import Any, Callable
 from itertools import chain
 
 class CircularArray:
-    """An auto-resizing, indexable, double sided queue data structure. O(1) indexing
-    and O(1) pushes and pops either end. Useful as an improved version of a Python list.
+    """An auto-resizing, indexable, double sided queue data structure. O(1) indexing,
+    O(1) pushes and pops either end. Useful as an improved version of a Python list.
     Used in a has-a relationship by grscheller.datastructure when implementing other
     data structures where its functionality is more likely restricted than augmented.
 

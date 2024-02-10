@@ -14,9 +14,10 @@ Version numbers for PyPI releases begin with a `v`.
     * PyPI API additions, PyPI bugfixes or minor changes
     * Significant documentation updates
 
-## Place holded for version v1.0.0
+## Version v1.0.0 - PyPI release date 2024-02-10
 
 * first stable release
+* dropped minimum Python requirement to 3.10
 
 ## Version v0.1.1 - PyPI release date 2024-01-30
 
