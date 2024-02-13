@@ -2,8 +2,9 @@
 
 Python module implementing an indexable circular array data structure.
 
-* See the [grscheller.circular-array][1] project on PyPI
-* Detailed [API documentation][2] all versions
+* [grscheller.circular-array][1] project on PyPI
+* [Detailed API documentation][2] on GH-Pages
+* [Source code][3] on GitHub
 
 ## Overview
 
@@ -22,3 +23,4 @@ from grscheller.circular_array import CircularArray
 
 [1]: https://pypi.org/project/grscheller.circular-array/
 [2]: https://grscheller.github.io/circular-array/
+[3]: https://github.com/grscheller/circular-array
