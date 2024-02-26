@@ -53,7 +53,7 @@ this data structure will resize itself as needed.
 
 from __future__ import annotations
 
-__version__ = &#34;1.0.0.2&#34;
+__version__ = &#34;1.0.0.3&#34;
 __all__ = [&#39;CircularArray&#39;]
 __author__ = &#34;Geoffrey R. Scheller&#34;
 __copyright__ = &#34;Copyright (c) 2023-2024 Geoffrey R. Scheller&#34;
@@ -68,18 +68,22 @@ class CircularArray:
     Used in a has-a relationship by grscheller.datastructure when implementing other
     data structures where its functionality is more likely restricted than augmented.
 
-    Raises: IndexError
+    - Indexing, pushing &amp; popping and size determination are all O(1) operations
 
-    Note: Indexing, pushing &amp; popping and size determination are all O(1) operations
-    Note: Popping from an empty CircularArray returns None
-    Note: Use in a boolean context to determine if empty
-    Note: A CircularArray will resize itself as needed
-    Note: CircularArrays are not sliceable
+    - Popping from an empty CircularArray returns None
+
+    - Use in a boolean context to determine if empty
+
+    - A CircularArray will resize itself as needed
+
+    - CircularArrays are not sliceable
+
+    Raises: IndexError
     &#34;&#34;&#34;
     __slots__ = &#39;_count&#39;, &#39;_capacity&#39;, &#39;_front&#39;, &#39;_rear&#39;, &#39;_list&#39;
 
     def __init__(self, *data):
-        &#34;&#34;&#34;Construct a double sided indexable queue.&#34;&#34;&#34;
+        &#34;&#34;&#34;Constructs a double sided indexable queue.&#34;&#34;&#34;
         size = len(data)
         capacity = size + 2
         self._count = size
@@ -358,13 +362,25 @@ if __name__ == &#34;__main__&#34;:
 O(1) pushes and pops either end. Useful as an improved version of a Python list.
 Used in a has-a relationship by grscheller.datastructure when implementing other
 data structures where its functionality is more likely restricted than augmented.</p>
+<ul>
+<li>
+<p>Indexing, pushing &amp; popping and size determination are all O(1) operations</p>
+</li>
+<li>
+<p>Popping from an empty CircularArray returns None</p>
+</li>
+<li>
+<p>Use in a boolean context to determine if empty</p>
+</li>
+<li>
+<p>A CircularArray will resize itself as needed</p>
+</li>
+<li>
+<p>CircularArrays are not sliceable</p>
+</li>
+</ul>
 <p>Raises: IndexError</p>
-<p>Note: Indexing, pushing &amp; popping and size determination are all O(1) operations
-Note: Popping from an empty CircularArray returns None
-Note: Use in a boolean context to determine if empty
-Note: A CircularArray will resize itself as needed
-Note: CircularArrays are not sliceable</p>
-<p>Construct a double sided indexable queue.</p></div>
+<p>Constructs a double sided indexable queue.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -375,18 +391,22 @@ Note: CircularArrays are not sliceable</p>
     Used in a has-a relationship by grscheller.datastructure when implementing other
     data structures where its functionality is more likely restricted than augmented.
 
-    Raises: IndexError
+    - Indexing, pushing &amp; popping and size determination are all O(1) operations
 
-    Note: Indexing, pushing &amp; popping and size determination are all O(1) operations
-    Note: Popping from an empty CircularArray returns None
-    Note: Use in a boolean context to determine if empty
-    Note: A CircularArray will resize itself as needed
-    Note: CircularArrays are not sliceable
+    - Popping from an empty CircularArray returns None
+
+    - Use in a boolean context to determine if empty
+
+    - A CircularArray will resize itself as needed
+
+    - CircularArrays are not sliceable
+
+    Raises: IndexError
     &#34;&#34;&#34;
     __slots__ = &#39;_count&#39;, &#39;_capacity&#39;, &#39;_front&#39;, &#39;_rear&#39;, &#39;_list&#39;
 
     def __init__(self, *data):
-        &#34;&#34;&#34;Construct a double sided indexable queue.&#34;&#34;&#34;
+        &#34;&#34;&#34;Constructs a double sided indexable queue.&#34;&#34;&#34;
         size = len(data)
         capacity = size + 2
         self._count = size

@@ -21,7 +21,7 @@ this data structure will resize itself as needed.
 
 from __future__ import annotations
 
-__version__ = "1.0.0.2"
+__version__ = "1.0.0.3"
 __all__ = ['CircularArray']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
@@ -36,18 +36,22 @@ class CircularArray:
     Used in a has-a relationship by grscheller.datastructure when implementing other
     data structures where its functionality is more likely restricted than augmented.
 
-    Raises: IndexError
+    - Indexing, pushing & popping and size determination are all O(1) operations
 
-    Note: Indexing, pushing & popping and size determination are all O(1) operations
-    Note: Popping from an empty CircularArray returns None
-    Note: Use in a boolean context to determine if empty
-    Note: A CircularArray will resize itself as needed
-    Note: CircularArrays are not sliceable
+    - Popping from an empty CircularArray returns None
+
+    - Use in a boolean context to determine if empty
+
+    - A CircularArray will resize itself as needed
+
+    - CircularArrays are not sliceable
+
+    Raises: IndexError
     """
     __slots__ = '_count', '_capacity', '_front', '_rear', '_list'
 
     def __init__(self, *data):
-        """Construct a double sided indexable queue."""
+        """Constructs a double sided indexable queue."""
         size = len(data)
         capacity = size + 2
         self._count = size
