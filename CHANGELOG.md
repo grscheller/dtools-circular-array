@@ -18,6 +18,11 @@ Version numbers for PyPI releases begin with a `v`.
   * commit count (thrashing)
   * not to be taken too seriously
 
+## Version v1.0.1 - PyPI release date 2024-03-01
+PyPI grscheller.circular-array v1.0.1 release
+
+* docstring updates to match other grscheller PyPI repos
+
 ## Version v1.0.0 - PyPI release date 2024-02-10
 
 * first stable release

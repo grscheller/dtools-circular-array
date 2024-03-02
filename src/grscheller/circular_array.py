@@ -23,7 +23,7 @@
 
 from __future__ import annotations
 
-__version__ = "1.0.1"
+__version__ = "1.0.1.0"
 __all__ = ['CircularArray']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
