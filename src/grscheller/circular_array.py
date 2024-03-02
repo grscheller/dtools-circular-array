@@ -14,14 +14,16 @@
 
 """Module implementing an indexable circlar array data structure
 
-Module implementing a stateful circular array data structures with amortized O(1)
-pushing and popping from either end and O(1) indexing. Implemented with a Python List,
-this data structure will resize itself as needed.
+* stateful data structure
+* O(1) random access any element
+* amortized O(1) pushing and popping from either end
+* data structure will resize itself as needed
+
 """
 
 from __future__ import annotations
 
-__version__ = "1.0.0.3"
+__version__ = "1.0.1"
 __all__ = ['CircularArray']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
@@ -31,27 +33,18 @@ from typing import Any, Callable
 from itertools import chain
 
 class CircularArray:
-    """An auto-resizing, indexable, double sided queue data structure. O(1) indexing,
-    O(1) pushes and pops either end. Useful as an improved version of a Python list.
-    Used in a has-a relationship by grscheller.datastructure when implementing other
-    data structures where its functionality is more likely restricted than augmented.
+    """Class implementing a double sided indexable queue
 
-    - Indexing, pushing & popping and size determination are all O(1) operations
-
-    - Popping from an empty CircularArray returns None
-
-    - Use in a boolean context to determine if empty
-
-    - A CircularArray will resize itself as needed
-
-    - CircularArrays are not sliceable
-
-    Raises: IndexError
+    * indexing, pushing & popping and length determination all O(1) operations
+    * popping an empty CircularArray returns None, use in boolean context see if empty
+    * iterators caches current content
+    * a CircularArray instance will resize itself as needed
+    * circularArrays are not sliceable
+    * raises: IndexError
     """
     __slots__ = '_count', '_capacity', '_front', '_rear', '_list'
 
     def __init__(self, *data):
-        """Constructs a double sided indexable queue."""
         size = len(data)
         capacity = size + 2
         self._count = size
@@ -63,9 +56,6 @@ class CircularArray:
         self._list.append(None)
 
     def __iter__(self):
-        """Generator yielding the cached contents of the current state of
-        the CircularArray.
-        """
         if self._count > 0:
             cap, rear, pos, currList = \
                 self._capacity, self._rear, self._front, self._list.copy()
@@ -75,9 +65,6 @@ class CircularArray:
             yield currList[pos]
 
     def __reversed__(self):
-        """Generator yielding the cached contents of the current state of
-        the CircularArray in reverse order.
-        """
         if self._count > 0:
             cap, front, pos, currList = \
                 self._capacity, self._front, self._rear, self._list.copy()
@@ -93,15 +80,12 @@ class CircularArray:
         return "(|" + ", ".join(map(repr, self)) + "|)"
 
     def __bool__(self):
-        """Returns true if the CircularArray is not empty."""
         return self._count > 0
 
     def __len__(self):
-        """Returns current number of values in the CirclularArray."""
         return self._count
 
     def __getitem__(self, index: int) -> Any:
-        """Get value at a valid index, otherwise raise IndexError."""
         cnt = self._count
         if 0 <= index < cnt:
             return self._list[(self._front + index) % self._capacity]
@@ -119,7 +103,6 @@ class CircularArray:
                 raise IndexError(msg0)
 
     def __setitem__(self, index: int, value: Any) -> Any:
-        """Set value at a valid index, otherwise raise IndexError."""
         cnt = self._count
         if 0 <= index < cnt:
             self._list[(self._front + index) % self._capacity] = value
@@ -224,16 +207,16 @@ class CircularArray:
 
     def mapSelf(self, f: Callable[[Any], Any]) -> None:
         """Apply function f over the CircularArray's contents mutating the
-        CircularArray, don't return anything.
+        CircularArray, does not return anything.
         """
         ca  = CircularArray(*map(f, self))
         self._count, self._capacity, self._front, self._rear, self._list = \
             ca._count, ca._capacity, ca._front, ca._rear, ca._list
 
     def foldL(self, f: Callable[[Any, Any], Any], initial: Any=None) -> Any:
-        """Fold left with an optional initial value. The first argument of f
-        is the accumulated value. If CircularArray is empty and no initial value
-        given, return None.
+        """Fold left with optional initial value. The first argument of `f` is
+        the accumulated value. If CircularArray is empty and no initial value
+        given, return `None`.
         """
         if self._count == 0:
             return initial
@@ -250,9 +233,9 @@ class CircularArray:
         return value
 
     def foldR(self, f: Callable[[Any, Any], Any], initial: Any=None) -> Any:
-        """Fold right with an optional initial value. The second argument of f
-        is the accumulated value. If CircularArray is empty and no initial
-        value given, return None.
+        """Fold right with optional initial value. The second argument of `f` is
+        the accumulated value. If CircularArray is empty and no initial
+        value given, return `None`.
         """
         if self._count == 0:
             return initial
