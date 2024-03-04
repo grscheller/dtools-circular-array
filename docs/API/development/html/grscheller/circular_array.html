@@ -127,14 +127,15 @@ class CircularArray:
         elif -cnt &lt;= index &lt; 0:
             return self._list[(self._front + cnt + index) % self._capacity]
         else:
-            low = -cnt
-            high = cnt - 1
-            msg = f&#39;Out of bounds: index = {index} not between {low} and {high}&#39;
-            msg += &#39; while getting value.&#39;
-            msg0 = &#39;Trying to get value from an empty data structure.&#39;
             if cnt &gt; 0:
-                raise IndexError(msg)
+                low = -cnt
+                high = cnt - 1
+                msg1 = f&#39;Out of bounds: &#39;
+                msg2 = f&#39;index = {index} not between {low} and {high}&#39;
+                msg3 = &#39; while getting value from a CircularArray.&#39;
+                raise IndexError(msg1 + msg2 + msg3)
             else:
+                msg0 = &#39;Trying to get value from an empty CircularArray.&#39;
                 raise IndexError(msg0)
 
     def __setitem__(self, index: int, value: Any) -&gt; Any:
@@ -146,11 +147,11 @@ class CircularArray:
         else:
             low = -cnt
             high = cnt - 1
-            msg = f&#39;Out of bounds: index = {index} not between {low} and {high}&#39;
-            msg += &#39;while setting value.&#39;
-            msg0 = &#39;Trying to get value from an empty data structure.&#39;
+            msg1 = f&#39;Out of bounds: index = {index} not between {low} and {high}&#39;
+            msg2 = &#39; while setting value in a CircularArray.&#39;
+            msg0 = &#39;Trying to set value in an empty CircularArray.&#39;
             if cnt &gt; 0:
-                raise IndexError(msg)
+                raise IndexError(msg1 + msg2)
             else:
                 raise IndexError(msg0)
 
@@ -417,14 +418,15 @@ if __name__ == &#34;__main__&#34;:
         elif -cnt &lt;= index &lt; 0:
             return self._list[(self._front + cnt + index) % self._capacity]
         else:
-            low = -cnt
-            high = cnt - 1
-            msg = f&#39;Out of bounds: index = {index} not between {low} and {high}&#39;
-            msg += &#39; while getting value.&#39;
-            msg0 = &#39;Trying to get value from an empty data structure.&#39;
             if cnt &gt; 0:
-                raise IndexError(msg)
+                low = -cnt
+                high = cnt - 1
+                msg1 = f&#39;Out of bounds: &#39;
+                msg2 = f&#39;index = {index} not between {low} and {high}&#39;
+                msg3 = &#39; while getting value from a CircularArray.&#39;
+                raise IndexError(msg1 + msg2 + msg3)
             else:
+                msg0 = &#39;Trying to get value from an empty CircularArray.&#39;
                 raise IndexError(msg0)
 
     def __setitem__(self, index: int, value: Any) -&gt; Any:
@@ -436,11 +438,11 @@ if __name__ == &#34;__main__&#34;:
         else:
             low = -cnt
             high = cnt - 1
-            msg = f&#39;Out of bounds: index = {index} not between {low} and {high}&#39;
-            msg += &#39;while setting value.&#39;
-            msg0 = &#39;Trying to get value from an empty data structure.&#39;
+            msg1 = f&#39;Out of bounds: index = {index} not between {low} and {high}&#39;
+            msg2 = &#39; while setting value in a CircularArray.&#39;
+            msg0 = &#39;Trying to set value in an empty CircularArray.&#39;
             if cnt &gt; 0:
-                raise IndexError(msg)
+                raise IndexError(msg1 + msg2)
             else:
                 raise IndexError(msg0)
 
