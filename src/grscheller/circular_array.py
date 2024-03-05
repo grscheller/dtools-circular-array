@@ -23,7 +23,7 @@
 
 from __future__ import annotations
 
-__version__ = "1.0.1.1"
+__version__ = "1.0.1.2"
 __all__ = ['CircularArray']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
@@ -58,13 +58,13 @@ class CircularArray:
 
     def __iter__(self):
         if self._count > 0:
-            cap,       \
-            rear,      \
-            pos,       \
+            cap, \
+            rear, \
+            pos, \
             currList = \
                 self._capacity, \
-                self._rear,     \
-                self._front,    \
+                self._rear, \
+                self._front, \
                 self._list.copy()
 
             while pos != rear:
@@ -74,13 +74,13 @@ class CircularArray:
 
     def __reversed__(self):
         if self._count > 0:
-            cap,       \
-            front,     \
-            pos,       \
+            cap, \
+            front, \
+            pos, \
             currList = \
                 self._capacity, \
-                self._front,    \
-                self._rear,     \
+                self._front, \
+                self._rear, \
                 self._list.copy()
 
             while pos != front:
@@ -126,10 +126,10 @@ class CircularArray:
             if cnt > 0:
                 msg1 = 'Out of bounds: '
                 msg2 = f'index = {index} not between {-cnt} and {cnt-1} '
-                msg3 = 'while setting value in a CircularArray.'
+                msg3 = 'while setting value from a CircularArray.'
                 raise IndexError(msg1 + msg2 + msg3)
             else:
-                msg0 = 'Trying to set value in an empty CircularArray.'
+                msg0 = 'Trying to set value from an empty CircularArray.'
                 raise IndexError(msg0)
 
     def __eq__(self, other):
@@ -138,41 +138,45 @@ class CircularArray:
         """
         if not isinstance(other, type(self)):
             return False
-        if self._count != other._count:
+
+        left, \
+        frontL, \
+        capL, \
+        cntL, \
+        right, \
+        frontR, \
+        capR, \
+        cntR = \
+            self, \
+            self._front, \
+            self._capacity, \
+            self._count, \
+            other, \
+            other._front, \
+            other._capacity, \
+            other._count
+
+        if cntL != cntR:
             return False
 
-        left,   \
-        frontL, \
-        capL,   \
-        cnt,    \
-        right,  \
-        frontR, \
-        capR =  \
-            self,           \
-            self._front,    \
-            self._capacity, \
-            self._count,    \
-            other,          \
-            other._front,   \
-            other._capacity
-
-        for nn in range(cnt):
+        for nn in range(cntL):
             if left._list[(frontL+nn)%capL] != right._list[(frontR+nn)%capR]:
                 return False
+
         return True
 
     def _double(self) -> None:
         """Double the capacity of the CircularArray."""
         data = self._list[self._front:] + self._list[:self._front] + [None]*self._capacity 
 
-        self._list,      \
-        self._front,     \
-        self._rear,      \
+        self._list, \
+        self._front, \
+        self._rear, \
         self._capacity = \
-            data,            \
-            0,               \
+            data, \
+            0, \
             self._count - 1, \
-            2 * self._capacity
+            2 * self._capacity 
 
     def copy(self) -> CircularArray:
         """Return a shallow copy of the CircularArray."""
@@ -202,13 +206,13 @@ class CircularArray:
         if self._count == 0:
             return None
         else:
-            d,                      \
-            self._count,            \
+            d, \
+            self._count, \
             self._list[self._rear], \
-            self._rear =            \
+            self._rear = \
                 self._list[self._rear], \
-                self._count-1,          \
-                None,                   \
+                self._count-1, \
+                None, \
                 (self._rear - 1) % self._capacity
             return d
 
@@ -217,15 +221,14 @@ class CircularArray:
         if self._count == 0:
             return None
         else:
-            d,                       \
-            self._count,             \
+            d, \
+            self._count, \
             self._list[self._front], \
-            self._front =            \
+            self._front = \
                 self._list[self._front], \
-                self._count-1,           \
-                None,                    \
+                self._count-1, \
+                None, \
                 (self._front+1) % self._capacity
-
             return d
 
     def map(self, f: Callable[[Any], Any]) -> CircularArray:
@@ -239,15 +242,15 @@ class CircularArray:
         CircularArray, does not return anything.
         """
         ca  = CircularArray(*map(f, self))
-        self._count,    \
+        self._count, \
         self._capacity, \
-        self._front,    \
-        self._rear,     \
-        self._list =    \
-            ca._count,    \
+        self._front, \
+        self._rear, \
+        self._list = \
+            ca._count, \
             ca._capacity, \
-            ca._front,    \
-            ca._rear,     \
+            ca._front, \
+            ca._rear, \
             ca._list
 
     def foldL(self, f: Callable[[Any, Any], Any], initial: Any=None) -> Any:
@@ -304,18 +307,18 @@ class CircularArray:
                 else:
                     data  = self._list[self._front:] + self._list[:self._rear+1]
 
-                self._list,     \
+                self._list, \
                 self._capacity, \
-                self._front,    \
-                self._rear =    \
-                    data,         \
-                    self._count,  \
-                    0,            \
+                self._front, \
+                self._rear = \
+                    data, \
+                    self._count, \
+                    0, \
                     self._capacity - 1
 
     def empty(self) -> None:
         """Empty the CircularArray, keep current capacity."""
-        self._list,  \
+        self._list, \
         self._front, \
         self._rear = \
             [None]*self._capacity, \
@@ -330,11 +333,11 @@ class CircularArray:
         """Returns fractional capacity of the CircularArray."""
         return self._count/self._capacity
 
-    def resize(self, addCapacity = 0) -> None:
+    def resize(self, addCapacity: int= 0) -> None:
         """Compact the CircularArray and add extra capacity."""
         self.compact()
         if addCapacity > 0:
-            self._list,      \
+            self._list, \
             self._capacity = \
                 self._list + [None]*addCapacity, \
                 self._capacity + addCapacity
