@@ -42,3 +42,33 @@ class TestCapacity:
         c.resize(30)
         assert c.fractionFilled() == 6/36
 
+    def test_double(self):
+        c = CircularArray(1, 2, 3)
+        assert c.popL() == 1
+        assert c.capacity() == 5
+        c._double()
+        assert c.capacity() == 10
+        c._double()
+        c.pushL(42)
+        c.pushR(0)
+        assert len(c) == 4
+        assert c.capacity() == 20
+        c.resize()
+        assert c.capacity() == 4
+        c.pushL(1)
+        assert len(c) == 5
+        assert c.capacity() == 8
+        for ii in range(45):
+            if ii % 3 == 0:
+                c.pushR(c.popL())
+                c.pushL(ii)
+            else:
+                c.pushR(ii)
+        assert len(c) == 50
+        assert c.capacity() == 64
+        jj = len(c)
+        while jj > 0:
+            kk = c.popL()
+            assert kk is not None
+            c.pushR(jj)
+            jj -= 1

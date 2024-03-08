@@ -23,7 +23,7 @@
 
 from __future__ import annotations
 
-__version__ = "1.0.1.2"
+__version__ = "1.0.2.0"
 __all__ = ['CircularArray']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
@@ -46,15 +46,12 @@ class CircularArray:
     __slots__ = '_count', '_capacity', '_front', '_rear', '_list'
 
     def __init__(self, *data):
-        size = len(data)
-        capacity = size + 2
-        self._count = size
-        self._capacity = capacity
+        count = len(data)
+        self._list = list(chain(data, (None, None)))
+        self._count = count
+        self._capacity = count + 2
         self._front = 0
-        self._rear = (size - 1) % capacity
-        self._list = list(data)
-        self._list.append(None)
-        self._list.append(None)
+        self._rear = count - 1 if count !=0 else 1
 
     def __iter__(self):
         if self._count > 0:
@@ -167,16 +164,13 @@ class CircularArray:
 
     def _double(self) -> None:
         """Double the capacity of the CircularArray."""
-        data = self._list[self._front:] + self._list[:self._front] + [None]*self._capacity 
-
-        self._list, \
-        self._front, \
-        self._rear, \
-        self._capacity = \
-            data, \
-            0, \
-            self._count - 1, \
-            2 * self._capacity 
+        if self._front <= self._rear:
+            self._list += [None]*self._capacity
+            self._capacity *= 2
+        else:
+            self._list = self._list[:self._front] + [None]*self._capacity + self._list[self._front:]
+            self._front += self._capacity
+            self._capacity *= 2
 
     def copy(self) -> CircularArray:
         """Return a shallow copy of the CircularArray."""
@@ -306,7 +300,8 @@ class CircularArray:
                     data  = self._list[self._front:self._rear+1]
                 else:
                     data  = self._list[self._front:] + self._list[:self._rear+1]
-
+                data.append(None)
+                data.append(None)
                 self._list, \
                 self._capacity, \
                 self._front, \
@@ -314,7 +309,7 @@ class CircularArray:
                     data, \
                     self._count, \
                     0, \
-                    self._capacity - 1
+                    self._count - 1
 
     def empty(self) -> None:
         """Empty the CircularArray, keep current capacity."""
