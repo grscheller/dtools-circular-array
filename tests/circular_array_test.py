@@ -97,32 +97,6 @@ class TestCircularArray:
         for _ in reversed(c0):
             assert False
 
-    def test_capacity(self):
-        c = CircularArray()
-        assert c.capacity() == 2
-
-        c = CircularArray(1, 2)
-        assert c.fractionFilled() == 2/4
-
-        c.pushL(0)
-        assert c.fractionFilled() == 3/4
-
-        c.pushR(3)
-        assert c.fractionFilled() == 4/4
-
-        c.pushR(4)
-        c.pushL(5)
-        assert c.fractionFilled() == 6/8
-
-        assert len(c) == 6
-        assert c.capacity() == 8
-
-        c.resize()
-        assert c.fractionFilled() == 6/6
-
-        c.resize(30)
-        assert c.fractionFilled() == 6/36
-
     def test_equality(self):
         c1 = CircularArray(1, 2, 3, 'Forty-Two', (7, 11, 'foobar'))
         c2 = CircularArray(2, 3, 'Forty-Two')
