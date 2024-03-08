@@ -11,10 +11,9 @@ Circular Array
 
 The CircularArray class implements an auto-resizing, indexable, double
 sided queue data structure. O(1) indexing and O(1) pushes and pops
-either end. Useful as an improved version of a Python list. Used in
-a has-a relationship by grscheller.datastructure when implementing other
-data structures where its functionality was more likely restricted than
-augmented.
+either end. Useful if used directly as an improved version of a Python
+List and in the implementation of other data structures in a "has-a"
+relationship.
 
 ## Usage
 

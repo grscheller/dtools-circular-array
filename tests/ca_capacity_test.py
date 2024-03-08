@@ -16,12 +16,12 @@ from grscheller.circular_array import CircularArray
 
 class TestCapacity:
 
-    def test_capacitya_original(self):
+    def test_capacity_original(self):
         c = CircularArray()
         assert c.capacity() == 2
 
         c = CircularArray(1, 2)
-        assert c.fractionFilled() == 2/4
+        assert c.fractionFilled() == 2/2
 
         c.pushL(0)
         assert c.fractionFilled() == 3/4
@@ -45,14 +45,14 @@ class TestCapacity:
     def test_double(self):
         c = CircularArray(1, 2, 3)
         assert c.popL() == 1
-        assert c.capacity() == 5
+        assert c.capacity() == 3
         c._double()
-        assert c.capacity() == 10
+        assert c.capacity() == 6
         c._double()
         c.pushL(42)
         c.pushR(0)
         assert len(c) == 4
-        assert c.capacity() == 20
+        assert c.capacity() == 12
         c.resize()
         assert c.capacity() == 4
         c.pushL(1)
@@ -72,3 +72,37 @@ class TestCapacity:
             assert kk is not None
             c.pushR(jj)
             jj -= 1
+
+    def test_empty(self):
+        c = CircularArray()
+        assert c == CircularArray()
+        assert c.capacity() == 2
+        c._double()
+        assert c.capacity() == 4
+        c.compact()
+        assert c.capacity() == 2
+        c.resize(6)
+        assert c.capacity() == 8
+        assert len(c) == 0
+
+    def test_one(self):
+        c = CircularArray(42)
+        assert c.capacity() == 1
+        c.compact()
+        assert c.capacity() == 1
+        c.resize(8)
+        assert c.capacity() == 9
+        assert len(c) == 1
+        popped = c.popL()
+        assert popped == 42
+        assert len(c) == 0
+        assert c.capacity() == 9
+        c.pushR(popped)
+        assert len(c) == 1
+        assert c.capacity() == 9
+        c.resize(3)
+        assert c.capacity() == 4
+        assert len(c) == 1
+        c.resize()
+        assert c.capacity() == 1
+

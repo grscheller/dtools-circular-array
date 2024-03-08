@@ -18,8 +18,21 @@ Version numbers for PyPI releases begin with a `v`.
   * commit count (thrashing)
   * not to be taken too seriously
 
+## Version 1.1.0.0 - commit date 2024-03-08
+
+* NEXT PyPI RELEASE WILL BE 2.0.0 !!!!!!!!!!!
+* BUGFIX: Fixed a subtle resizing bug
+  * bug probably present in all previous versions
+    * not previously identified due to inadequate test coverage!
+    * debating pulling all previous PyPI releases
+  * improved test coverage vastly
+* made some major code API changes
+  * upon initialization minimizing size of the CircularArray
+  * have some ideas on how to to improve API for resizing CircularArrays
+  * need to test my other 2 PyPI projects
+    * both use circular-array as a dependency
+
 ## Version v1.0.1 - PyPI release date 2024-03-01
-PyPI grscheller.circular-array v1.0.1 release
 
 * docstring updates to match other grscheller PyPI repos
 
