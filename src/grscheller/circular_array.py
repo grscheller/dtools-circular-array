@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module for an indexable circular array data structure
+"""Module for an indexable circular array data structure.
 
 * stateful data structure
 * O(1) random access any element
