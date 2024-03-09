@@ -18,6 +18,14 @@ Version numbers for PyPI releases begin with a `v`.
   * commit count (thrashing)
   * not to be taken too seriously
 
+## Version v2.0.0 - PyPI release date 2024-03-08
+
+* New "epoch" due to resizing bug fixed on previous commit
+  * much improved and cleaned up
+  * much better test suite
+* method _double() made "public" and renamed double() 
+* resize(newsize) now resizes to at least newsize
+
 ## Version 1.1.0.0 - commit date 2024-03-08
 
 * NEXT PyPI RELEASE WILL BE 2.0.0 !!!!!!!!!!!

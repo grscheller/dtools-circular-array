@@ -40,15 +40,26 @@ class TestCapacity:
         assert c.fractionFilled() == 6/6
 
         c.resize(30)
-        assert c.fractionFilled() == 6/36
+        assert c.fractionFilled() == 6/30
+
+        c.resize(3)
+        assert c.fractionFilled() == 6/6
+
+        c.popL()
+        c.popR()
+        c.popL()
+        c.popR()
+        assert c.fractionFilled() == 2/6
+        c.resize(3)
+        assert c.fractionFilled() == 2/3
 
     def test_double(self):
         c = CircularArray(1, 2, 3)
         assert c.popL() == 1
         assert c.capacity() == 3
-        c._double()
+        c.double()
         assert c.capacity() == 6
-        c._double()
+        c.double()
         c.pushL(42)
         c.pushR(0)
         assert len(c) == 4
@@ -77,12 +88,12 @@ class TestCapacity:
         c = CircularArray()
         assert c == CircularArray()
         assert c.capacity() == 2
-        c._double()
+        c.double()
         assert c.capacity() == 4
         c.compact()
         assert c.capacity() == 2
         c.resize(6)
-        assert c.capacity() == 8
+        assert c.capacity() == 6
         assert len(c) == 0
 
     def test_one(self):
@@ -91,17 +102,17 @@ class TestCapacity:
         c.compact()
         assert c.capacity() == 1
         c.resize(8)
-        assert c.capacity() == 9
+        assert c.capacity() == 8
         assert len(c) == 1
         popped = c.popL()
         assert popped == 42
         assert len(c) == 0
-        assert c.capacity() == 9
+        assert c.capacity() == 8
         c.pushR(popped)
         assert len(c) == 1
-        assert c.capacity() == 9
+        assert c.capacity() == 8
         c.resize(3)
-        assert c.capacity() == 4
+        assert c.capacity() == 3
         assert len(c) == 1
         c.resize()
         assert c.capacity() == 1
