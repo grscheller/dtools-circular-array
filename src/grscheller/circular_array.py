@@ -29,15 +29,15 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
 
-from typing import Any, Callable
+from typing import Any, Callable, Iterator
 from itertools import chain
 
 class CircularArray:
-    """Class implementing an indexible circular array
+    """Class implementing an indexable circular array
 
     * indexing, pushing & popping and length determination all O(1) operations
     * popping from an empty CircularArray returns None
-    * in a boolean context returnd False if empty, True otherwise
+    * in a boolean context returned False if empty, True otherwise
     * iterators caches current content
     * a CircularArray instance will resize itself as needed
     * circularArrays are not sliceable
@@ -45,7 +45,7 @@ class CircularArray:
     """
     __slots__ = '_count', '_capacity', '_front', '_rear', '_list'
 
-    def __init__(self, *data):
+    def __init__(self, *data: Any) -> None:
         match len(data):
             case 0:
                 self._list = [None, None]
@@ -60,7 +60,7 @@ class CircularArray:
                 self._front = 0
                 self._rear = count - 1
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[Any]:
         if self._count > 0:
             capacity,       rear,       position,    currentState = \
             self._capacity, self._rear, self._front, self._list.copy()
@@ -70,7 +70,7 @@ class CircularArray:
                 position = (position + 1) % capacity
             yield currentState[position]
 
-    def __reversed__(self):
+    def __reversed__(self) -> Iterator[Any]:
         if self._count > 0:
             capacity,       front,       position,   currentState = \
             self._capacity, self._front, self._rear, self._list.copy()
@@ -80,16 +80,16 @@ class CircularArray:
                 position = (position - 1) % capacity
             yield currentState[position]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f'{self.__class__.__name__}(' + ', '.join(map(repr, self)) + ')'
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "(|" + ", ".join(map(repr, self)) + "|)"
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         return self._count > 0
 
-    def __len__(self):
+    def __len__(self) -> int:
         return self._count
 
     def __getitem__(self, index: int) -> Any:
@@ -124,7 +124,7 @@ class CircularArray:
                 msg0 = 'Trying to set value from an empty CircularArray.'
                 raise IndexError(msg0)
 
-    def __eq__(self, other):
+    def __eq__(self, other: CircularArray) -> bool:
         """Returns True if all the data stored in both compare as equal.
         Worst case is O(n) behavior for the true case.
         """
@@ -147,6 +147,7 @@ class CircularArray:
         return CircularArray(*self)
 
     def reverse(self) -> CircularArray:
+        """Return a reversed shallow copy of the CircularArray."""
         return CircularArray(*reversed(self))
 
     def pushR(self, value: Any) -> None:
@@ -166,7 +167,7 @@ class CircularArray:
         self._count += 1
 
     def popR(self) -> Any:
-        """Pop data off the rear of the CirclularArray, returns None if empty."""
+        """Pop data off the rear of the CircularArray, returns None if empty."""
         if self._count == 0:
             return None
         else:
@@ -176,7 +177,7 @@ class CircularArray:
             return value
 
     def popL(self) -> Any:
-        """Pop data off the front of the CirclularArray, returns None if empty."""
+        """Pop data off the front of the CircularArray, returns None if empty."""
         if self._count == 0:
             return None
         else:
@@ -227,6 +228,7 @@ class CircularArray:
         if self._count == 0:
             return initial
         
+        vs: Iterator[Any]
         if initial is None:
             vs = reversed(self)
         else:

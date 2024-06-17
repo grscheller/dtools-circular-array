@@ -16,7 +16,7 @@ from grscheller.circular_array import CircularArray
 
 class TestCapacity:
 
-    def test_capacity_original(self):
+    def test_capacity_original(self) -> None:
         c = CircularArray()
         assert c.capacity() == 2
 
@@ -53,7 +53,7 @@ class TestCapacity:
         c.resize(3)
         assert c.fractionFilled() == 2/3
 
-    def test_double(self):
+    def test_double(self) -> None:
         c = CircularArray(1, 2, 3)
         assert c.popL() == 1
         assert c.capacity() == 3
@@ -84,7 +84,7 @@ class TestCapacity:
             c.pushR(jj)
             jj -= 1
 
-    def test_empty(self):
+    def test_empty(self) -> None:
         c = CircularArray()
         assert c == CircularArray()
         assert c.capacity() == 2
@@ -96,7 +96,7 @@ class TestCapacity:
         assert c.capacity() == 6
         assert len(c) == 0
 
-    def test_one(self):
+    def test_one(self) -> None:
         c = CircularArray(42)
         assert c.capacity() == 1
         c.compact()

@@ -15,7 +15,7 @@
 from grscheller.circular_array import CircularArray
 
 class TestCircularArray:
-    def test_mutate_returns_none(self):
+    def test_mutate_returns_none(self) -> None:
         ca1 = CircularArray()
         ca1.pushL(1)
         ca1.pushL(2)
@@ -33,29 +33,29 @@ class TestCircularArray:
         assert ca1 != ca2
         assert len(ca1) == len(ca2)
 
-    def test_push_then_pop(self):
+    def test_push_then_pop(self) -> None:
         c = CircularArray()
-        pushed = 42
-        c.pushL(pushed)
-        popped = c.popL()
-        assert pushed == popped
+        pushed1 = 42
+        c.pushL(pushed1)
+        popped1 = c.popL()
+        assert pushed1 == popped1
         assert len(c) == 0
         assert c.popL() is None
-        pushed = 0
-        c.pushL(pushed)
-        popped = c.popR()
-        assert pushed == popped == 0
+        pushed1 = 0
+        c.pushL(pushed1)
+        popped1 = c.popR()
+        assert pushed1 == popped1 == 0
         assert not c
-        pushed = 0
-        c.pushR(pushed)
-        popped = c.popL()
-        assert popped is not None
-        assert pushed == popped
+        pushed1 = 0
+        c.pushR(pushed1)
+        popped1 = c.popL()
+        assert popped1 is not None
+        assert pushed1 == popped1
         assert len(c) == 0
-        pushed = ''
-        c.pushR(pushed)
-        popped = c.popR()
-        assert pushed == popped
+        pushed2 = ''
+        c.pushR(pushed2)
+        popped2 = c.popR()
+        assert pushed2 == popped2
         assert len(c) == 0
         c.pushR('first')
         c.pushR('second')
@@ -66,7 +66,7 @@ class TestCircularArray:
         c.popL()
         assert len(c) == 0
 
-    def test_iterators(self):
+    def test_iterators(self) -> None:
         data = [*range(100)]
         c = CircularArray(*data)
         ii = 0
@@ -90,14 +90,14 @@ class TestCircularArray:
         for _ in reversed(c0):
             assert False
 
-        data = ()
+        data = []
         c0 = CircularArray(*data)
         for _ in c0:
             assert False
         for _ in reversed(c0):
             assert False
 
-    def test_equality(self):
+    def test_equality(self) -> None:
         c1 = CircularArray(1, 2, 3, 'Forty-Two', (7, 11, 'foobar'))
         c2 = CircularArray(2, 3, 'Forty-Two')
         c2.pushL(1)
@@ -127,7 +127,7 @@ class TestCircularArray:
         c2.pushL(200)
         assert c1 == c2
 
-    def test_map(self):
+    def test_map(self) -> None:
         c0 = CircularArray(1,2,3,10)
         c1 = c0.copy()
         c2 = c1.map(lambda x: x*x-1)
@@ -137,13 +137,13 @@ class TestCircularArray:
         assert c1 is not c0
         assert len(c1) == len(c2) == 4
 
-    def test_mapMutate(self):
+    def test_mapMutate(self) -> None:
         c1 = CircularArray(1,2,3,10)
         c1.mapSelf(lambda x: x*x-1)
         assert c1 == CircularArray(0,3,8,99)
         assert len(c1) == 4
 
-    def test_get_set_items(self):
+    def test_get_set_items(self) -> None:
         c1 = CircularArray('a', 'b', 'c', 'd')
         c2 = c1.copy()
         assert c1 == c2
@@ -169,7 +169,7 @@ class TestCircularArray:
         assert c2.popL() == 'a'
         assert c1 == c2
 
-    def test_foldL(self):
+    def test_foldL(self) -> None:
         c1 = CircularArray()
         assert c1.foldL(lambda x, y: x + y) == None
         assert c1.foldL(lambda x, y: x + y, initial=42) == 42
@@ -185,7 +185,7 @@ class TestCircularArray:
 
         assert c3.foldL(f, initial=[]) == [0, 1, 2, 3, 4]
 
-    def test_foldR(self):
+    def test_foldR(self) -> None:
         c1 = CircularArray()
         assert c1.foldR(lambda x, y: x * y) == None
         assert c1.foldR(lambda x, y: x * y, initial=42) == 42
