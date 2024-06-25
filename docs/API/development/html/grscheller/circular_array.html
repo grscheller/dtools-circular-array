@@ -72,6 +72,7 @@ hljs.highlightAll();
     * a CircularArray instance will resize itself as needed
     * circularArrays are not sliceable
     * raises: IndexError
+
     &#34;&#34;&#34;
     __slots__ = &#39;_count&#39;, &#39;_capacity&#39;, &#39;_front&#39;, &#39;_rear&#39;, &#39;_list&#39;
 
@@ -158,7 +159,7 @@ hljs.highlightAll();
         &#34;&#34;&#34;Returns True if all the data stored in both compare as equal.
 
         * worst case is O(n) behavior for the true case
-        * both CircularArrays must be of the same type (contain the same types)
+
         &#34;&#34;&#34;
         if not isinstance(other, type(self)):
             return False
@@ -199,7 +200,12 @@ hljs.highlightAll();
         self._count += 1
 
     def popR(self) -&gt; T|None:
-        &#34;&#34;&#34;Pop data off the rear of the CircularArray, returns None if empty.&#34;&#34;&#34;
+        &#34;&#34;&#34;Pop data off the rear of the CircularArray.
+
+        * returns None if empty
+        * use in a boolean context to determine if empty
+
+        &#34;&#34;&#34;
         if self._count == 0:
             return None
         else:
@@ -209,7 +215,12 @@ hljs.highlightAll();
             return value
 
     def popL(self) -&gt; T|None:
-        &#34;&#34;&#34;Pop data off the front of the CircularArray, returns None if empty.&#34;&#34;&#34;
+        &#34;&#34;&#34;Pop data off the front of the CircularArray.
+
+        * returns None if empty
+        * use in a boolean context to determine if empty
+
+        &#34;&#34;&#34;
         if self._count == 0:
             return None
         else:
@@ -219,16 +230,19 @@ hljs.highlightAll();
             return value
 
     def map(self, f: Callable[[T], S]) -&gt; CircularArray[S]:
-        &#34;&#34;&#34;Apply function f over the CircularArray&#39;s contents and return
-        the results in a new CircularArray.
+        &#34;&#34;&#34;Apply function f over the CircularArray&#39;s contents.
+
+        * return the results in a new CircularArray
+
         &#34;&#34;&#34;
         return CircularArray(*map(f, self))
 
     def foldL(self, f: Callable[[T, T], T]) -&gt; T|None:
         &#34;&#34;&#34;Fold CircularArray left.
 
-        * first argument of `f` is the accumulated value
+        * first argument of `f` is for the accumulated value
         * if CircularArray is empty, return `None`
+
         &#34;&#34;&#34;
         if self._count == 0:
             return None
@@ -244,8 +258,9 @@ hljs.highlightAll();
     def foldR(self, f: Callable[[T, T], T]) -&gt; T|None:
         &#34;&#34;&#34;Fold CircularArray right.
 
-        * second argument of `f` is the accumulated value
+        * second argument of `f` is for the accumulated value
         * if CircularArray is empty, return `None`
+
         &#34;&#34;&#34;
         if self._count == 0:
             return None
@@ -260,8 +275,9 @@ hljs.highlightAll();
     def foldL1(self, f: Callable[[S, T], S], initial: S) -&gt; S:
         &#34;&#34;&#34;Fold CircularArray left with an initial value.
 
-        * first argument of `f` is the accumulated value
+        * first argument of `f` is for the accumulated value
         * if CircularArray is empty, return the initial value
+
         &#34;&#34;&#34;
         if self._count == 0:
             return initial
@@ -275,8 +291,9 @@ hljs.highlightAll();
     def foldR1(self, f: Callable[[T, S], S], initial: S) -&gt; S:
         &#34;&#34;&#34;Fold CircularArray right with an initial value.
 
-        * second argument of `f` is the accumulated value
+        * second argument of `f` is for the accumulated value
         * if CircularArray is empty, return the initial value
+
         &#34;&#34;&#34;
         if self._count == 0:
             return initial
@@ -375,7 +392,7 @@ hljs.highlightAll();
 <dd>
 <div class="desc"><p>Fold CircularArray left.</p>
 <ul>
-<li>first argument of <code>f</code> is the accumulated value</li>
+<li>first argument of <code>f</code> is for the accumulated value</li>
 <li>if CircularArray is empty, return <code>None</code></li>
 </ul></div>
 </dd>
@@ -385,7 +402,7 @@ hljs.highlightAll();
 <dd>
 <div class="desc"><p>Fold CircularArray left with an initial value.</p>
 <ul>
-<li>first argument of <code>f</code> is the accumulated value</li>
+<li>first argument of <code>f</code> is for the accumulated value</li>
 <li>if CircularArray is empty, return the initial value</li>
 </ul></div>
 </dd>
@@ -395,7 +412,7 @@ hljs.highlightAll();
 <dd>
 <div class="desc"><p>Fold CircularArray right.</p>
 <ul>
-<li>second argument of <code>f</code> is the accumulated value</li>
+<li>second argument of <code>f</code> is for the accumulated value</li>
 <li>if CircularArray is empty, return <code>None</code></li>
 </ul></div>
 </dd>
@@ -405,7 +422,7 @@ hljs.highlightAll();
 <dd>
 <div class="desc"><p>Fold CircularArray right with an initial value.</p>
 <ul>
-<li>second argument of <code>f</code> is the accumulated value</li>
+<li>second argument of <code>f</code> is for the accumulated value</li>
 <li>if CircularArray is empty, return the initial value</li>
 </ul></div>
 </dd>
@@ -419,20 +436,30 @@ hljs.highlightAll();
 <span>def <span class="ident">map</span></span>(<span>self, f: Callable[[T], S]) ‑> <a title="grscheller.circular_array.CircularArray" href="#grscheller.circular_array.CircularArray">CircularArray</a>[~S]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Apply function f over the CircularArray's contents and return
-the results in a new CircularArray.</p></div>
+<div class="desc"><p>Apply function f over the CircularArray's contents.</p>
+<ul>
+<li>return the results in a new CircularArray</li>
+</ul></div>
 </dd>
 <dt id="grscheller.circular_array.CircularArray.popL"><code class="name flex">
 <span>def <span class="ident">popL</span></span>(<span>self) ‑> Optional[~T]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Pop data off the front of the CircularArray, returns None if empty.</p></div>
+<div class="desc"><p>Pop data off the front of the CircularArray.</p>
+<ul>
+<li>returns None if empty</li>
+<li>use in a boolean context to determine if empty</li>
+</ul></div>
 </dd>
 <dt id="grscheller.circular_array.CircularArray.popR"><code class="name flex">
 <span>def <span class="ident">popR</span></span>(<span>self) ‑> Optional[~T]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Pop data off the rear of the CircularArray, returns None if empty.</p></div>
+<div class="desc"><p>Pop data off the rear of the CircularArray.</p>
+<ul>
+<li>returns None if empty</li>
+<li>use in a boolean context to determine if empty</li>
+</ul></div>
 </dd>
 <dt id="grscheller.circular_array.CircularArray.pushL"><code class="name flex">
 <span>def <span class="ident">pushL</span></span>(<span>self, value: T) ‑> None</span>

@@ -24,13 +24,12 @@
 
 from __future__ import annotations
 
-__version__ = "3.0.0"
+__version__ = "3.0.0.1"
 __all__ = ['CircularArray']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
 
-from itertools import chain
 from typing import Any, Callable, Generic, Iterator, TypeVar
 
 T = TypeVar('T')
@@ -46,6 +45,7 @@ class CircularArray(Generic[T]):
     * a CircularArray instance will resize itself as needed
     * circularArrays are not sliceable
     * raises: IndexError
+
     """
     __slots__ = '_count', '_capacity', '_front', '_rear', '_list'
 
@@ -132,7 +132,7 @@ class CircularArray(Generic[T]):
         """Returns True if all the data stored in both compare as equal.
 
         * worst case is O(n) behavior for the true case
-        * both CircularArrays must be of the same type (contain the same types)
+
         """
         if not isinstance(other, type(self)):
             return False
@@ -173,7 +173,12 @@ class CircularArray(Generic[T]):
         self._count += 1
 
     def popR(self) -> T|None:
-        """Pop data off the rear of the CircularArray, returns None if empty."""
+        """Pop data off the rear of the CircularArray.
+
+        * returns None if empty
+        * use in a boolean context to determine if empty
+
+        """
         if self._count == 0:
             return None
         else:
@@ -183,7 +188,12 @@ class CircularArray(Generic[T]):
             return value
 
     def popL(self) -> T|None:
-        """Pop data off the front of the CircularArray, returns None if empty."""
+        """Pop data off the front of the CircularArray.
+
+        * returns None if empty
+        * use in a boolean context to determine if empty
+
+        """
         if self._count == 0:
             return None
         else:
@@ -193,16 +203,19 @@ class CircularArray(Generic[T]):
             return value
 
     def map(self, f: Callable[[T], S]) -> CircularArray[S]:
-        """Apply function f over the CircularArray's contents and return
-        the results in a new CircularArray.
+        """Apply function f over the CircularArray's contents.
+
+        * return the results in a new CircularArray
+
         """
         return CircularArray(*map(f, self))
 
     def foldL(self, f: Callable[[T, T], T]) -> T|None:
         """Fold CircularArray left.
 
-        * first argument of `f` is the accumulated value
+        * first argument of `f` is for the accumulated value
         * if CircularArray is empty, return `None`
+
         """
         if self._count == 0:
             return None
@@ -218,8 +231,9 @@ class CircularArray(Generic[T]):
     def foldR(self, f: Callable[[T, T], T]) -> T|None:
         """Fold CircularArray right.
 
-        * second argument of `f` is the accumulated value
+        * second argument of `f` is for the accumulated value
         * if CircularArray is empty, return `None`
+
         """
         if self._count == 0:
             return None
@@ -234,8 +248,9 @@ class CircularArray(Generic[T]):
     def foldL1(self, f: Callable[[S, T], S], initial: S) -> S:
         """Fold CircularArray left with an initial value.
 
-        * first argument of `f` is the accumulated value
+        * first argument of `f` is for the accumulated value
         * if CircularArray is empty, return the initial value
+
         """
         if self._count == 0:
             return initial
@@ -249,8 +264,9 @@ class CircularArray(Generic[T]):
     def foldR1(self, f: Callable[[T, S], S], initial: S) -> S:
         """Fold CircularArray right with an initial value.
 
-        * second argument of `f` is the accumulated value
+        * second argument of `f` is for the accumulated value
         * if CircularArray is empty, return the initial value
+
         """
         if self._count == 0:
             return initial
