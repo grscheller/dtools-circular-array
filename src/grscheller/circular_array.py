@@ -18,21 +18,25 @@
 * O(1) random access any element
 * amortized O(1) pushing and popping from either end
 * data structure will resize itself as needed
+* generic class with one type parameter
 
 """
 
 from __future__ import annotations
 
-__version__ = "2.0.0"
+__version__ = "3.0.0"
 __all__ = ['CircularArray']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
 
-from typing import Any, Callable, Iterator
 from itertools import chain
+from typing import Any, Callable, Generic, Iterator, TypeVar
 
-class CircularArray:
+T = TypeVar('T')
+S = TypeVar('S')
+
+class CircularArray(Generic[T]):
     """Class implementing an indexable circular array
 
     * indexing, pushing & popping and length determination all O(1) operations
@@ -45,10 +49,10 @@ class CircularArray:
     """
     __slots__ = '_count', '_capacity', '_front', '_rear', '_list'
 
-    def __init__(self, *data: Any) -> None:
+    def __init__(self, *data: T):
         match len(data):
             case 0:
-                self._list = [None, None]
+                self._list: list[T|None] = [None, None]
                 self._count = 0
                 self._capacity = 2
                 self._front = 0
@@ -60,25 +64,25 @@ class CircularArray:
                 self._front = 0
                 self._rear = count - 1
 
-    def __iter__(self) -> Iterator[Any]:
+    def __iter__(self) -> Iterator[T]:
         if self._count > 0:
             capacity,       rear,       position,    currentState = \
             self._capacity, self._rear, self._front, self._list.copy()
 
             while position != rear:
-                yield currentState[position]
+                yield currentState[position]            # type: ignore
                 position = (position + 1) % capacity
-            yield currentState[position]
+            yield currentState[position]                # type: ignore
 
-    def __reversed__(self) -> Iterator[Any]:
+    def __reversed__(self) -> Iterator[T]:
         if self._count > 0:
             capacity,       front,       position,   currentState = \
             self._capacity, self._front, self._rear, self._list.copy()
 
             while position != front:
-                yield currentState[position]
+                yield currentState[position]         # type: ignore
                 position = (position - 1) % capacity
-            yield currentState[position]
+            yield currentState[position]             # type: ignore
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}(' + ', '.join(map(repr, self)) + ')'
@@ -92,12 +96,12 @@ class CircularArray:
     def __len__(self) -> int:
         return self._count
 
-    def __getitem__(self, index: int) -> Any:
+    def __getitem__(self, index: int) -> T:
         cnt = self._count
         if 0 <= index < cnt:
-            return self._list[(self._front + index) % self._capacity]
+            return self._list[(self._front + index) % self._capacity]        # type: ignore
         elif -cnt <= index < 0:
-            return self._list[(self._front + cnt + index) % self._capacity]
+            return self._list[(self._front + cnt + index) % self._capacity]  # type: ignore
         else:
             if cnt > 0:
                 msg1 = 'Out of bounds: '
@@ -108,7 +112,7 @@ class CircularArray:
                 msg0 = 'Trying to get value from an empty CircularArray.'
                 raise IndexError(msg0)
 
-    def __setitem__(self, index: int, value: Any) -> Any:
+    def __setitem__(self, index: int, value: T) -> None:
         cnt = self._count
         if 0 <= index < cnt:
             self._list[(self._front + index) % self._capacity] = value
@@ -124,9 +128,11 @@ class CircularArray:
                 msg0 = 'Trying to set value from an empty CircularArray.'
                 raise IndexError(msg0)
 
-    def __eq__(self, other: CircularArray) -> bool:
+    def __eq__(self, other: object) -> bool:
         """Returns True if all the data stored in both compare as equal.
-        Worst case is O(n) behavior for the true case.
+
+        * worst case is O(n) behavior for the true case
+        * both CircularArrays must be of the same type (contain the same types)
         """
         if not isinstance(other, type(self)):
             return False
@@ -142,15 +148,15 @@ class CircularArray:
                 return False
         return True
 
-    def copy(self) -> CircularArray:
+    def copy(self) -> CircularArray[T]:
         """Return a shallow copy of the CircularArray."""
         return CircularArray(*self)
 
-    def reverse(self) -> CircularArray:
+    def reverse(self) -> CircularArray[T]:
         """Return a reversed shallow copy of the CircularArray."""
         return CircularArray(*reversed(self))
 
-    def pushR(self, value: Any) -> None:
+    def pushR(self, value: T) -> None:
         """Push data onto the rear of the CircularArray."""
         if self._count == self._capacity:
             self.double()
@@ -158,7 +164,7 @@ class CircularArray:
         self._list[self._rear] = value
         self._count += 1
 
-    def pushL(self, value: Any) -> None:
+    def pushL(self, value: T) -> None:
         """Push data onto the front of the CircularArray."""
         if self._count == self._capacity:
             self.double()
@@ -166,7 +172,7 @@ class CircularArray:
         self._list[self._front] = value
         self._count += 1
 
-    def popR(self) -> Any:
+    def popR(self) -> T|None:
         """Pop data off the rear of the CircularArray, returns None if empty."""
         if self._count == 0:
             return None
@@ -176,7 +182,7 @@ class CircularArray:
 
             return value
 
-    def popL(self) -> Any:
+    def popL(self) -> T|None:
         """Pop data off the front of the CircularArray, returns None if empty."""
         if self._count == 0:
             return None
@@ -186,56 +192,71 @@ class CircularArray:
 
             return value
 
-    def map(self, f: Callable[[Any], Any]) -> CircularArray:
+    def map(self, f: Callable[[T], S]) -> CircularArray[S]:
         """Apply function f over the CircularArray's contents and return
         the results in a new CircularArray.
         """
         return CircularArray(*map(f, self))
 
-    def mapSelf(self, f: Callable[[Any], Any]) -> None:
-        """Apply function f over the CircularArray's contents mutating the
-        CircularArray, does not return anything.
-        """
-        ca  = CircularArray(*map(f, self))
+    def foldL(self, f: Callable[[T, T], T]) -> T|None:
+        """Fold CircularArray left.
 
-        self._count, self._capacity, self._front, self._rear, self._list = \
-        ca._count,   ca._capacity,   ca._front,   ca._rear,   ca._list
-
-    def foldL(self, f: Callable[[Any, Any], Any], initial: Any=None) -> Any:
-        """Fold left with optional initial value. The first argument of `f` is
-        the accumulated value. If CircularArray is empty and no initial value
-        given, return `None`.
+        * first argument of `f` is the accumulated value
+        * if CircularArray is empty, return `None`
         """
         if self._count == 0:
-            return initial
-        
-        if initial is None:
-            vs = iter(self)
-        else:
-            vs = chain((initial,), self)
+            return None
 
-        value = next(vs)
-        for v in vs:
+        iter_self = iter(self)
+        value = next(iter_self)
+
+        for v in iter_self:
             value = f(value, v)
 
         return value
 
-    def foldR(self, f: Callable[[Any, Any], Any], initial: Any=None) -> Any:
-        """Fold right with optional initial value. The second argument of `f` is
-        the accumulated value. If CircularArray is empty and no initial
-        value given, return `None`.
+    def foldR(self, f: Callable[[T, T], T]) -> T|None:
+        """Fold CircularArray right.
+
+        * second argument of `f` is the accumulated value
+        * if CircularArray is empty, return `None`
+        """
+        if self._count == 0:
+            return None
+
+        rev_self = reversed(self)
+        value = next(rev_self)
+        for v in rev_self:
+            value = f(v, value)
+
+        return value
+
+    def foldL1(self, f: Callable[[S, T], S], initial: S) -> S:
+        """Fold CircularArray left with an initial value.
+
+        * first argument of `f` is the accumulated value
+        * if CircularArray is empty, return the initial value
         """
         if self._count == 0:
             return initial
-        
-        vs: Iterator[Any]
-        if initial is None:
-            vs = reversed(self)
-        else:
-            vs = chain((initial,), reversed(self))
 
-        value = next(vs)
-        for v in vs:
+        value: S = initial
+        for v in iter(self):
+            value = f(value, v)
+
+        return value
+
+    def foldR1(self, f: Callable[[T, S], S], initial: S) -> S:
+        """Fold CircularArray right with an initial value.
+
+        * second argument of `f` is the accumulated value
+        * if CircularArray is empty, return the initial value
+        """
+        if self._count == 0:
+            return initial
+
+        value: S = initial
+        for v in reversed(self):
             value = f(v, value)
 
         return value

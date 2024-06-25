@@ -16,37 +16,39 @@ from grscheller.circular_array import CircularArray
 
 class TestCircularArray:
     def test_mutate_returns_none(self) -> None:
-        ca1 = CircularArray()
+        ca1: CircularArray[int] = CircularArray()
         ca1.pushL(1)
-        ca1.pushL(2)
-        ret = ca1.pushL(3)
-        assert ret is None
-        ca1.pushR(1)
+        ca1.pushL(0)
         ca1.pushR(2)
-        ret = ca1.pushR(3)
-        assert ret is None
-        ret = ca1.mapSelf(lambda x: x+1)
-        assert ret is None
-        assert ca1.popL() == ca1.popR() == 4
+        ca1.pushR(3)
+        assert ca1.popL() == 0
+        ca1.pushR(4)
         ca2 = ca1.map(lambda x: x+1)
         assert ca1 is not ca2
         assert ca1 != ca2
         assert len(ca1) == len(ca2)
+        assert ca1.popL() == 1
+        while ca1:
+            assert ca1.popL() == ca2.popL()
+        assert len(ca1) == 0
+        assert len(ca2) == 1
+        assert ca2.popR() == 5
+        assert ca2.popL() is None
 
     def test_push_then_pop(self) -> None:
-        c = CircularArray()
-        pushed1 = 42
+        c: CircularArray[str] = CircularArray()
+        pushed1 = '42'
         c.pushL(pushed1)
         popped1 = c.popL()
         assert pushed1 == popped1
         assert len(c) == 0
         assert c.popL() is None
-        pushed1 = 0
+        pushed1 = '0'
         c.pushL(pushed1)
         popped1 = c.popR()
-        assert pushed1 == popped1 == 0
+        assert pushed1 == popped1 == '0'
         assert not c
-        pushed1 = 0
+        pushed1 = '0'
         c.pushR(pushed1)
         popped1 = c.popL()
         assert popped1 is not None
@@ -84,14 +86,14 @@ class TestCircularArray:
             ii += 1
         assert ii == 101
 
-        c0 = CircularArray()
+        c0: CircularArray[object] = CircularArray()
         for _ in c0:
             assert False
         for _ in reversed(c0):
             assert False
 
-        data = []
-        c0 = CircularArray(*data)
+        data2: list[str] = []
+        c0 = CircularArray(*data2)
         for _ in c0:
             assert False
         for _ in reversed(c0):
@@ -137,12 +139,6 @@ class TestCircularArray:
         assert c1 is not c0
         assert len(c1) == len(c2) == 4
 
-    def test_mapMutate(self) -> None:
-        c1 = CircularArray(1,2,3,10)
-        c1.mapSelf(lambda x: x*x-1)
-        assert c1 == CircularArray(0,3,8,99)
-        assert len(c1) == 4
-
     def test_get_set_items(self) -> None:
         c1 = CircularArray('a', 'b', 'c', 'd')
         c2 = c1.copy()
@@ -170,34 +166,36 @@ class TestCircularArray:
         assert c1 == c2
 
     def test_foldL(self) -> None:
-        c1 = CircularArray()
+        c1: CircularArray[int] = CircularArray()
         assert c1.foldL(lambda x, y: x + y) == None
-        assert c1.foldL(lambda x, y: x + y, initial=42) == 42
+        assert c1.foldL1(lambda x, y: x + y, initial=42) == 42
 
         c2 = CircularArray(*range(1, 11))
         assert c2.foldL(lambda x, y: x + y) == 55
-        assert c2.foldL(lambda x, y: x + y, initial=10) == 65
+        assert c2.foldL1(lambda x, y: x + y, initial=10) == 65
         c3 = CircularArray(*range(5))
 
         def f(vs: list[int], v: int) -> list[int]:
             vs.append(v)
             return vs
 
-        assert c3.foldL(f, initial=[]) == [0, 1, 2, 3, 4]
+        empty: list[int] = []
+        assert c3.foldL1(f, empty) == [0, 1, 2, 3, 4]
 
     def test_foldR(self) -> None:
-        c1 = CircularArray()
+        c1: CircularArray[int] = CircularArray()
         assert c1.foldR(lambda x, y: x * y) == None
-        assert c1.foldR(lambda x, y: x * y, initial=42) == 42
+        assert c1.foldR1(lambda x, y: x * y, initial=42) == 42
 
         c2 = CircularArray(*range(1, 6))
         assert c2.foldR(lambda x, y: x * y) == 120
-        assert c2.foldR(lambda x, y: x * y, initial=10) == 1200
+        assert c2.foldR1(lambda x, y: x * y, initial=10) == 1200
 
         def f(v: int, vs: list[int]) -> list[int]:
             vs.append(v)
             return vs
 
         c3 = CircularArray(*range(5))
-        assert c3.foldR(f, initial=[]) == [4, 3, 2, 1, 0]
+        empty: list[int] = []
+        assert c3.foldR1(f, empty) == [4, 3, 2, 1, 0]
 
