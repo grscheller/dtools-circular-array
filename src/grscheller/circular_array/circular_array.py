@@ -12,19 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module for an indexable circular array data structure.
-
-* stateful data structure
-* O(1) random access any element
-* amortized O(1) pushing and popping from either end
-* data structure will resize itself as needed
-* generic class with one type parameter
-
-"""
+"""Module for an indexable circular array data structure."""
 
 from __future__ import annotations
 
-__version__ = "3.0.0.1"
 __all__ = ['CircularArray']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
@@ -38,12 +29,14 @@ S = TypeVar('S')
 class CircularArray(Generic[T]):
     """Class implementing an indexable circular array
 
-    * indexing, pushing & popping and length determination all O(1) operations
-    * popping from an empty CircularArray returns None
+    * stateful data structure
+    * amortized O(1) pushing and popping from either end
+    * O(1) random access any element
+    * generic class with one type parameter
+    * will resize itself as needed
+    * not sliceable
     * in a boolean context returned False if empty, True otherwise
     * iterators caches current content
-    * a CircularArray instance will resize itself as needed
-    * circularArrays are not sliceable
     * raises: IndexError
 
     """

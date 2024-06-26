@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
 <meta name="generator" content="pdoc3 0.11.0">
-<title>grscheller.circular_array API documentation</title>
-<meta name="description" content="Module for an indexable circular array data structure …">
+<title>grscheller.circular_array.circular_array API documentation</title>
+<meta name="description" content="Module for an indexable circular array data structure.">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
@@ -22,17 +22,10 @@ hljs.highlightAll();
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>grscheller.circular_array</code></h1>
+<h1 class="title">Module <code>grscheller.circular_array.circular_array</code></h1>
 </header>
 <section id="section-intro">
 <p>Module for an indexable circular array data structure.</p>
-<ul>
-<li>stateful data structure</li>
-<li>O(1) random access any element</li>
-<li>amortized O(1) pushing and popping from either end</li>
-<li>data structure will resize itself as needed</li>
-<li>generic class with one type parameter</li>
-</ul>
 </section>
 <section>
 </section>
@@ -43,19 +36,21 @@ hljs.highlightAll();
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="grscheller.circular_array.CircularArray"><code class="flex name class">
+<dt id="grscheller.circular_array.circular_array.CircularArray"><code class="flex name class">
 <span>class <span class="ident">CircularArray</span></span>
 <span>(</span><span>*data: T)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Class implementing an indexable circular array</p>
 <ul>
-<li>indexing, pushing &amp; popping and length determination all O(1) operations</li>
-<li>popping from an empty CircularArray returns None</li>
+<li>stateful data structure</li>
+<li>amortized O(1) pushing and popping from either end</li>
+<li>O(1) random access any element</li>
+<li>generic class with one type parameter</li>
+<li>will resize itself as needed</li>
+<li>not sliceable</li>
 <li>in a boolean context returned False if empty, True otherwise</li>
 <li>iterators caches current content</li>
-<li>a CircularArray instance will resize itself as needed</li>
-<li>circularArrays are not sliceable</li>
 <li>raises: IndexError</li>
 </ul></div>
 <details class="source">
@@ -65,12 +60,14 @@ hljs.highlightAll();
 <pre><code class="python">class CircularArray(Generic[T]):
     &#34;&#34;&#34;Class implementing an indexable circular array
 
-    * indexing, pushing &amp; popping and length determination all O(1) operations
-    * popping from an empty CircularArray returns None
+    * stateful data structure
+    * amortized O(1) pushing and popping from either end
+    * O(1) random access any element
+    * generic class with one type parameter
+    * will resize itself as needed
+    * not sliceable
     * in a boolean context returned False if empty, True otherwise
     * iterators caches current content
-    * a CircularArray instance will resize itself as needed
-    * circularArrays are not sliceable
     * raises: IndexError
 
     &#34;&#34;&#34;
@@ -356,37 +353,37 @@ hljs.highlightAll();
 </ul>
 <h3>Methods</h3>
 <dl>
-<dt id="grscheller.circular_array.CircularArray.capacity"><code class="name flex">
+<dt id="grscheller.circular_array.circular_array.CircularArray.capacity"><code class="name flex">
 <span>def <span class="ident">capacity</span></span>(<span>self) ‑> int</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Returns current capacity of the CircularArray.</p></div>
 </dd>
-<dt id="grscheller.circular_array.CircularArray.compact"><code class="name flex">
+<dt id="grscheller.circular_array.circular_array.CircularArray.compact"><code class="name flex">
 <span>def <span class="ident">compact</span></span>(<span>self) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Compact the CircularArray as much as possible.</p></div>
 </dd>
-<dt id="grscheller.circular_array.CircularArray.copy"><code class="name flex">
-<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.circular_array.CircularArray" href="#grscheller.circular_array.CircularArray">CircularArray</a>[~T]</span>
+<dt id="grscheller.circular_array.circular_array.CircularArray.copy"><code class="name flex">
+<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.circular_array.circular_array.CircularArray" href="#grscheller.circular_array.circular_array.CircularArray">CircularArray</a>[~T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return a shallow copy of the CircularArray.</p></div>
 </dd>
-<dt id="grscheller.circular_array.CircularArray.double"><code class="name flex">
+<dt id="grscheller.circular_array.circular_array.CircularArray.double"><code class="name flex">
 <span>def <span class="ident">double</span></span>(<span>self) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Double the capacity of the CircularArray.</p></div>
 </dd>
-<dt id="grscheller.circular_array.CircularArray.empty"><code class="name flex">
+<dt id="grscheller.circular_array.circular_array.CircularArray.empty"><code class="name flex">
 <span>def <span class="ident">empty</span></span>(<span>self) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Empty the CircularArray, keep current capacity.</p></div>
 </dd>
-<dt id="grscheller.circular_array.CircularArray.foldL"><code class="name flex">
+<dt id="grscheller.circular_array.circular_array.CircularArray.foldL"><code class="name flex">
 <span>def <span class="ident">foldL</span></span>(<span>self, f: Callable[[T, T], T]) ‑> Optional[~T]</span>
 </code></dt>
 <dd>
@@ -396,7 +393,7 @@ hljs.highlightAll();
 <li>if CircularArray is empty, return <code>None</code></li>
 </ul></div>
 </dd>
-<dt id="grscheller.circular_array.CircularArray.foldL1"><code class="name flex">
+<dt id="grscheller.circular_array.circular_array.CircularArray.foldL1"><code class="name flex">
 <span>def <span class="ident">foldL1</span></span>(<span>self, f: Callable[[S, T], S], initial: S) ‑> ~S</span>
 </code></dt>
 <dd>
@@ -406,7 +403,7 @@ hljs.highlightAll();
 <li>if CircularArray is empty, return the initial value</li>
 </ul></div>
 </dd>
-<dt id="grscheller.circular_array.CircularArray.foldR"><code class="name flex">
+<dt id="grscheller.circular_array.circular_array.CircularArray.foldR"><code class="name flex">
 <span>def <span class="ident">foldR</span></span>(<span>self, f: Callable[[T, T], T]) ‑> Optional[~T]</span>
 </code></dt>
 <dd>
@@ -416,7 +413,7 @@ hljs.highlightAll();
 <li>if CircularArray is empty, return <code>None</code></li>
 </ul></div>
 </dd>
-<dt id="grscheller.circular_array.CircularArray.foldR1"><code class="name flex">
+<dt id="grscheller.circular_array.circular_array.CircularArray.foldR1"><code class="name flex">
 <span>def <span class="ident">foldR1</span></span>(<span>self, f: Callable[[T, S], S], initial: S) ‑> ~S</span>
 </code></dt>
 <dd>
@@ -426,14 +423,14 @@ hljs.highlightAll();
 <li>if CircularArray is empty, return the initial value</li>
 </ul></div>
 </dd>
-<dt id="grscheller.circular_array.CircularArray.fractionFilled"><code class="name flex">
+<dt id="grscheller.circular_array.circular_array.CircularArray.fractionFilled"><code class="name flex">
 <span>def <span class="ident">fractionFilled</span></span>(<span>self) ‑> float</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Returns fractional capacity of the CircularArray.</p></div>
 </dd>
-<dt id="grscheller.circular_array.CircularArray.map"><code class="name flex">
-<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[T], S]) ‑> <a title="grscheller.circular_array.CircularArray" href="#grscheller.circular_array.CircularArray">CircularArray</a>[~S]</span>
+<dt id="grscheller.circular_array.circular_array.CircularArray.map"><code class="name flex">
+<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[T], S]) ‑> <a title="grscheller.circular_array.circular_array.CircularArray" href="#grscheller.circular_array.circular_array.CircularArray">CircularArray</a>[~S]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Apply function f over the CircularArray's contents.</p>
@@ -441,7 +438,7 @@ hljs.highlightAll();
 <li>return the results in a new CircularArray</li>
 </ul></div>
 </dd>
-<dt id="grscheller.circular_array.CircularArray.popL"><code class="name flex">
+<dt id="grscheller.circular_array.circular_array.CircularArray.popL"><code class="name flex">
 <span>def <span class="ident">popL</span></span>(<span>self) ‑> Optional[~T]</span>
 </code></dt>
 <dd>
@@ -451,7 +448,7 @@ hljs.highlightAll();
 <li>use in a boolean context to determine if empty</li>
 </ul></div>
 </dd>
-<dt id="grscheller.circular_array.CircularArray.popR"><code class="name flex">
+<dt id="grscheller.circular_array.circular_array.CircularArray.popR"><code class="name flex">
 <span>def <span class="ident">popR</span></span>(<span>self) ‑> Optional[~T]</span>
 </code></dt>
 <dd>
@@ -461,26 +458,26 @@ hljs.highlightAll();
 <li>use in a boolean context to determine if empty</li>
 </ul></div>
 </dd>
-<dt id="grscheller.circular_array.CircularArray.pushL"><code class="name flex">
+<dt id="grscheller.circular_array.circular_array.CircularArray.pushL"><code class="name flex">
 <span>def <span class="ident">pushL</span></span>(<span>self, value: T) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Push data onto the front of the CircularArray.</p></div>
 </dd>
-<dt id="grscheller.circular_array.CircularArray.pushR"><code class="name flex">
+<dt id="grscheller.circular_array.circular_array.CircularArray.pushR"><code class="name flex">
 <span>def <span class="ident">pushR</span></span>(<span>self, value: T) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Push data onto the rear of the CircularArray.</p></div>
 </dd>
-<dt id="grscheller.circular_array.CircularArray.resize"><code class="name flex">
+<dt id="grscheller.circular_array.circular_array.CircularArray.resize"><code class="name flex">
 <span>def <span class="ident">resize</span></span>(<span>self, newSize: int = 0) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Compact CircularArray and resize to newSize if less than newSize.</p></div>
 </dd>
-<dt id="grscheller.circular_array.CircularArray.reverse"><code class="name flex">
-<span>def <span class="ident">reverse</span></span>(<span>self) ‑> <a title="grscheller.circular_array.CircularArray" href="#grscheller.circular_array.CircularArray">CircularArray</a>[~T]</span>
+<dt id="grscheller.circular_array.circular_array.CircularArray.reverse"><code class="name flex">
+<span>def <span class="ident">reverse</span></span>(<span>self) ‑> <a title="grscheller.circular_array.circular_array.CircularArray" href="#grscheller.circular_array.circular_array.CircularArray">CircularArray</a>[~T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return a reversed shallow copy of the CircularArray.</p></div>
@@ -495,28 +492,33 @@ hljs.highlightAll();
 <ul></ul>
 </div>
 <ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="grscheller.circular_array" href="index.html">grscheller.circular_array</a></code></li>
+</ul>
+</li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="grscheller.circular_array.CircularArray" href="#grscheller.circular_array.CircularArray">CircularArray</a></code></h4>
+<h4><code><a title="grscheller.circular_array.circular_array.CircularArray" href="#grscheller.circular_array.circular_array.CircularArray">CircularArray</a></code></h4>
 <ul class="two-column">
-<li><code><a title="grscheller.circular_array.CircularArray.capacity" href="#grscheller.circular_array.CircularArray.capacity">capacity</a></code></li>
-<li><code><a title="grscheller.circular_array.CircularArray.compact" href="#grscheller.circular_array.CircularArray.compact">compact</a></code></li>
-<li><code><a title="grscheller.circular_array.CircularArray.copy" href="#grscheller.circular_array.CircularArray.copy">copy</a></code></li>
-<li><code><a title="grscheller.circular_array.CircularArray.double" href="#grscheller.circular_array.CircularArray.double">double</a></code></li>
-<li><code><a title="grscheller.circular_array.CircularArray.empty" href="#grscheller.circular_array.CircularArray.empty">empty</a></code></li>
-<li><code><a title="grscheller.circular_array.CircularArray.foldL" href="#grscheller.circular_array.CircularArray.foldL">foldL</a></code></li>
-<li><code><a title="grscheller.circular_array.CircularArray.foldL1" href="#grscheller.circular_array.CircularArray.foldL1">foldL1</a></code></li>
-<li><code><a title="grscheller.circular_array.CircularArray.foldR" href="#grscheller.circular_array.CircularArray.foldR">foldR</a></code></li>
-<li><code><a title="grscheller.circular_array.CircularArray.foldR1" href="#grscheller.circular_array.CircularArray.foldR1">foldR1</a></code></li>
-<li><code><a title="grscheller.circular_array.CircularArray.fractionFilled" href="#grscheller.circular_array.CircularArray.fractionFilled">fractionFilled</a></code></li>
-<li><code><a title="grscheller.circular_array.CircularArray.map" href="#grscheller.circular_array.CircularArray.map">map</a></code></li>
-<li><code><a title="grscheller.circular_array.CircularArray.popL" href="#grscheller.circular_array.CircularArray.popL">popL</a></code></li>
-<li><code><a title="grscheller.circular_array.CircularArray.popR" href="#grscheller.circular_array.CircularArray.popR">popR</a></code></li>
-<li><code><a title="grscheller.circular_array.CircularArray.pushL" href="#grscheller.circular_array.CircularArray.pushL">pushL</a></code></li>
-<li><code><a title="grscheller.circular_array.CircularArray.pushR" href="#grscheller.circular_array.CircularArray.pushR">pushR</a></code></li>
-<li><code><a title="grscheller.circular_array.CircularArray.resize" href="#grscheller.circular_array.CircularArray.resize">resize</a></code></li>
-<li><code><a title="grscheller.circular_array.CircularArray.reverse" href="#grscheller.circular_array.CircularArray.reverse">reverse</a></code></li>
+<li><code><a title="grscheller.circular_array.circular_array.CircularArray.capacity" href="#grscheller.circular_array.circular_array.CircularArray.capacity">capacity</a></code></li>
+<li><code><a title="grscheller.circular_array.circular_array.CircularArray.compact" href="#grscheller.circular_array.circular_array.CircularArray.compact">compact</a></code></li>
+<li><code><a title="grscheller.circular_array.circular_array.CircularArray.copy" href="#grscheller.circular_array.circular_array.CircularArray.copy">copy</a></code></li>
+<li><code><a title="grscheller.circular_array.circular_array.CircularArray.double" href="#grscheller.circular_array.circular_array.CircularArray.double">double</a></code></li>
+<li><code><a title="grscheller.circular_array.circular_array.CircularArray.empty" href="#grscheller.circular_array.circular_array.CircularArray.empty">empty</a></code></li>
+<li><code><a title="grscheller.circular_array.circular_array.CircularArray.foldL" href="#grscheller.circular_array.circular_array.CircularArray.foldL">foldL</a></code></li>
+<li><code><a title="grscheller.circular_array.circular_array.CircularArray.foldL1" href="#grscheller.circular_array.circular_array.CircularArray.foldL1">foldL1</a></code></li>
+<li><code><a title="grscheller.circular_array.circular_array.CircularArray.foldR" href="#grscheller.circular_array.circular_array.CircularArray.foldR">foldR</a></code></li>
+<li><code><a title="grscheller.circular_array.circular_array.CircularArray.foldR1" href="#grscheller.circular_array.circular_array.CircularArray.foldR1">foldR1</a></code></li>
+<li><code><a title="grscheller.circular_array.circular_array.CircularArray.fractionFilled" href="#grscheller.circular_array.circular_array.CircularArray.fractionFilled">fractionFilled</a></code></li>
+<li><code><a title="grscheller.circular_array.circular_array.CircularArray.map" href="#grscheller.circular_array.circular_array.CircularArray.map">map</a></code></li>
+<li><code><a title="grscheller.circular_array.circular_array.CircularArray.popL" href="#grscheller.circular_array.circular_array.CircularArray.popL">popL</a></code></li>
+<li><code><a title="grscheller.circular_array.circular_array.CircularArray.popR" href="#grscheller.circular_array.circular_array.CircularArray.popR">popR</a></code></li>
+<li><code><a title="grscheller.circular_array.circular_array.CircularArray.pushL" href="#grscheller.circular_array.circular_array.CircularArray.pushL">pushL</a></code></li>
+<li><code><a title="grscheller.circular_array.circular_array.CircularArray.pushR" href="#grscheller.circular_array.circular_array.CircularArray.pushR">pushR</a></code></li>
+<li><code><a title="grscheller.circular_array.circular_array.CircularArray.resize" href="#grscheller.circular_array.circular_array.CircularArray.resize">resize</a></code></li>
+<li><code><a title="grscheller.circular_array.circular_array.CircularArray.reverse" href="#grscheller.circular_array.circular_array.CircularArray.reverse">reverse</a></code></li>
 </ul>
 </li>
 </ul>
