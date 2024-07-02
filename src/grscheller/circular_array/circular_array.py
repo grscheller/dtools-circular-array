@@ -21,12 +21,12 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
 
-from typing import Any, Callable, Generic, Iterator, TypeVar
+from typing import Callable, Generic, Iterator, Optional, TypeVar
 
-T = TypeVar('T')
-S = TypeVar('S')
+_T = TypeVar('_T')
+_S = TypeVar('_S')
 
-class CircularArray(Generic[T]):
+class CircularArray(Generic[_T]):
     """Class implementing an indexable circular array
 
     * stateful data structure
@@ -42,10 +42,10 @@ class CircularArray(Generic[T]):
     """
     __slots__ = '_count', '_capacity', '_front', '_rear', '_list'
 
-    def __init__(self, *data: T):
+    def __init__(self, *data: _T):
         match len(data):
             case 0:
-                self._list: list[T|None] = [None, None]
+                self._list: list[Optional[_T]] = [None, None]
                 self._count = 0
                 self._capacity = 2
                 self._front = 0
@@ -57,7 +57,7 @@ class CircularArray(Generic[T]):
                 self._front = 0
                 self._rear = count - 1
 
-    def __iter__(self) -> Iterator[T]:
+    def __iter__(self) -> Iterator[_T]:
         if self._count > 0:
             capacity,       rear,       position,    currentState = \
             self._capacity, self._rear, self._front, self._list.copy()
@@ -67,7 +67,7 @@ class CircularArray(Generic[T]):
                 position = (position + 1) % capacity
             yield currentState[position]                # type: ignore
 
-    def __reversed__(self) -> Iterator[T]:
+    def __reversed__(self) -> Iterator[_T]:
         if self._count > 0:
             capacity,       front,       position,   currentState = \
             self._capacity, self._front, self._rear, self._list.copy()
@@ -89,7 +89,7 @@ class CircularArray(Generic[T]):
     def __len__(self) -> int:
         return self._count
 
-    def __getitem__(self, index: int) -> T:
+    def __getitem__(self, index: int) -> _T:
         cnt = self._count
         if 0 <= index < cnt:
             return self._list[(self._front + index) % self._capacity]        # type: ignore
@@ -105,7 +105,7 @@ class CircularArray(Generic[T]):
                 msg0 = 'Trying to get value from an empty CircularArray.'
                 raise IndexError(msg0)
 
-    def __setitem__(self, index: int, value: T) -> None:
+    def __setitem__(self, index: int, value: _T) -> None:
         cnt = self._count
         if 0 <= index < cnt:
             self._list[(self._front + index) % self._capacity] = value
@@ -141,15 +141,15 @@ class CircularArray(Generic[T]):
                 return False
         return True
 
-    def copy(self) -> CircularArray[T]:
+    def copy(self) -> CircularArray[_T]:
         """Return a shallow copy of the CircularArray."""
         return CircularArray(*self)
 
-    def reverse(self) -> CircularArray[T]:
+    def reverse(self) -> CircularArray[_T]:
         """Return a reversed shallow copy of the CircularArray."""
         return CircularArray(*reversed(self))
 
-    def pushR(self, value: T) -> None:
+    def pushR(self, value: _T) -> None:
         """Push data onto the rear of the CircularArray."""
         if self._count == self._capacity:
             self.double()
@@ -157,7 +157,7 @@ class CircularArray(Generic[T]):
         self._list[self._rear] = value
         self._count += 1
 
-    def pushL(self, value: T) -> None:
+    def pushL(self, value: _T) -> None:
         """Push data onto the front of the CircularArray."""
         if self._count == self._capacity:
             self.double()
@@ -165,7 +165,7 @@ class CircularArray(Generic[T]):
         self._list[self._front] = value
         self._count += 1
 
-    def popR(self) -> T|None:
+    def popR(self) -> Optional[_T]:
         """Pop data off the rear of the CircularArray.
 
         * returns None if empty
@@ -180,7 +180,7 @@ class CircularArray(Generic[T]):
 
             return value
 
-    def popL(self) -> T|None:
+    def popL(self) -> Optional[_T]:
         """Pop data off the front of the CircularArray.
 
         * returns None if empty
@@ -195,7 +195,7 @@ class CircularArray(Generic[T]):
 
             return value
 
-    def map(self, f: Callable[[T], S]) -> CircularArray[S]:
+    def map(self, f: Callable[[_T], _S]) -> CircularArray[_S]:
         """Apply function f over the CircularArray's contents.
 
         * return the results in a new CircularArray
@@ -203,7 +203,7 @@ class CircularArray(Generic[T]):
         """
         return CircularArray(*map(f, self))
 
-    def foldL(self, f: Callable[[T, T], T]) -> T|None:
+    def foldL(self, f: Callable[[_T, _T], _T]) -> Optional[_T]:
         """Fold CircularArray left.
 
         * first argument of `f` is for the accumulated value
@@ -221,7 +221,7 @@ class CircularArray(Generic[T]):
 
         return value
 
-    def foldR(self, f: Callable[[T, T], T]) -> T|None:
+    def foldR(self, f: Callable[[_T, _T], _T]) -> Optional[_T]:
         """Fold CircularArray right.
 
         * second argument of `f` is for the accumulated value
@@ -238,36 +238,28 @@ class CircularArray(Generic[T]):
 
         return value
 
-    def foldL1(self, f: Callable[[S, T], S], initial: S) -> S:
+    def foldL1(self, f: Callable[[_S, _T], _S], init: _S) -> _S:
         """Fold CircularArray left with an initial value.
 
         * first argument of `f` is for the accumulated value
         * if CircularArray is empty, return the initial value
 
         """
-        if self._count == 0:
-            return initial
-
-        value: S = initial
+        value: _S = init
         for v in iter(self):
             value = f(value, v)
-
         return value
 
-    def foldR1(self, f: Callable[[T, S], S], initial: S) -> S:
+    def foldR1(self, f: Callable[[_T, _S], _S], init: _S) -> _S:
         """Fold CircularArray right with an initial value.
 
         * second argument of `f` is for the accumulated value
         * if CircularArray is empty, return the initial value
 
         """
-        if self._count == 0:
-            return initial
-
-        value: S = initial
+        value: _S = init
         for v in reversed(self):
             value = f(v, value)
-
         return value
 
     def capacity(self) -> int:
