@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
-<meta name="generator" content="pdoc3 0.11.0">
+<meta name="generator" content="pdoc3 0.11.1">
 <title>grscheller.circular_array.circular_array API documentation</title>
 <meta name="description" content="Module for an indexable circular array data structure.">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
@@ -38,7 +38,7 @@ hljs.highlightAll();
 <dl>
 <dt id="grscheller.circular_array.circular_array.CircularArray"><code class="flex name class">
 <span>class <span class="ident">CircularArray</span></span>
-<span>(</span><span>*data: T)</span>
+<span>(</span><span>*data: _T)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Class implementing an indexable circular array</p>
@@ -57,7 +57,7 @@ hljs.highlightAll();
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class CircularArray(Generic[T]):
+<pre><code class="python">class CircularArray(Generic[_T]):
     &#34;&#34;&#34;Class implementing an indexable circular array
 
     * stateful data structure
@@ -73,10 +73,10 @@ hljs.highlightAll();
     &#34;&#34;&#34;
     __slots__ = &#39;_count&#39;, &#39;_capacity&#39;, &#39;_front&#39;, &#39;_rear&#39;, &#39;_list&#39;
 
-    def __init__(self, *data: T):
+    def __init__(self, *data: _T):
         match len(data):
             case 0:
-                self._list: list[T|None] = [None, None]
+                self._list: list[Optional[_T]] = [None, None]
                 self._count = 0
                 self._capacity = 2
                 self._front = 0
@@ -88,7 +88,7 @@ hljs.highlightAll();
                 self._front = 0
                 self._rear = count - 1
 
-    def __iter__(self) -&gt; Iterator[T]:
+    def __iter__(self) -&gt; Iterator[_T]:
         if self._count &gt; 0:
             capacity,       rear,       position,    currentState = \
             self._capacity, self._rear, self._front, self._list.copy()
@@ -98,7 +98,7 @@ hljs.highlightAll();
                 position = (position + 1) % capacity
             yield currentState[position]                # type: ignore
 
-    def __reversed__(self) -&gt; Iterator[T]:
+    def __reversed__(self) -&gt; Iterator[_T]:
         if self._count &gt; 0:
             capacity,       front,       position,   currentState = \
             self._capacity, self._front, self._rear, self._list.copy()
@@ -120,7 +120,7 @@ hljs.highlightAll();
     def __len__(self) -&gt; int:
         return self._count
 
-    def __getitem__(self, index: int) -&gt; T:
+    def __getitem__(self, index: int) -&gt; _T:
         cnt = self._count
         if 0 &lt;= index &lt; cnt:
             return self._list[(self._front + index) % self._capacity]        # type: ignore
@@ -136,7 +136,7 @@ hljs.highlightAll();
                 msg0 = &#39;Trying to get value from an empty CircularArray.&#39;
                 raise IndexError(msg0)
 
-    def __setitem__(self, index: int, value: T) -&gt; None:
+    def __setitem__(self, index: int, value: _T) -&gt; None:
         cnt = self._count
         if 0 &lt;= index &lt; cnt:
             self._list[(self._front + index) % self._capacity] = value
@@ -172,15 +172,15 @@ hljs.highlightAll();
                 return False
         return True
 
-    def copy(self) -&gt; CircularArray[T]:
+    def copy(self) -&gt; CircularArray[_T]:
         &#34;&#34;&#34;Return a shallow copy of the CircularArray.&#34;&#34;&#34;
         return CircularArray(*self)
 
-    def reverse(self) -&gt; CircularArray[T]:
+    def reverse(self) -&gt; CircularArray[_T]:
         &#34;&#34;&#34;Return a reversed shallow copy of the CircularArray.&#34;&#34;&#34;
         return CircularArray(*reversed(self))
 
-    def pushR(self, value: T) -&gt; None:
+    def pushR(self, value: _T) -&gt; None:
         &#34;&#34;&#34;Push data onto the rear of the CircularArray.&#34;&#34;&#34;
         if self._count == self._capacity:
             self.double()
@@ -188,7 +188,7 @@ hljs.highlightAll();
         self._list[self._rear] = value
         self._count += 1
 
-    def pushL(self, value: T) -&gt; None:
+    def pushL(self, value: _T) -&gt; None:
         &#34;&#34;&#34;Push data onto the front of the CircularArray.&#34;&#34;&#34;
         if self._count == self._capacity:
             self.double()
@@ -196,7 +196,7 @@ hljs.highlightAll();
         self._list[self._front] = value
         self._count += 1
 
-    def popR(self) -&gt; T|None:
+    def popR(self) -&gt; Optional[_T]:
         &#34;&#34;&#34;Pop data off the rear of the CircularArray.
 
         * returns None if empty
@@ -211,7 +211,7 @@ hljs.highlightAll();
 
             return value
 
-    def popL(self) -&gt; T|None:
+    def popL(self) -&gt; Optional[_T]:
         &#34;&#34;&#34;Pop data off the front of the CircularArray.
 
         * returns None if empty
@@ -226,7 +226,7 @@ hljs.highlightAll();
 
             return value
 
-    def map(self, f: Callable[[T], S]) -&gt; CircularArray[S]:
+    def map(self, f: Callable[[_T], _S]) -&gt; CircularArray[_S]:
         &#34;&#34;&#34;Apply function f over the CircularArray&#39;s contents.
 
         * return the results in a new CircularArray
@@ -234,7 +234,7 @@ hljs.highlightAll();
         &#34;&#34;&#34;
         return CircularArray(*map(f, self))
 
-    def foldL(self, f: Callable[[T, T], T]) -&gt; T|None:
+    def foldL(self, f: Callable[[_T, _T], _T]) -&gt; Optional[_T]:
         &#34;&#34;&#34;Fold CircularArray left.
 
         * first argument of `f` is for the accumulated value
@@ -252,7 +252,7 @@ hljs.highlightAll();
 
         return value
 
-    def foldR(self, f: Callable[[T, T], T]) -&gt; T|None:
+    def foldR(self, f: Callable[[_T, _T], _T]) -&gt; Optional[_T]:
         &#34;&#34;&#34;Fold CircularArray right.
 
         * second argument of `f` is for the accumulated value
@@ -269,36 +269,28 @@ hljs.highlightAll();
 
         return value
 
-    def foldL1(self, f: Callable[[S, T], S], initial: S) -&gt; S:
+    def foldL1(self, f: Callable[[_S, _T], _S], init: _S) -&gt; _S:
         &#34;&#34;&#34;Fold CircularArray left with an initial value.
 
         * first argument of `f` is for the accumulated value
         * if CircularArray is empty, return the initial value
 
         &#34;&#34;&#34;
-        if self._count == 0:
-            return initial
-
-        value: S = initial
+        value: _S = init
         for v in iter(self):
             value = f(value, v)
-
         return value
 
-    def foldR1(self, f: Callable[[T, S], S], initial: S) -&gt; S:
+    def foldR1(self, f: Callable[[_T, _S], _S], init: _S) -&gt; _S:
         &#34;&#34;&#34;Fold CircularArray right with an initial value.
 
         * second argument of `f` is for the accumulated value
         * if CircularArray is empty, return the initial value
 
         &#34;&#34;&#34;
-        if self._count == 0:
-            return initial
-
-        value: S = initial
+        value: _S = init
         for v in reversed(self):
             value = f(v, value)
-
         return value
 
     def capacity(self) -&gt; int:
@@ -366,7 +358,7 @@ hljs.highlightAll();
 <div class="desc"><p>Compact the CircularArray as much as possible.</p></div>
 </dd>
 <dt id="grscheller.circular_array.circular_array.CircularArray.copy"><code class="name flex">
-<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.circular_array.circular_array.CircularArray" href="#grscheller.circular_array.circular_array.CircularArray">CircularArray</a>[~T]</span>
+<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.circular_array.circular_array.CircularArray" href="#grscheller.circular_array.circular_array.CircularArray">CircularArray</a>[~_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return a shallow copy of the CircularArray.</p></div>
@@ -384,7 +376,7 @@ hljs.highlightAll();
 <div class="desc"><p>Empty the CircularArray, keep current capacity.</p></div>
 </dd>
 <dt id="grscheller.circular_array.circular_array.CircularArray.foldL"><code class="name flex">
-<span>def <span class="ident">foldL</span></span>(<span>self, f: Callable[[T, T], T]) ‑> Optional[~T]</span>
+<span>def <span class="ident">foldL</span></span>(<span>self, f: Callable[[_T, _T], _T]) ‑> Optional[~_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Fold CircularArray left.</p>
@@ -394,7 +386,7 @@ hljs.highlightAll();
 </ul></div>
 </dd>
 <dt id="grscheller.circular_array.circular_array.CircularArray.foldL1"><code class="name flex">
-<span>def <span class="ident">foldL1</span></span>(<span>self, f: Callable[[S, T], S], initial: S) ‑> ~S</span>
+<span>def <span class="ident">foldL1</span></span>(<span>self, f: Callable[[_S, _T], _S], init: _S) ‑> ~_S</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Fold CircularArray left with an initial value.</p>
@@ -404,7 +396,7 @@ hljs.highlightAll();
 </ul></div>
 </dd>
 <dt id="grscheller.circular_array.circular_array.CircularArray.foldR"><code class="name flex">
-<span>def <span class="ident">foldR</span></span>(<span>self, f: Callable[[T, T], T]) ‑> Optional[~T]</span>
+<span>def <span class="ident">foldR</span></span>(<span>self, f: Callable[[_T, _T], _T]) ‑> Optional[~_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Fold CircularArray right.</p>
@@ -414,7 +406,7 @@ hljs.highlightAll();
 </ul></div>
 </dd>
 <dt id="grscheller.circular_array.circular_array.CircularArray.foldR1"><code class="name flex">
-<span>def <span class="ident">foldR1</span></span>(<span>self, f: Callable[[T, S], S], initial: S) ‑> ~S</span>
+<span>def <span class="ident">foldR1</span></span>(<span>self, f: Callable[[_T, _S], _S], init: _S) ‑> ~_S</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Fold CircularArray right with an initial value.</p>
@@ -430,7 +422,7 @@ hljs.highlightAll();
 <div class="desc"><p>Returns fractional capacity of the CircularArray.</p></div>
 </dd>
 <dt id="grscheller.circular_array.circular_array.CircularArray.map"><code class="name flex">
-<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[T], S]) ‑> <a title="grscheller.circular_array.circular_array.CircularArray" href="#grscheller.circular_array.circular_array.CircularArray">CircularArray</a>[~S]</span>
+<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[_T], _S]) ‑> <a title="grscheller.circular_array.circular_array.CircularArray" href="#grscheller.circular_array.circular_array.CircularArray">CircularArray</a>[~_S]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Apply function f over the CircularArray's contents.</p>
@@ -439,7 +431,7 @@ hljs.highlightAll();
 </ul></div>
 </dd>
 <dt id="grscheller.circular_array.circular_array.CircularArray.popL"><code class="name flex">
-<span>def <span class="ident">popL</span></span>(<span>self) ‑> Optional[~T]</span>
+<span>def <span class="ident">popL</span></span>(<span>self) ‑> Optional[~_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Pop data off the front of the CircularArray.</p>
@@ -449,7 +441,7 @@ hljs.highlightAll();
 </ul></div>
 </dd>
 <dt id="grscheller.circular_array.circular_array.CircularArray.popR"><code class="name flex">
-<span>def <span class="ident">popR</span></span>(<span>self) ‑> Optional[~T]</span>
+<span>def <span class="ident">popR</span></span>(<span>self) ‑> Optional[~_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Pop data off the rear of the CircularArray.</p>
@@ -459,13 +451,13 @@ hljs.highlightAll();
 </ul></div>
 </dd>
 <dt id="grscheller.circular_array.circular_array.CircularArray.pushL"><code class="name flex">
-<span>def <span class="ident">pushL</span></span>(<span>self, value: T) ‑> None</span>
+<span>def <span class="ident">pushL</span></span>(<span>self, value: _T) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Push data onto the front of the CircularArray.</p></div>
 </dd>
 <dt id="grscheller.circular_array.circular_array.CircularArray.pushR"><code class="name flex">
-<span>def <span class="ident">pushR</span></span>(<span>self, value: T) ‑> None</span>
+<span>def <span class="ident">pushR</span></span>(<span>self, value: _T) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Push data onto the rear of the CircularArray.</p></div>
@@ -477,7 +469,7 @@ hljs.highlightAll();
 <div class="desc"><p>Compact CircularArray and resize to newSize if less than newSize.</p></div>
 </dd>
 <dt id="grscheller.circular_array.circular_array.CircularArray.reverse"><code class="name flex">
-<span>def <span class="ident">reverse</span></span>(<span>self) ‑> <a title="grscheller.circular_array.circular_array.CircularArray" href="#grscheller.circular_array.circular_array.CircularArray">CircularArray</a>[~T]</span>
+<span>def <span class="ident">reverse</span></span>(<span>self) ‑> <a title="grscheller.circular_array.circular_array.CircularArray" href="#grscheller.circular_array.circular_array.CircularArray">CircularArray</a>[~_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return a reversed shallow copy of the CircularArray.</p></div>
@@ -527,7 +519,7 @@ hljs.highlightAll();
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.0</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.1</a>.</p>
 </footer>
 </body>
 </html>

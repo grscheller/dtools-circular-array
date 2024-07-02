@@ -168,11 +168,11 @@ class TestCircularArray:
     def test_foldL(self) -> None:
         c1: CircularArray[int] = CircularArray()
         assert c1.foldL(lambda x, y: x + y) == None
-        assert c1.foldL1(lambda x, y: x + y, initial=42) == 42
+        assert c1.foldL1(lambda x, y: x + y, init=42) == 42
 
         c2 = CircularArray(*range(1, 11))
         assert c2.foldL(lambda x, y: x + y) == 55
-        assert c2.foldL1(lambda x, y: x + y, initial=10) == 65
+        assert c2.foldL1(lambda x, y: x + y, init=10) == 65
         c3 = CircularArray(*range(5))
 
         def f(vs: list[int], v: int) -> list[int]:
@@ -185,11 +185,11 @@ class TestCircularArray:
     def test_foldR(self) -> None:
         c1: CircularArray[int] = CircularArray()
         assert c1.foldR(lambda x, y: x * y) == None
-        assert c1.foldR1(lambda x, y: x * y, initial=42) == 42
+        assert c1.foldR1(lambda x, y: x * y, init=42) == 42
 
         c2 = CircularArray(*range(1, 6))
         assert c2.foldR(lambda x, y: x * y) == 120
-        assert c2.foldR1(lambda x, y: x * y, initial=10) == 1200
+        assert c2.foldR1(lambda x, y: x * y, init=10) == 1200
 
         def f(v: int, vs: list[int]) -> list[int]:
             vs.append(v)
