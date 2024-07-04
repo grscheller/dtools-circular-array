@@ -69,7 +69,7 @@ class TestCircularArray:
         assert len(c) == 0
 
     def test_iterators(self) -> None:
-        data = [*range(100)]
+        data: list[int] = [*range(100)]
         c = CircularArray(*data)
         ii = 0
         for item in c:
@@ -100,8 +100,8 @@ class TestCircularArray:
             assert False
 
     def test_equality(self) -> None:
-        c1 = CircularArray(1, 2, 3, 'Forty-Two', (7, 11, 'foobar'))
-        c2 = CircularArray(2, 3, 'Forty-Two')
+        c1: CircularArray[object] = CircularArray(1, 2, 3, 'Forty-Two', (7, 11, 'foobar'))
+        c2: CircularArray[object] = CircularArray(2, 3, 'Forty-Two')
         c2.pushL(1)
         c2.pushR((7, 11, 'foobar'))
         assert c1 == c2

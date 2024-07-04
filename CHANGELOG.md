@@ -10,7 +10,7 @@ Version numbers for PyPI releases begin with a `v`.
 * second digit:
   * PyPI breaking API changes or PyPI major changes
 * third digit:
-  * PyPI API additions, PyPI bugfixes or minor changes
+  * PyPI API additions, PyPI bug fixes or minor changes
   * PyPI significant documentation updates
   * development API breaking changes
 * forth digit (development environment only):
@@ -18,7 +18,13 @@ Version numbers for PyPI releases begin with a `v`.
   * commit count (thrashing)
   * not to be taken too seriously
 
-## Version 3.0.0 - CircularArray class now using Generic Type Parameter
+## Version 3.0.3.0 - commit date 2024-07-04
+
+* can now directly push multiple values onto a CircularArray
+
+## Version 3.0.0.0 - commit date 2024-06-28
+
+* CircularArray class now using Generic Type Parameter
 
 * new epoch in development, start of 3.0 series
 * now using TypeVars

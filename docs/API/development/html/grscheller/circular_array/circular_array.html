@@ -180,21 +180,23 @@ hljs.highlightAll();
         &#34;&#34;&#34;Return a reversed shallow copy of the CircularArray.&#34;&#34;&#34;
         return CircularArray(*reversed(self))
 
-    def pushR(self, value: _T) -&gt; None:
+    def pushR(self, *ds: _T) -&gt; None:
         &#34;&#34;&#34;Push data onto the rear of the CircularArray.&#34;&#34;&#34;
-        if self._count == self._capacity:
-            self.double()
-        self._rear = (self._rear + 1) % self._capacity
-        self._list[self._rear] = value
-        self._count += 1
+        for d in ds:
+            if self._count == self._capacity:
+                self.double()
+            self._rear = (self._rear + 1) % self._capacity
+            self._list[self._rear] = d
+            self._count += 1
 
-    def pushL(self, value: _T) -&gt; None:
+    def pushL(self, *ds: _T) -&gt; None:
         &#34;&#34;&#34;Push data onto the front of the CircularArray.&#34;&#34;&#34;
-        if self._count == self._capacity:
-            self.double()
-        self._front = (self._front - 1) % self._capacity
-        self._list[self._front] = value
-        self._count += 1
+        for d in ds:
+            if self._count == self._capacity:
+                self.double()
+            self._front = (self._front - 1) % self._capacity
+            self._list[self._front] = d
+            self._count += 1
 
     def popR(self) -&gt; Optional[_T]:
         &#34;&#34;&#34;Pop data off the rear of the CircularArray.
@@ -206,10 +208,10 @@ hljs.highlightAll();
         if self._count == 0:
             return None
         else:
-            value, self._count, self._list[self._rear], self._rear = \
+            d, self._count, self._list[self._rear], self._rear = \
                 self._list[self._rear], self._count-1, None, (self._rear - 1) % self._capacity
 
-            return value
+            return d
 
     def popL(self) -&gt; Optional[_T]:
         &#34;&#34;&#34;Pop data off the front of the CircularArray.
@@ -221,10 +223,10 @@ hljs.highlightAll();
         if self._count == 0:
             return None
         else:
-            value, self._count, self._list[self._front], self._front = \
+            d, self._count, self._list[self._front], self._front = \
                 self._list[self._front], self._count-1, None, (self._front+1) % self._capacity
 
-            return value
+            return d
 
     def map(self, f: Callable[[_T], _S]) -&gt; CircularArray[_S]:
         &#34;&#34;&#34;Apply function f over the CircularArray&#39;s contents.
@@ -451,13 +453,13 @@ hljs.highlightAll();
 </ul></div>
 </dd>
 <dt id="grscheller.circular_array.circular_array.CircularArray.pushL"><code class="name flex">
-<span>def <span class="ident">pushL</span></span>(<span>self, value: _T) ‑> None</span>
+<span>def <span class="ident">pushL</span></span>(<span>self, *ds: _T) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Push data onto the front of the CircularArray.</p></div>
 </dd>
 <dt id="grscheller.circular_array.circular_array.CircularArray.pushR"><code class="name flex">
-<span>def <span class="ident">pushR</span></span>(<span>self, value: _T) ‑> None</span>
+<span>def <span class="ident">pushR</span></span>(<span>self, *ds: _T) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Push data onto the rear of the CircularArray.</p></div>

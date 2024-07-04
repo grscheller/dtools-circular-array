@@ -149,21 +149,23 @@ class CircularArray(Generic[_T]):
         """Return a reversed shallow copy of the CircularArray."""
         return CircularArray(*reversed(self))
 
-    def pushR(self, value: _T) -> None:
+    def pushR(self, *ds: _T) -> None:
         """Push data onto the rear of the CircularArray."""
-        if self._count == self._capacity:
-            self.double()
-        self._rear = (self._rear + 1) % self._capacity
-        self._list[self._rear] = value
-        self._count += 1
+        for d in ds:
+            if self._count == self._capacity:
+                self.double()
+            self._rear = (self._rear + 1) % self._capacity
+            self._list[self._rear] = d
+            self._count += 1
 
-    def pushL(self, value: _T) -> None:
+    def pushL(self, *ds: _T) -> None:
         """Push data onto the front of the CircularArray."""
-        if self._count == self._capacity:
-            self.double()
-        self._front = (self._front - 1) % self._capacity
-        self._list[self._front] = value
-        self._count += 1
+        for d in ds:
+            if self._count == self._capacity:
+                self.double()
+            self._front = (self._front - 1) % self._capacity
+            self._list[self._front] = d
+            self._count += 1
 
     def popR(self) -> Optional[_T]:
         """Pop data off the rear of the CircularArray.
@@ -175,10 +177,10 @@ class CircularArray(Generic[_T]):
         if self._count == 0:
             return None
         else:
-            value, self._count, self._list[self._rear], self._rear = \
+            d, self._count, self._list[self._rear], self._rear = \
                 self._list[self._rear], self._count-1, None, (self._rear - 1) % self._capacity
 
-            return value
+            return d
 
     def popL(self) -> Optional[_T]:
         """Pop data off the front of the CircularArray.
@@ -190,10 +192,10 @@ class CircularArray(Generic[_T]):
         if self._count == 0:
             return None
         else:
-            value, self._count, self._list[self._front], self._front = \
+            d, self._count, self._list[self._front], self._front = \
                 self._list[self._front], self._count-1, None, (self._front+1) % self._capacity
 
-            return value
+            return d
 
     def map(self, f: Callable[[_T], _S]) -> CircularArray[_S]:
         """Apply function f over the CircularArray's contents.
