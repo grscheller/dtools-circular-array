@@ -175,10 +175,6 @@ hljs.highlightAll();
         &#34;&#34;&#34;Return a shallow copy of the CircularArray.&#34;&#34;&#34;
         return CircularArray(*self)
 
-    def reverse(self) -&gt; CircularArray[_T]:
-        &#34;&#34;&#34;Return a reversed shallow copy of the CircularArray.&#34;&#34;&#34;
-        return CircularArray(*reversed(self))
-
     def pushR(self, *ds: _T) -&gt; None:
         &#34;&#34;&#34;Push data onto the rear of the CircularArray.&#34;&#34;&#34;
         for d in ds:
@@ -460,12 +456,6 @@ hljs.highlightAll();
 <dd>
 <div class="desc"><p>Compact CircularArray and resize to newSize if less than newSize.</p></div>
 </dd>
-<dt id="grscheller.circular_array.circular_array.CircularArray.reverse"><code class="name flex">
-<span>def <span class="ident">reverse</span></span>(<span>self) ‑> <a title="grscheller.circular_array.circular_array.CircularArray" href="#grscheller.circular_array.circular_array.CircularArray">CircularArray</a>[~_T]</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Return a reversed shallow copy of the CircularArray.</p></div>
-</dd>
 </dl>
 </dd>
 </dl>
@@ -502,7 +492,6 @@ hljs.highlightAll();
 <li><code><a title="grscheller.circular_array.circular_array.CircularArray.pushL" href="#grscheller.circular_array.circular_array.CircularArray.pushL">pushL</a></code></li>
 <li><code><a title="grscheller.circular_array.circular_array.CircularArray.pushR" href="#grscheller.circular_array.circular_array.CircularArray.pushR">pushR</a></code></li>
 <li><code><a title="grscheller.circular_array.circular_array.CircularArray.resize" href="#grscheller.circular_array.circular_array.CircularArray.resize">resize</a></code></li>
-<li><code><a title="grscheller.circular_array.circular_array.CircularArray.reverse" href="#grscheller.circular_array.circular_array.CircularArray.reverse">reverse</a></code></li>
 </ul>
 </li>
 </ul>

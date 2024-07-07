@@ -144,10 +144,6 @@ class CircularArray(Generic[_T]):
         """Return a shallow copy of the CircularArray."""
         return CircularArray(*self)
 
-    def reverse(self) -> CircularArray[_T]:
-        """Return a reversed shallow copy of the CircularArray."""
-        return CircularArray(*reversed(self))
-
     def pushR(self, *ds: _T) -> None:
         """Push data onto the rear of the CircularArray."""
         for d in ds:
