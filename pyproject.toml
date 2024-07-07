@@ -20,9 +20,8 @@ dependencies = []
 dynamic = ["version", "description"]
 keywords = [
     "circular-array", "circular array", "O(1)",
-    "popL", "popR", "pushL", "pushR",
-    "popLeft", "popRight", "pushLeft", "pushRight",
-    "popFront", "popRear", "pushFront", "pushRear"
+    "auto-resizing", "auto resizing",
+    "pop", "push", "popL", "popR", "pushL", "pushR"
 ]
 
 [project.optional-dependencies]

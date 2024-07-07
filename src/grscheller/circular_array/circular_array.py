@@ -125,7 +125,6 @@ class CircularArray(Generic[_T]):
         """Returns True if all the data stored in both compare as equal.
 
         * worst case is O(n) behavior for the true case
-
         """
         if not isinstance(other, type(self)):
             return False
@@ -172,14 +171,12 @@ class CircularArray(Generic[_T]):
 
         * returns None if empty
         * use in a boolean context to determine if empty
-
         """
         if self._count == 0:
             return None
         else:
             d, self._count, self._list[self._rear], self._rear = \
                 self._list[self._rear], self._count-1, None, (self._rear - 1) % self._capacity
-
             return d
 
     def popL(self) -> Optional[_T]:
@@ -187,21 +184,18 @@ class CircularArray(Generic[_T]):
 
         * returns None if empty
         * use in a boolean context to determine if empty
-
         """
         if self._count == 0:
             return None
         else:
             d, self._count, self._list[self._front], self._front = \
                 self._list[self._front], self._count-1, None, (self._front+1) % self._capacity
-
             return d
 
     def map(self, f: Callable[[_T], _S]) -> CircularArray[_S]:
         """Apply function f over the CircularArray's contents.
 
         * return the results in a new CircularArray
-
         """
         return CircularArray(*map(f, self))
 
@@ -210,7 +204,6 @@ class CircularArray(Generic[_T]):
 
         * first argument of `f` is for the accumulated value
         * if CircularArray is empty, return `None`
-
         """
         if self._count == 0:
             return None
@@ -228,7 +221,6 @@ class CircularArray(Generic[_T]):
 
         * second argument of `f` is for the accumulated value
         * if CircularArray is empty, return `None`
-
         """
         if self._count == 0:
             return None
@@ -245,7 +237,6 @@ class CircularArray(Generic[_T]):
 
         * first argument of `f` is for the accumulated value
         * if CircularArray is empty, return the initial value
-
         """
         value: _S = init
         for v in iter(self):
@@ -257,7 +248,6 @@ class CircularArray(Generic[_T]):
 
         * second argument of `f` is for the accumulated value
         * if CircularArray is empty, return the initial value
-
         """
         value: _S = init
         for v in reversed(self):
