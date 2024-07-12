@@ -2,7 +2,7 @@
 
 PyPI grscheller.circular-array PyPI project.
 
-## Semantic versioning
+## Semantic Versioning
 
 * first digit:
   * major event, epoch, or paradigm shift
@@ -14,10 +14,10 @@ PyPI grscheller.circular-array PyPI project.
   * bug fixes
   * minor changes
   * significant documentation updates
-* forth digit (development environment only):
-  * not to be taken too seriously
+* forth digit:
+  * development only
 
-## Releases and other important milestones
+## Releases and Important Milestones
 
 ### Version 3.1.0 - PyPI release date 2024-07-11
 
