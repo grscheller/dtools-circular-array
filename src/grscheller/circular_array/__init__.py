@@ -14,9 +14,7 @@
 
 """Package for an indexable circular array data structure."""
 
-__version__ = "3.0.4.0"
+__version__ = "3.1.0"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2016-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
-
-from .circular_array import CircularArray

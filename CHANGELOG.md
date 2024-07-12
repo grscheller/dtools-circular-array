@@ -19,6 +19,11 @@ PyPI grscheller.circular-array PyPI project.
 
 ## Releases and other important milestones
 
+### Version 3.1.0 - PyPI release date 2024-07-11
+
+* generic typing now being used
+* first PyPI release where mult values can be pushed on CircularArray
+
 ### Version 3.0.3.0 - commit date 2024-07-04
 
 * can now directly push multiple values onto a CircularArray

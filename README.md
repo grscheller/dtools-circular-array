@@ -1,4 +1,4 @@
-# PyPI grscheller.circular-array Project
+# PyPI grscheller.circular-array project
 
 Circular Array
 
@@ -17,7 +17,9 @@ relationship.
 
 ## Usage
 
-from grscheller.circular_array import CircularArray
+```python
+from grscheller.circular_array.ca import CircularArray
+```
 
 ---
 

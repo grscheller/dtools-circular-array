@@ -12,7 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from grscheller.circular_array import CircularArray
+from __future__ import annotations
+
+from typing import Optional
+from grscheller.circular_array.ca import CircularArray
 
 class TestCircularArray:
     def test_mutate_returns_none(self) -> None:
