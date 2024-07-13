@@ -1,6 +1,7 @@
-# PyPI grscheller.circular-array project
+# Python Circular Array Implementation
 
-Circular Array
+Best used as either a standalone improved Python list or in the
+implementing of other Python data structures.
 
 * Python module implementing an indexable, double sided queue
 * See [grscheller.circular-array][1] project on PyPI
