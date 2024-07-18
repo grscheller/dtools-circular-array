@@ -156,6 +156,7 @@ hljs.highlightAll();
         &#34;&#34;&#34;Returns True if all the data stored in both compare as equal.
 
         * worst case is O(n) behavior for the true case
+
         &#34;&#34;&#34;
         if not isinstance(other, type(self)):
             return False
@@ -198,6 +199,7 @@ hljs.highlightAll();
 
         * returns None if empty
         * use in a boolean context to determine if empty
+
         &#34;&#34;&#34;
         if self._count == 0:
             return None
@@ -211,6 +213,7 @@ hljs.highlightAll();
 
         * returns None if empty
         * use in a boolean context to determine if empty
+
         &#34;&#34;&#34;
         if self._count == 0:
             return None
@@ -223,14 +226,16 @@ hljs.highlightAll();
         &#34;&#34;&#34;Apply function f over the CircularArray&#39;s contents.
 
         * return the results in a new CircularArray
+
         &#34;&#34;&#34;
         return CircularArray(*map(f, self))
 
     def foldL(self, f: Callable[[_T, _T], _T]) -&gt; Optional[_T]:
         &#34;&#34;&#34;Fold CircularArray left.
 
-        * first argument of `f` is for the accumulated value
-        * if CircularArray is empty, return `None`
+        * first argument of function f is for the accumulated value
+        * if CircularArray is empty, return None
+
         &#34;&#34;&#34;
         if self._count == 0:
             return None
@@ -246,8 +251,9 @@ hljs.highlightAll();
     def foldR(self, f: Callable[[_T, _T], _T]) -&gt; Optional[_T]:
         &#34;&#34;&#34;Fold CircularArray right.
 
-        * second argument of `f` is for the accumulated value
-        * if CircularArray is empty, return `None`
+        * second argument of function f is for the accumulated value
+        * if CircularArray is empty, return None
+
         &#34;&#34;&#34;
         if self._count == 0:
             return None
@@ -262,8 +268,9 @@ hljs.highlightAll();
     def foldL1(self, f: Callable[[_S, _T], _S], init: _S) -&gt; _S:
         &#34;&#34;&#34;Fold CircularArray left with an initial value.
 
-        * first argument of `f` is for the accumulated value
+        * first argument of function f is for the accumulated value
         * if CircularArray is empty, return the initial value
+
         &#34;&#34;&#34;
         value: _S = init
         for v in iter(self):
@@ -273,8 +280,9 @@ hljs.highlightAll();
     def foldR1(self, f: Callable[[_T, _S], _S], init: _S) -&gt; _S:
         &#34;&#34;&#34;Fold CircularArray right with an initial value.
 
-        * second argument of `f` is for the accumulated value
+        * second argument of function f is for the accumulated value
         * if CircularArray is empty, return the initial value
+
         &#34;&#34;&#34;
         value: _S = init
         for v in reversed(self):
@@ -289,9 +297,9 @@ hljs.highlightAll();
         &#34;&#34;&#34;Compact the CircularArray as much as possible.&#34;&#34;&#34;
         match self._count:
             case 0:
-                self._capacity, self._front, self._rear, self._list = 2, 0, 1, [None]*2 
+                self._capacity, self._front, self._rear, self._list = 2, 0, 1, [None]*2
             case 1:
-                self._capacity, self._front, self._rear, self._list = 1, 0, 0, [self._list[self._front]] 
+                self._capacity, self._front, self._rear, self._list = 1, 0, 0, [self._list[self._front]]
             case _:
                 if self._front &lt;= self._rear:
                     self._capacity, self._front, self._rear,    self._list = \
@@ -369,8 +377,8 @@ hljs.highlightAll();
 <dd>
 <div class="desc"><p>Fold CircularArray left.</p>
 <ul>
-<li>first argument of <code>f</code> is for the accumulated value</li>
-<li>if CircularArray is empty, return <code>None</code></li>
+<li>first argument of function f is for the accumulated value</li>
+<li>if CircularArray is empty, return None</li>
 </ul></div>
 </dd>
 <dt id="grscheller.circular_array.ca.CircularArray.foldL1"><code class="name flex">
@@ -379,7 +387,7 @@ hljs.highlightAll();
 <dd>
 <div class="desc"><p>Fold CircularArray left with an initial value.</p>
 <ul>
-<li>first argument of <code>f</code> is for the accumulated value</li>
+<li>first argument of function f is for the accumulated value</li>
 <li>if CircularArray is empty, return the initial value</li>
 </ul></div>
 </dd>
@@ -389,8 +397,8 @@ hljs.highlightAll();
 <dd>
 <div class="desc"><p>Fold CircularArray right.</p>
 <ul>
-<li>second argument of <code>f</code> is for the accumulated value</li>
-<li>if CircularArray is empty, return <code>None</code></li>
+<li>second argument of function f is for the accumulated value</li>
+<li>if CircularArray is empty, return None</li>
 </ul></div>
 </dd>
 <dt id="grscheller.circular_array.ca.CircularArray.foldR1"><code class="name flex">
@@ -399,7 +407,7 @@ hljs.highlightAll();
 <dd>
 <div class="desc"><p>Fold CircularArray right with an initial value.</p>
 <ul>
-<li>second argument of <code>f</code> is for the accumulated value</li>
+<li>second argument of function f is for the accumulated value</li>
 <li>if CircularArray is empty, return the initial value</li>
 </ul></div>
 </dd>

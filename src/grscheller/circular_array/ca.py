@@ -125,6 +125,7 @@ class CircularArray(Generic[_T]):
         """Returns True if all the data stored in both compare as equal.
 
         * worst case is O(n) behavior for the true case
+
         """
         if not isinstance(other, type(self)):
             return False
@@ -167,6 +168,7 @@ class CircularArray(Generic[_T]):
 
         * returns None if empty
         * use in a boolean context to determine if empty
+
         """
         if self._count == 0:
             return None
@@ -180,6 +182,7 @@ class CircularArray(Generic[_T]):
 
         * returns None if empty
         * use in a boolean context to determine if empty
+
         """
         if self._count == 0:
             return None
@@ -192,14 +195,16 @@ class CircularArray(Generic[_T]):
         """Apply function f over the CircularArray's contents.
 
         * return the results in a new CircularArray
+
         """
         return CircularArray(*map(f, self))
 
     def foldL(self, f: Callable[[_T, _T], _T]) -> Optional[_T]:
         """Fold CircularArray left.
 
-        * first argument of `f` is for the accumulated value
-        * if CircularArray is empty, return `None`
+        * first argument of function f is for the accumulated value
+        * if CircularArray is empty, return None
+
         """
         if self._count == 0:
             return None
@@ -215,8 +220,9 @@ class CircularArray(Generic[_T]):
     def foldR(self, f: Callable[[_T, _T], _T]) -> Optional[_T]:
         """Fold CircularArray right.
 
-        * second argument of `f` is for the accumulated value
-        * if CircularArray is empty, return `None`
+        * second argument of function f is for the accumulated value
+        * if CircularArray is empty, return None
+
         """
         if self._count == 0:
             return None
@@ -231,8 +237,9 @@ class CircularArray(Generic[_T]):
     def foldL1(self, f: Callable[[_S, _T], _S], init: _S) -> _S:
         """Fold CircularArray left with an initial value.
 
-        * first argument of `f` is for the accumulated value
+        * first argument of function f is for the accumulated value
         * if CircularArray is empty, return the initial value
+
         """
         value: _S = init
         for v in iter(self):
@@ -242,8 +249,9 @@ class CircularArray(Generic[_T]):
     def foldR1(self, f: Callable[[_T, _S], _S], init: _S) -> _S:
         """Fold CircularArray right with an initial value.
 
-        * second argument of `f` is for the accumulated value
+        * second argument of function f is for the accumulated value
         * if CircularArray is empty, return the initial value
+
         """
         value: _S = init
         for v in reversed(self):
@@ -258,9 +266,9 @@ class CircularArray(Generic[_T]):
         """Compact the CircularArray as much as possible."""
         match self._count:
             case 0:
-                self._capacity, self._front, self._rear, self._list = 2, 0, 1, [None]*2 
+                self._capacity, self._front, self._rear, self._list = 2, 0, 1, [None]*2
             case 1:
-                self._capacity, self._front, self._rear, self._list = 1, 0, 0, [self._list[self._front]] 
+                self._capacity, self._front, self._rear, self._list = 1, 0, 0, [self._list[self._front]]
             case _:
                 if self._front <= self._rear:
                     self._capacity, self._front, self._rear,    self._list = \
