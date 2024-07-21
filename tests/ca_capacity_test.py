@@ -15,15 +15,15 @@
 from __future__ import annotations
 
 from typing import Optional
-from grscheller.circular_array.ca import CircularArray
+from grscheller.circular_array.ca import CA
 
 class TestCapacity:
 
     def test_capacity_original(self) -> None:
-        c: CircularArray[object] = CircularArray()
+        c: CA[object] = CA()
         assert c.capacity() == 2
 
-        c = CircularArray(1, 2)
+        c = CA(1, 2)
         assert c.fractionFilled() == 2/2
 
         c.pushL(0)
@@ -57,7 +57,7 @@ class TestCapacity:
         assert c.fractionFilled() == 2/3
 
     def test_double(self) -> None:
-        c: CircularArray[Optional[int]] = CircularArray(1, 2, 3)
+        c: CA[Optional[int]] = CA(1, 2, 3)
         assert c.popL() == 1
         assert c.capacity() == 3
         c.double()
@@ -88,8 +88,8 @@ class TestCapacity:
             jj -= 1
 
     def test_empty(self) -> None:
-        c: CircularArray[object] = CircularArray()
-        assert c == CircularArray()
+        c: CA[object] = CA()
+        assert c == CA()
         assert c.capacity() == 2
         c.double()
         assert c.capacity() == 4
@@ -100,7 +100,7 @@ class TestCapacity:
         assert len(c) == 0
 
     def test_one(self) -> None:
-        c = CircularArray(42)
+        c = CA(42)
         assert c.capacity() == 1
         c.compact()
         assert c.capacity() == 1

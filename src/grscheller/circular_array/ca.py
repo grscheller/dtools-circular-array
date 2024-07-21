@@ -16,17 +16,20 @@
 
 from __future__ import annotations
 
-__all__ = ['CircularArray']
+__all__ = ['CA']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
 
 from typing import Callable, Generic, Iterator, Optional, TypeVar
 
-_T = TypeVar('_T')
+_D = TypeVar('_D')
 _S = TypeVar('_S')
+_L = TypeVar('_L')
+_R = TypeVar('_R')
+_U = TypeVar('_U')
 
-class CircularArray(Generic[_T]):
+class CA(Generic[_D, _S]):
     """Class implementing an indexable circular array
 
     * stateful data structure
@@ -37,51 +40,54 @@ class CircularArray(Generic[_T]):
     * not sliceable
     * in a boolean context returned False if empty, True otherwise
     * iterators caches current content
+    * intended to implement other data structures, so
+    * does not make defensive copies of data for the purposes of iteration
     * raises: IndexError
 
     """
-    __slots__ = '_count', '_capacity', '_front', '_rear', '_list'
+    __slots__ = '_count', '_capacity', '_front', '_rear', '_list', '_s'
 
-    def __init__(self, *data: _T):
-        match len(data):
+    def __init__(self, *ds: _D, sentinel: Optional[_S|_D]=None):
+        self._s = sentinel
+        match len(ds):
             case 0:
-                self._list: list[Optional[_T]] = [None, None]
+                self._list: list[_D|_S] = [sentinel, sentinel]  # type: ignore # if sentinel == None, then _S == None
                 self._count = 0
                 self._capacity = 2
                 self._front = 0
                 self._rear = 1
             case count:
-                self._list = list(data)
+                self._list = list(ds)
                 self._count = count
                 self._capacity = count
                 self._front = 0
                 self._rear = count - 1
 
-    def __iter__(self) -> Iterator[_T]:
+    def __iter__(self) -> Iterator[_D]:
         if self._count > 0:
             capacity,       rear,       position,    currentState = \
             self._capacity, self._rear, self._front, self._list.copy()
 
             while position != rear:
-                yield currentState[position]            # type: ignore
+                yield currentState[position]          # type: ignore # will always yield _D
                 position = (position + 1) % capacity
-            yield currentState[position]                # type: ignore
+            yield currentState[position]              # type: ignore # will always yield _D
 
-    def __reversed__(self) -> Iterator[_T]:
+    def __reversed__(self) -> Iterator[_D]:
         if self._count > 0:
             capacity,       front,       position,   currentState = \
             self._capacity, self._front, self._rear, self._list.copy()
 
             while position != front:
-                yield currentState[position]         # type: ignore
+                yield currentState[position]         # type: ignore # will always yield _D
                 position = (position - 1) % capacity
-            yield currentState[position]             # type: ignore
+            yield currentState[position]             # type: ignore # will always yield _D
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}(' + ', '.join(map(repr, self)) + ')'
+        return 'CA(' + ', '.join(map(repr, self)) + ', sentinel = ' + repr(self._s) + ')'
 
     def __str__(self) -> str:
-        return "(|" + ", ".join(map(repr, self)) + "|)"
+        return "(|" + ", ".join(map(str, self)) + "|)"
 
     def __bool__(self) -> bool:
         return self._count > 0
@@ -89,12 +95,12 @@ class CircularArray(Generic[_T]):
     def __len__(self) -> int:
         return self._count
 
-    def __getitem__(self, index: int) -> _T:
+    def __getitem__(self, index: int) -> _D:
         cnt = self._count
         if 0 <= index < cnt:
-            return self._list[(self._front + index) % self._capacity]        # type: ignore
+            return self._list[(self._front + index) % self._capacity]        # type: ignore # will always return a _D
         elif -cnt <= index < 0:
-            return self._list[(self._front + cnt + index) % self._capacity]  # type: ignore
+            return self._list[(self._front + cnt + index) % self._capacity]  # type: ignore # will always return a _D
         else:
             if cnt > 0:
                 msg1 = 'Out of bounds: '
@@ -105,7 +111,7 @@ class CircularArray(Generic[_T]):
                 msg0 = 'Trying to get value from an empty CircularArray.'
                 raise IndexError(msg0)
 
-    def __setitem__(self, index: int, value: _T) -> None:
+    def __setitem__(self, index: int, value: _D) -> None:
         cnt = self._count
         if 0 <= index < cnt:
             self._list[(self._front + index) % self._capacity] = value
@@ -141,11 +147,11 @@ class CircularArray(Generic[_T]):
                 return False
         return True
 
-    def copy(self) -> CircularArray[_T]:
+    def copy(self) -> CA[_D]:
         """Return a shallow copy of the CircularArray."""
-        return CircularArray(*self)
+        return CA(*self, sentinel=self._s)
 
-    def pushR(self, *ds: _T) -> None:
+    def pushR(self, *ds: _D) -> None:
         """Push data onto the rear of the CircularArray."""
         for d in ds:
             if self._count == self._capacity:
@@ -154,7 +160,7 @@ class CircularArray(Generic[_T]):
             self._list[self._rear] = d
             self._count += 1
 
-    def pushL(self, *ds: _T) -> None:
+    def pushL(self, *ds: _D) -> None:
         """Push data onto the front of the CircularArray."""
         for d in ds:
             if self._count == self._capacity:
@@ -163,7 +169,7 @@ class CircularArray(Generic[_T]):
             self._list[self._front] = d
             self._count += 1
 
-    def popR(self) -> Optional[_T]:
+    def popR(self) -> _D|_S:
         """Pop data off the rear of the CircularArray.
 
         * returns None if empty
@@ -171,13 +177,13 @@ class CircularArray(Generic[_T]):
 
         """
         if self._count == 0:
-            return None
+            return self._s    # type: ignore # only will be None when _S == None
         else:
             d, self._count, self._list[self._rear], self._rear = \
-                self._list[self._rear], self._count-1, None, (self._rear - 1) % self._capacity
+                self._list[self._rear], self._count-1, self._s, (self._rear - 1) % self._capacity  # type: ignore # only will be None when _S == None
             return d
 
-    def popL(self) -> Optional[_T]:
+    def popL(self) -> _D|_S:
         """Pop data off the front of the CircularArray.
 
         * returns None if empty
@@ -185,78 +191,61 @@ class CircularArray(Generic[_T]):
 
         """
         if self._count == 0:
-            return None
+            return self._s    # type: ignore # only will be None when _S == None
         else:
             d, self._count, self._list[self._front], self._front = \
-                self._list[self._front], self._count-1, None, (self._front+1) % self._capacity
+                self._list[self._front], self._count-1, self._s, (self._front+1) % self._capacity  # type: ignore # only will be None when _S == None
             return d
 
-    def map(self, f: Callable[[_T], _S]) -> CircularArray[_S]:
+    def map(self, f: Callable[[_D], _U]) -> CA[_U, _S]:
         """Apply function f over the CircularArray's contents.
 
         * return the results in a new CircularArray
 
         """
-        return CircularArray(*map(f, self))
+        return CA(*map(f, self), sentinel=self._s)  # type: ignore # only will be None when _S == None
 
-    def foldL(self, f: Callable[[_T, _T], _T]) -> Optional[_T]:
-        """Fold CircularArray left.
-
-        * first argument of function f is for the accumulated value
-        * if CircularArray is empty, return None
-
-        """
-        if self._count == 0:
-            return None
-
-        iter_self = iter(self)
-        value = next(iter_self)
-
-        for v in iter_self:
-            value = f(value, v)
-
-        return value
-
-    def foldR(self, f: Callable[[_T, _T], _T]) -> Optional[_T]:
-        """Fold CircularArray right.
-
-        * second argument of function f is for the accumulated value
-        * if CircularArray is empty, return None
-
-        """
-        if self._count == 0:
-            return None
-
-        rev_self = reversed(self)
-        value = next(rev_self)
-        for v in rev_self:
-            value = f(v, value)
-
-        return value
-
-    def foldL1(self, f: Callable[[_S, _T], _S], init: _S) -> _S:
-        """Fold CircularArray left with an initial value.
+    def foldL(self, f: Callable[[_L, _D], _L], start: Optional[_L]=None, default: Optional[_L]=None) -> _L|_S:
+        """Fold left with an initial value.
 
         * first argument of function f is for the accumulated value
-        * if CircularArray is empty, return the initial value
+        * if empty, return the initial value s
 
         """
-        value: _S = init
-        for v in iter(self):
-            value = f(value, v)
-        return value
+        it = iter(self)
+        if start is not None:
+            acc = start
+        elif len(self) == 0:
+            if default is None:
+                return self._s            # type: ignore # will be type _S
+            else:
+                return default
+        else:
+            acc = next(it)                # type: ignore # in this case _L == _D
+        for v in it:
+            acc = f(acc, v)
+        return acc
 
-    def foldR1(self, f: Callable[[_T, _S], _S], init: _S) -> _S:
-        """Fold CircularArray right with an initial value.
+    def foldR(self, f: Callable[[_D, _R], _R], start: Optional[_R]=None, default: Optional[_R]=None) -> _R|_S:
+        """Fold right with an initial value.
 
         * second argument of function f is for the accumulated value
-        * if CircularArray is empty, return the initial value
+        * if empty, return the initial value s
 
         """
-        value: _S = init
-        for v in reversed(self):
-            value = f(v, value)
-        return value
+        it = reversed(self)
+        if start is not None:
+            acc = start
+        elif len(self) == 0:
+            if default is None:
+                return self._s            # type: ignore # will be type _S
+            else:
+                return default
+        else:
+            acc = next(it)                # type: ignore # in this case _R == _D
+        for v in it:
+            acc = f(v, acc)
+        return acc
 
     def capacity(self) -> int:
         """Returns current capacity of the CircularArray."""
@@ -266,7 +255,7 @@ class CircularArray(Generic[_T]):
         """Compact the CircularArray as much as possible."""
         match self._count:
             case 0:
-                self._capacity, self._front, self._rear, self._list = 2, 0, 1, [None]*2
+                self._capacity, self._front, self._rear, self._list = 2, 0, 1, [self._s]*2  # type: ignore # only will be None when _S == None
             case 1:
                 self._capacity, self._front, self._rear, self._list = 1, 0, 0, [self._list[self._front]]
             case _:
@@ -280,16 +269,16 @@ class CircularArray(Generic[_T]):
     def double(self) -> None:
         """Double the capacity of the CircularArray."""
         if self._front <= self._rear:
-            self._list += [None]*self._capacity
+            self._list += [self._s]*self._capacity  # type: ignore # only will be None when _S == None
             self._capacity *= 2
         else:
-            self._list = self._list[:self._front] + [None]*self._capacity + self._list[self._front:]
+            self._list = self._list[:self._front] + [self._s]*self._capacity + self._list[self._front:]  # type: ignore # only will be None when _S == None
             self._front += self._capacity
             self._capacity *= 2
 
     def empty(self) -> None:
         """Empty the CircularArray, keep current capacity."""
-        self._list, self._front, self._rear = [None]*self._capacity, 0, self._capacity-1
+        self._list, self._front, self._rear = [self._s]*self._capacity, 0, self._capacity-1  # type: ignore # only will be None when _S == None
 
     def fractionFilled(self) -> float:
         """Returns fractional capacity of the CircularArray."""
@@ -300,9 +289,6 @@ class CircularArray(Generic[_T]):
         self.compact()
         capacity = self._capacity
         if newSize > capacity:
-            self._list, self._capacity = self._list+[None]*(newSize-capacity), newSize
+            self._list, self._capacity = self._list+[self._s]*(newSize-capacity), newSize  # type: ignore # only will be None when _S == None
             if self._count == 0:
                 self._rear = capacity - 1
-
-if __name__ == "__main__":
-    pass
