@@ -47,11 +47,11 @@ class CA(Generic[_D, _S]):
     """
     __slots__ = '_count', '_capacity', '_front', '_rear', '_list', '_s'
 
-    def __init__(self, *ds: _D, sentinel: Optional[_S|_D]=None):
+    def __init__(self, *ds: _D, sentinel: _S):
         self._s = sentinel
         match len(ds):
             case 0:
-                self._list: list[_D|_S] = [sentinel, sentinel]  # type: ignore # if sentinel == None, then _S == None
+                self._list: list[_D|_S] = [sentinel, sentinel]
                 self._count = 0
                 self._capacity = 2
                 self._front = 0
@@ -135,6 +135,8 @@ class CA(Generic[_D, _S]):
         """
         if not isinstance(other, type(self)):
             return False
+        if self._s != other._s:
+            return False
 
         frontL,      capacityL,      countL,      frontR,       capacityR,       countR = \
         self._front, self._capacity, self._count, other._front, other._capacity, other._count
@@ -147,7 +149,7 @@ class CA(Generic[_D, _S]):
                 return False
         return True
 
-    def copy(self) -> CA[_D]:
+    def copy(self) -> CA[_D, _S]:
         """Return a shallow copy of the CircularArray."""
         return CA(*self, sentinel=self._s)
 
@@ -177,10 +179,10 @@ class CA(Generic[_D, _S]):
 
         """
         if self._count == 0:
-            return self._s    # type: ignore # only will be None when _S == None
+            return self._s
         else:
             d, self._count, self._list[self._rear], self._rear = \
-                self._list[self._rear], self._count-1, self._s, (self._rear - 1) % self._capacity  # type: ignore # only will be None when _S == None
+                self._list[self._rear], self._count-1, self._s, (self._rear - 1) % self._capacity
             return d
 
     def popL(self) -> _D|_S:
@@ -191,10 +193,10 @@ class CA(Generic[_D, _S]):
 
         """
         if self._count == 0:
-            return self._s    # type: ignore # only will be None when _S == None
+            return self._s
         else:
             d, self._count, self._list[self._front], self._front = \
-                self._list[self._front], self._count-1, self._s, (self._front+1) % self._capacity  # type: ignore # only will be None when _S == None
+                self._list[self._front], self._count-1, self._s, (self._front+1) % self._capacity
             return d
 
     def map(self, f: Callable[[_D], _U]) -> CA[_U, _S]:
@@ -203,47 +205,59 @@ class CA(Generic[_D, _S]):
         * return the results in a new CircularArray
 
         """
-        return CA(*map(f, self), sentinel=self._s)  # type: ignore # only will be None when _S == None
+        return CA(*map(f, self), sentinel=self._s)
 
-    def foldL(self, f: Callable[[_L, _D], _L], start: Optional[_L]=None, default: Optional[_L]=None) -> _L|_S:
+    def foldL(self, f: Callable[[_D, _D], _D]) -> _D|_S:
         """Fold left with an initial value.
 
         * first argument of function f is for the accumulated value
-        * if empty, return the initial value s
+        * if empty, return the sentinel value of type _S
 
         """
-        it = iter(self)
-        if start is not None:
-            acc = start
-        elif len(self) == 0:
-            if default is None:
-                return self._s            # type: ignore # will be type _S
-            else:
-                return default
+        if self:
+            it = iter(self)
+            acc = next(it)
+            for v in it:
+                acc = f(acc, v)
+            return acc
         else:
-            acc = next(it)                # type: ignore # in this case _L == _D
-        for v in it:
+            return self._s
+
+    def foldL1(self, f: Callable[[_L, _D], _L], init: _L) -> _L:
+        """Fold left with an initial value.
+
+        * first argument of function f is for the accumulated value
+
+        """
+        acc = init
+        for v in iter(self):
             acc = f(acc, v)
         return acc
 
-    def foldR(self, f: Callable[[_D, _R], _R], start: Optional[_R]=None, default: Optional[_R]=None) -> _R|_S:
+    def foldR(self, f: Callable[[_D, _D], _D]) -> _D|_S:
         """Fold right with an initial value.
 
         * second argument of function f is for the accumulated value
-        * if empty, return the initial value s
+        * if empty, return the sentinel value of type _S
 
         """
-        it = reversed(self)
-        if start is not None:
-            acc = start
-        elif len(self) == 0:
-            if default is None:
-                return self._s            # type: ignore # will be type _S
-            else:
-                return default
+        if self:
+            it = reversed(self)
+            acc = next(it)
+            for v in it:
+                acc = f(v, acc)
+            return acc
         else:
-            acc = next(it)                # type: ignore # in this case _R == _D
-        for v in it:
+            return self._s
+
+    def foldR1(self, f: Callable[[_D, _R], _R], init: _R) -> _R:
+        """Fold right with an initial value.
+
+        * second argument of function f is for the accumulated value
+
+        """
+        acc = init
+        for v in reversed(self):
             acc = f(v, acc)
         return acc
 
@@ -255,7 +269,7 @@ class CA(Generic[_D, _S]):
         """Compact the CircularArray as much as possible."""
         match self._count:
             case 0:
-                self._capacity, self._front, self._rear, self._list = 2, 0, 1, [self._s]*2  # type: ignore # only will be None when _S == None
+                self._capacity, self._front, self._rear, self._list = 2, 0, 1, [self._s]*2
             case 1:
                 self._capacity, self._front, self._rear, self._list = 1, 0, 0, [self._list[self._front]]
             case _:
@@ -269,16 +283,16 @@ class CA(Generic[_D, _S]):
     def double(self) -> None:
         """Double the capacity of the CircularArray."""
         if self._front <= self._rear:
-            self._list += [self._s]*self._capacity  # type: ignore # only will be None when _S == None
+            self._list += [self._s]*self._capacity
             self._capacity *= 2
         else:
-            self._list = self._list[:self._front] + [self._s]*self._capacity + self._list[self._front:]  # type: ignore # only will be None when _S == None
+            self._list = self._list[:self._front] + [self._s]*self._capacity + self._list[self._front:]
             self._front += self._capacity
             self._capacity *= 2
 
     def empty(self) -> None:
         """Empty the CircularArray, keep current capacity."""
-        self._list, self._front, self._rear = [self._s]*self._capacity, 0, self._capacity-1  # type: ignore # only will be None when _S == None
+        self._list, self._front, self._rear = [self._s]*self._capacity, 0, self._capacity-1
 
     def fractionFilled(self) -> float:
         """Returns fractional capacity of the CircularArray."""
@@ -289,6 +303,6 @@ class CA(Generic[_D, _S]):
         self.compact()
         capacity = self._capacity
         if newSize > capacity:
-            self._list, self._capacity = self._list+[self._s]*(newSize-capacity), newSize  # type: ignore # only will be None when _S == None
+            self._list, self._capacity = self._list+[self._s]*(newSize-capacity), newSize
             if self._count == 0:
                 self._rear = capacity - 1
