@@ -32,14 +32,12 @@ _U = TypeVar('_U')
 class CA(Generic[_D, _S]):
     """Class implementing an indexable circular array
 
-    * stateful data structure
+    * stateful generic data structure with a data type and a "fallback/sentinel" type
     * amortized O(1) pushing and popping from either end
     * O(1) random access any element
-    * generic class with one type parameter
     * will resize itself as needed
     * not sliceable
     * in a boolean context returned False if empty, True otherwise
-    * iterators caches current content
     * intended to implement other data structures, so
     * does not make defensive copies of data for the purposes of iteration
     * raises: IndexError

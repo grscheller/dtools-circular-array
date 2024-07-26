@@ -19,6 +19,12 @@ PyPI grscheller.circular-array PyPI project.
 
 ## Releases and Important Milestones
 
+### Version 3.2.0 - PyPI release date 2024-07-26
+
+* class name changed CircularArray -> CA
+* Now takes a "sentinel" or "fallback" value in its initializer
+  * formally used None for this
+
 ### Version 3.1.0 - PyPI release date 2024-07-11
 
 * generic typing now being used

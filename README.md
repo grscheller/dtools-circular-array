@@ -19,7 +19,23 @@ relationship.
 ## Usage
 
 ```python
-from grscheller.circular_array.ca import CircularArray
+from grscheller.circular_array.ca import CA
+
+ca = CA(1, 2, 3, sentinel = None)
+assert ca.popL() == 1
+assert ca.popR() == 3
+ca.pushR(42, 0)
+assert repr(ca) == 'CA(2, 42, 0, sentinel = None)'
+assert str(ca) == '(|2, 42, 0|)'
+assert ca.popL() == 2
+assert ca.popL() == 42
+assert ca.popL() == 0
+assert ca.popL() == None
+
+ca0 = CA(1, 2, sentinel = 0)
+assert ca0.popR() == 2
+assert ca0.popR() == 1
+assert ca0.popR() == 0
 ```
 
 ---
