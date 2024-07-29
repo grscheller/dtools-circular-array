@@ -22,7 +22,7 @@ __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
 
 from typing import Callable, Generic, Iterator, Optional, TypeVar
-from grscheller.fp.iterators import foldL as fL, foldR as fR
+from grscheller.fp.iterators import foldL, foldR
 
 _D = TypeVar('_D')
 _S = TypeVar('_S')
@@ -206,24 +206,23 @@ class CA(Generic[_D, _S]):
         """
         return CA(*map(f, self), sentinel=self._s)
 
-    def foldL(self, f: Callable[[_L|_S, _D], _L], initial: Optional[_L]=None) -> _L|_S:
+    def foldL(self, f: Callable[[_L|_S, _D], _L|_S], initial: Optional[_L]=None) -> _L|_S:
         """Fold left with an initial value.
 
         * first argument of function f is for the accumulated value
         * if empty, return the sentinel value of type _S
 
         """
-        return fL(self, f, self._s, initial)
+        return foldL(self, f, self._s, initial)
 
-    def foldR(self, f: Callable[[_D, _R|_S], _R], initial: Optional[_R]=None) -> _R|_S:
+    def foldR(self, f: Callable[[_D, _R|_S], _R|_S], initial: Optional[_R]=None) -> _R|_S:
         """Fold right with an initial value.
 
         * second argument of function f is for the accumulated value
         * if empty, return the sentinel value of type _S
 
         """
-        return fR(self, f, self._s, initial)
-
+        return foldR(self, f, self._s, initial)
     def capacity(self) -> int:
         """Returns current capacity of the CircularArray."""
         return self._capacity
