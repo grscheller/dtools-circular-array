@@ -16,6 +16,7 @@ from __future__ import annotations
 
 from typing import Optional
 from grscheller.circular_array.ca import CA
+from grscheller.fp.nothing import nothing, Nothing
 
 class TestCircularArray:
     def test_mutate_returns_none(self) -> None:
@@ -171,28 +172,33 @@ class TestCircularArray:
     def test_foldL(self) -> None:
         c1: CA[int, None] = CA(sentinel=None)
         assert c1.foldL(lambda x, y: x + y) == None
-        assert c1.foldL1(lambda x, y: x + y, init=42) == 42
+        assert c1.foldL(lambda x, y: x + y, initial=42) == 42
 
-        c2: CA[int, None] = CA(*range(1, 11), sentinel=None)
-        assert c2.foldL(lambda x, y: x + y) == 55
-        assert c2.foldL1(lambda x, y: x + y, init=10) == 65
-        c3: CA[int, None] = CA(*(0,1,2,3,4), sentinel=None)
+        c2: CA[int, Nothing] = CA(sentinel=nothing)
+        assert c2.foldL(lambda x, y: x + y) == nothing
+        assert c2.foldL(lambda x, y: x + y, initial=0) == 0
+
+        c3: CA[int, None] = CA(*range(1, 11), sentinel=None)
+        assert c3.foldL(lambda x, y: x + y) == 55
+        assert c3.foldL(lambda x, y: x + y, initial=10) == 65
+
+        c4: CA[int, None] = CA(*(0,1,2,3,4), sentinel=None)
 
         def f(vs: list[int], v: int) -> list[int]:
             vs.append(v)
             return vs
 
         empty: list[int] = []
-        assert c3.foldL1(f, empty) == [0, 1, 2, 3, 4]
+        assert c4.foldL(f, empty) == [0, 1, 2, 3, 4]
 
     def test_foldR(self) -> None:
         c1: CA[int, None] = CA(sentinel=None)
         assert c1.foldR(lambda x, y: x * y) == None
-        assert c1.foldR1(lambda x, y: x * y, init=42) == 42
+        assert c1.foldR(lambda x, y: x * y, initial=42) == 42
 
         c2: CA[int, None] = CA(*range(1, 6), sentinel=None)
         assert c2.foldR(lambda x, y: x * y) == 120
-        assert c2.foldR1(lambda x, y: x * y, init=10) == 1200
+        assert c2.foldR(lambda x, y: x * y, initial=10) == 1200
 
         def f(v: int, vs: list[int]) -> list[int]:
             vs.append(v)
@@ -201,4 +207,4 @@ class TestCircularArray:
         c3: CA[int, tuple[()]] = CA(*range(5), sentinel=())
         empty: list[int] = []
         assert c3 == CA(0, 1, 2, 3, 4, sentinel=())
-        assert c3.foldR1(f, empty) == [4, 3, 2, 1, 0]
+        assert c3.foldR(f, empty) == [4, 3, 2, 1, 0]

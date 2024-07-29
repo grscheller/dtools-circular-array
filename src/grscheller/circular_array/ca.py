@@ -22,6 +22,7 @@ __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
 
 from typing import Callable, Generic, Iterator, Optional, TypeVar
+from grscheller.fp.iterators import foldL as fL, foldR as fR
 
 _D = TypeVar('_D')
 _S = TypeVar('_S')
@@ -205,59 +206,23 @@ class CA(Generic[_D, _S]):
         """
         return CA(*map(f, self), sentinel=self._s)
 
-    def foldL(self, f: Callable[[_D, _D], _D]) -> _D|_S:
+    def foldL(self, f: Callable[[_L|_S, _D], _L], initial: Optional[_L]=None) -> _L|_S:
         """Fold left with an initial value.
 
         * first argument of function f is for the accumulated value
         * if empty, return the sentinel value of type _S
 
         """
-        if self:
-            it = iter(self)
-            acc = next(it)
-            for v in it:
-                acc = f(acc, v)
-            return acc
-        else:
-            return self._s
+        return fL(self, f, self._s, initial)
 
-    def foldL1(self, f: Callable[[_L, _D], _L], init: _L) -> _L:
-        """Fold left with an initial value.
-
-        * first argument of function f is for the accumulated value
-
-        """
-        acc = init
-        for v in iter(self):
-            acc = f(acc, v)
-        return acc
-
-    def foldR(self, f: Callable[[_D, _D], _D]) -> _D|_S:
+    def foldR(self, f: Callable[[_D, _R|_S], _R], initial: Optional[_R]=None) -> _R|_S:
         """Fold right with an initial value.
 
         * second argument of function f is for the accumulated value
         * if empty, return the sentinel value of type _S
 
         """
-        if self:
-            it = reversed(self)
-            acc = next(it)
-            for v in it:
-                acc = f(v, acc)
-            return acc
-        else:
-            return self._s
-
-    def foldR1(self, f: Callable[[_D, _R], _R], init: _R) -> _R:
-        """Fold right with an initial value.
-
-        * second argument of function f is for the accumulated value
-
-        """
-        acc = init
-        for v in reversed(self):
-            acc = f(v, acc)
-        return acc
+        return fR(self, f, self._s, initial)
 
     def capacity(self) -> int:
         """Returns current capacity of the CircularArray."""
