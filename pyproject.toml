@@ -16,7 +16,7 @@ classifiers = [
     "Operating System :: OS Independent",
     "License :: OSI Approved :: Apache Software License"
 ]
-dependencies = ["grscheller.fp >= 0.2.2, < 0.3"]
+dependencies = ["grscheller.fp >= 0.3.0, < 0.4"]
 dynamic = ["version", "description"]
 keywords = [
     "circular-array", "circular array", "O(1)",

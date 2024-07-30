@@ -233,24 +233,23 @@ hljs.highlightAll();
         &#34;&#34;&#34;
         return CA(*map(f, self), sentinel=self._s)
 
-    def foldL(self, f: Callable[[_L|_S, _D], _L], initial: Optional[_L]=None) -&gt; _L|_S:
+    def foldL(self, f: Callable[[_L|_S, _D], _L|_S], initial: Optional[_L]=None) -&gt; _L|_S:
         &#34;&#34;&#34;Fold left with an initial value.
 
         * first argument of function f is for the accumulated value
         * if empty, return the sentinel value of type _S
 
         &#34;&#34;&#34;
-        return fL(self, f, self._s, initial)
+        return foldL(self, f, initial, self._s)
 
-    def foldR(self, f: Callable[[_D, _R|_S], _R], initial: Optional[_R]=None) -&gt; _R|_S:
+    def foldR(self, f: Callable[[_D, _R|_S], _R|_S], initial: Optional[_R]=None) -&gt; _R|_S:
         &#34;&#34;&#34;Fold right with an initial value.
 
         * second argument of function f is for the accumulated value
         * if empty, return the sentinel value of type _S
 
         &#34;&#34;&#34;
-        return fR(self, f, self._s, initial)
-
+        return foldR(self, f, initial, self._s)
     def capacity(self) -&gt; int:
         &#34;&#34;&#34;Returns current capacity of the CircularArray.&#34;&#34;&#34;
         return self._capacity
@@ -334,7 +333,7 @@ hljs.highlightAll();
 <div class="desc"><p>Empty the CircularArray, keep current capacity.</p></div>
 </dd>
 <dt id="grscheller.circular_array.ca.CA.foldL"><code class="name flex">
-<span>def <span class="ident">foldL</span></span>(<span>self, f: Callable[[_L | _S, _D], _L], initial: Optional[_L] = None) ‑> Union[_L, _S]</span>
+<span>def <span class="ident">foldL</span></span>(<span>self, f: Callable[[_L | _S, _D], _L | _S], initial: Optional[_L] = None) ‑> Union[_L, _S]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Fold left with an initial value.</p>
@@ -344,7 +343,7 @@ hljs.highlightAll();
 </ul></div>
 </dd>
 <dt id="grscheller.circular_array.ca.CA.foldR"><code class="name flex">
-<span>def <span class="ident">foldR</span></span>(<span>self, f: Callable[[_D, _R | _S], _R], initial: Optional[_R] = None) ‑> Union[_R, _S]</span>
+<span>def <span class="ident">foldR</span></span>(<span>self, f: Callable[[_D, _R | _S], _R | _S], initial: Optional[_R] = None) ‑> Union[_R, _S]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Fold right with an initial value.</p>

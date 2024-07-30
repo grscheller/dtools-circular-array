@@ -213,7 +213,7 @@ class CA(Generic[_D, _S]):
         * if empty, return the sentinel value of type _S
 
         """
-        return foldL(self, f, self._s, initial)
+        return foldL(self, f, initial, self._s)
 
     def foldR(self, f: Callable[[_D, _R|_S], _R|_S], initial: Optional[_R]=None) -> _R|_S:
         """Fold right with an initial value.
@@ -222,7 +222,7 @@ class CA(Generic[_D, _S]):
         * if empty, return the sentinel value of type _S
 
         """
-        return foldR(self, f, self._s, initial)
+        return foldR(self, f, initial, self._s)
     def capacity(self) -> int:
         """Returns current capacity of the CircularArray."""
         return self._capacity
