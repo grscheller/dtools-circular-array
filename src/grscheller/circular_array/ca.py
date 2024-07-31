@@ -21,19 +21,18 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
 
-from typing import Callable, Generic, Iterator, Optional, TypeVar
-from grscheller.fp.iterables import foldL, foldR
+from typing import Callable, cast, Generic, Iterator, Optional, TypeVar
 
 _D = TypeVar('_D')
 _S = TypeVar('_S')
 _L = TypeVar('_L')
 _R = TypeVar('_R')
-_U = TypeVar('_U')
+_T = TypeVar('_T')
 
 class CA(Generic[_D, _S]):
     """Class implementing an indexable circular array
 
-    * stateful generic data structure with a data type and a "fallback/sentinel" type
+    * stateful generic data structure with a data type and a "fallback/sentinel" value
     * amortized O(1) pushing and popping from either end
     * O(1) random access any element
     * will resize itself as needed
@@ -46,11 +45,11 @@ class CA(Generic[_D, _S]):
     """
     __slots__ = '_count', '_capacity', '_front', '_rear', '_list', '_s'
 
-    def __init__(self, *ds: _D, sentinel: _S):
-        self._s = sentinel
+    def __init__(self, *ds: _D, s: _S):
+        self._s = s
         match len(ds):
             case 0:
-                self._list: list[_D|_S] = [sentinel, sentinel]
+                self._list: list[_D|_S] = [s, s]
                 self._count = 0
                 self._capacity = 2
                 self._front = 0
@@ -150,7 +149,7 @@ class CA(Generic[_D, _S]):
 
     def copy(self) -> CA[_D, _S]:
         """Return a shallow copy of the CircularArray."""
-        return CA(*self, sentinel=self._s)
+        return CA(*self, s=self._s)
 
     def pushR(self, *ds: _D) -> None:
         """Push data onto the rear of the CircularArray."""
@@ -198,31 +197,62 @@ class CA(Generic[_D, _S]):
                 self._list[self._front], self._count-1, self._s, (self._front+1) % self._capacity
             return d
 
-    def map(self, f: Callable[[_D], _U]) -> CA[_U, _S]:
+    def map(self, f: Callable[[_D], _T]) -> CA[_T, _S]:
         """Apply function f over the CircularArray's contents.
 
         * return the results in a new CircularArray
 
         """
-        return CA(*map(f, self), sentinel=self._s)
+        return CA(*map(f, self), s=self._s)
 
-    def foldL(self, f: Callable[[_L|_S, _D], _L|_S], initial: Optional[_L]=None) -> _L|_S:
+    def foldL(self, f: Callable[[_L, _D], _L], initial: Optional[_L]=None) -> _L|_S:
         """Fold left with an initial value.
 
         * first argument of function f is for the accumulated value
         * if empty, return the sentinel value of type _S
 
         """
-        return foldL(self, f, initial, self._s)
+        if self._count == 0:
+            if initial is None:
+                return self._s
+            else:
+                return initial
+        else:
+            if initial is None:
+                acc = cast(_L, self[0])                   # in this case _D = _L
+                for idx in range(1, self._count):
+                    acc = f(acc, self[idx])
+                return acc
+            else:
+                acc = initial
+                for d in self:
+                    acc = f(acc, d)
+                return acc
 
-    def foldR(self, f: Callable[[_D, _R|_S], _R|_S], initial: Optional[_R]=None) -> _R|_S:
+    def foldR(self, f: Callable[[_D, _R], _R], initial: Optional[_R]=None) -> _R|_S:
         """Fold right with an initial value.
 
         * second argument of function f is for the accumulated value
         * if empty, return the sentinel value of type _S
 
         """
-        return foldR(self, f, initial, self._s)
+        if self._count == 0:
+            if initial is None:
+                return self._s
+            else:
+                return initial
+        else:
+            if initial is None:
+                acc = cast(_R, self[-1])                  # in this case _D = _R
+                for idx in range(self._count-2, -1, -1):
+                    acc = f(self[idx], acc)
+                return acc
+            else:
+                acc = initial
+                for d in reversed(self):
+                    acc = f(d, acc)
+                return acc
+
     def capacity(self) -> int:
         """Returns current capacity of the CircularArray."""
         return self._capacity

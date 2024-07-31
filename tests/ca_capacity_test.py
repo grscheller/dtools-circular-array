@@ -20,10 +20,10 @@ from grscheller.circular_array.ca import CA
 class TestCapacity:
 
     def test_capacity_original(self) -> None:
-        c: CA[object, None] = CA(sentinel=None)
+        c: CA[object, None] = CA(s=None)
         assert c.capacity() == 2
 
-        c = CA(1, 2, sentinel=None)
+        c = CA(1, 2, s=None)
         assert c.fractionFilled() == 2/2
 
         c.pushL(0)
@@ -57,7 +57,7 @@ class TestCapacity:
         assert c.fractionFilled() == 2/3
 
     def test_double(self) -> None:
-        c: CA[int, int] = CA(1, 2, 3, sentinel=-1)
+        c: CA[int, int] = CA(1, 2, 3, s=-1)
         assert c.popL() == 1
         assert c.capacity() == 3
         c.double()
@@ -88,9 +88,9 @@ class TestCapacity:
             jj -= 1
 
     def test_empty(self) -> None:
-        c: CA[object, None] = CA(sentinel=None)
-        assert c != CA(sentinel=())
-        assert c == CA(sentinel=None)
+        c: CA[object, None] = CA(s=None)
+        assert c != CA(s=())
+        assert c == CA(s=None)
         assert c.capacity() == 2
         c.double()
         assert c.capacity() == 4
@@ -101,7 +101,7 @@ class TestCapacity:
         assert len(c) == 0
 
     def test_one(self) -> None:
-        c = CA(42, sentinel=None)
+        c = CA(42, s=None)
         assert c.capacity() == 1
         c.compact()
         assert c.capacity() == 1

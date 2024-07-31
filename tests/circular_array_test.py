@@ -20,7 +20,7 @@ from grscheller.fp.nothing import nothing, Nothing
 
 class TestCircularArray:
     def test_mutate_returns_none(self) -> None:
-        ca1: CA[int, None] = CA(sentinel=None)
+        ca1: CA[int, None] = CA(s=None)
         assert ca1.pushL(1) == None  # type: ignore # testing for no return
         ca1.pushL(0)
         ca1.pushR(2)
@@ -40,7 +40,7 @@ class TestCircularArray:
         assert ca2.popL() is None
 
     def test_push_then_pop(self) -> None:
-        c: CA[str, None] = CA(sentinel=None)
+        c: CA[str, None] = CA(s=None)
         pushed1 = '42'
         c.pushL(pushed1)
         popped1 = c.popL()
@@ -74,7 +74,7 @@ class TestCircularArray:
 
     def test_iterators(self) -> None:
         data: list[int] = [*range(100)]
-        c: CA[int, tuple[()]]= CA(*data, sentinel=())
+        c: CA[int, tuple[()]]= CA(*data, s=())
         ii = 0
         for item in c:
             assert data[ii] == item
@@ -82,7 +82,7 @@ class TestCircularArray:
         assert ii == 100
 
         data.append(100)
-        c = CA(*data, sentinel=())
+        c = CA(*data, s=())
         data.reverse()
         ii = 0
         for item in reversed(c):
@@ -90,22 +90,22 @@ class TestCircularArray:
             ii += 1
         assert ii == 101
 
-        c0: CA[object, tuple[()]] = CA(sentinel=())
+        c0: CA[object, tuple[()]] = CA(s=())
         for _ in c0:
             assert False
         for _ in reversed(c0):
             assert False
 
         data2: list[str] = []
-        c0 = CA(*data2, sentinel=())
+        c0 = CA(*data2, s=())
         for _ in c0:
             assert False
         for _ in reversed(c0):
             assert False
 
     def test_equality(self) -> None:
-        c1: CA[object, tuple[()]] = CA(1, 2, 3, 'Forty-Two', (7, 11, 'foobar'), sentinel=())
-        c2: CA[object, tuple[()]] = CA(2, 3, 'Forty-Two', sentinel=())
+        c1: CA[object, tuple[()]] = CA(1, 2, 3, 'Forty-Two', (7, 11, 'foobar'), s=())
+        c2: CA[object, tuple[()]] = CA(2, 3, 'Forty-Two', s=())
         c2.pushL(1)
         c2.pushR((7, 11, 'foobar'))
         assert c1 == c2
@@ -134,17 +134,17 @@ class TestCircularArray:
         assert c1 == c2
 
     def test_map(self) -> None:
-        c0: CA[int, None] = CA(1,2,3,10, sentinel=None)
+        c0: CA[int, None] = CA(1,2,3,10, s=None)
         c1 = c0.copy()
         c2 = c1.map(lambda x: x*x-1)
-        assert c2 == CA(0,3,8,99, sentinel=None)
+        assert c2 == CA(0,3,8,99, s=None)
         assert c1 != c2
         assert c1 == c0
         assert c1 is not c0
         assert len(c1) == len(c2) == 4
 
     def test_get_set_items(self) -> None:
-        c1: CA[str, str] = CA('a', 'b', 'c', 'd', sentinel = '')
+        c1: CA[str, str] = CA('a', 'b', 'c', 'd', s = '')
         c2 = c1.copy()
         assert c1 == c2
         c1[2] = 'cat'
@@ -170,19 +170,19 @@ class TestCircularArray:
         assert c1 == c2
 
     def test_foldL(self) -> None:
-        c1: CA[int, None] = CA(sentinel=None)
+        c1: CA[int, None] = CA(s=None)
         assert c1.foldL(lambda x, y: x + y) == None
         assert c1.foldL(lambda x, y: x + y, initial=42) == 42
 
-        c2: CA[int, Nothing] = CA(sentinel=nothing)
+        c2: CA[int, Nothing] = CA(s=nothing)
         assert c2.foldL(lambda x, y: x + y) == nothing
         assert c2.foldL(lambda x, y: x + y, initial=0) == 0
 
-        c3: CA[int, None] = CA(*range(1, 11), sentinel=None)
+        c3: CA[int, None] = CA(*range(1, 11), s=None)
         assert c3.foldL(lambda x, y: x + y) == 55
         assert c3.foldL(lambda x, y: x + y, initial=10) == 65
 
-        c4: CA[int, None] = CA(*(0,1,2,3,4), sentinel=None)
+        c4: CA[int, None] = CA(*(0,1,2,3,4), s=None)
 
         def f(vs: list[int], v: int) -> list[int]:
             vs.append(v)
@@ -192,11 +192,11 @@ class TestCircularArray:
         assert c4.foldL(f, empty) == [0, 1, 2, 3, 4]
 
     def test_foldR(self) -> None:
-        c1: CA[int, None] = CA(sentinel=None)
+        c1: CA[int, None] = CA(s=None)
         assert c1.foldR(lambda x, y: x * y) == None
         assert c1.foldR(lambda x, y: x * y, initial=42) == 42
 
-        c2: CA[int, None] = CA(*range(1, 6), sentinel=None)
+        c2: CA[int, None] = CA(*range(1, 6), s=None)
         assert c2.foldR(lambda x, y: x * y) == 120
         assert c2.foldR(lambda x, y: x * y, initial=10) == 1200
 
@@ -204,7 +204,7 @@ class TestCircularArray:
             vs.append(v)
             return vs
 
-        c3: CA[int, tuple[()]] = CA(*range(5), sentinel=())
+        c3: CA[int, tuple[()]] = CA(*range(5), s=())
         empty: list[int] = []
-        assert c3 == CA(0, 1, 2, 3, 4, sentinel=())
+        assert c3 == CA(0, 1, 2, 3, 4, s=())
         assert c3.foldR(f, empty) == [4, 3, 2, 1, 0]
