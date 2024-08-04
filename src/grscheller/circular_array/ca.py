@@ -39,27 +39,32 @@ class CA(Generic[_D, _S]):
     * not sliceable
     * in a boolean context returned False if empty, True otherwise
     * intended to implement other data structures, so
-    * does not make defensive copies of data for the purposes of iteration
-    * raises: IndexError
+    * - does not make defensive copies of data for the purposes of iteration
+    * - raises: IndexError
+    * - no convenience default sentinel value
 
     """
-    __slots__ = '_count', '_capacity', '_front', '_rear', '_list', '_s'
+    __slots__ = '_list', '_s', '_storable', '_count', '_capacity', '_front', '_rear'
 
-    def __init__(self, *ds: _D, s: _S):
-        self._s = s
-        match len(ds):
-            case 0:
-                self._list: list[_D|_S] = [s, s]
-                self._count = 0
-                self._capacity = 2
-                self._front = 0
-                self._rear = 1
-            case count:
-                self._list = list(ds)
-                self._count = count
-                self._capacity = count
-                self._front = 0
-                self._rear = count - 1
+    def __init__(self, *data: _D, sentinel: _S, storable: bool=True):
+        self._s = sentinel
+        self._storable = storable
+
+        self._list: list[_D|_S]
+        if storable:
+            self._list = [sentinel] + list(data) + [sentinel]
+        else:
+            self._list = [sentinel] + list(filter(lambda d: d != sentinel, data)) + [sentinel]
+
+        length = len(self._list)
+        self._count = length - 2
+        self._capacity = length
+        if length == 2:
+            self._front = 0
+            self._rear = 1
+        else:
+            self._front = 1
+            self._rear = length - 2
 
     def __iter__(self) -> Iterator[_D]:
         if self._count > 0:
@@ -67,9 +72,9 @@ class CA(Generic[_D, _S]):
             self._capacity, self._rear, self._front, self._list.copy()
 
             while position != rear:
-                yield currentState[position]          # type: ignore # will always yield _D
+                yield cast(_D, currentState[position])  # will always yield a _D
                 position = (position + 1) % capacity
-            yield currentState[position]              # type: ignore # will always yield _D
+            yield cast(_D, currentState[position])      # will always yield a _D
 
     def __reversed__(self) -> Iterator[_D]:
         if self._count > 0:
@@ -77,15 +82,25 @@ class CA(Generic[_D, _S]):
             self._capacity, self._front, self._rear, self._list.copy()
 
             while position != front:
-                yield currentState[position]         # type: ignore # will always yield _D
+                yield cast(_D, currentState[position])  # will always yield a _D
                 position = (position - 1) % capacity
-            yield currentState[position]             # type: ignore # will always yield _D
+            yield cast(_D, currentState[position])      # will always yield a _D
 
     def __repr__(self) -> str:
-        return 'CA(' + ', '.join(map(repr, self)) + ', sentinel = ' + repr(self._s) + ')'
+        if self._storable:
+            return ('CA('
+                    + ', '.join(map(repr, self))
+                    + (', ' if self._count > 0 else '')
+                    + 'sentinel=' + repr(self._s) + ')')
+        else:
+            return ('CA('
+                    + ', '.join(map(repr, self))
+                    + (', ' if self._count > 0 else '')
+                    + 'sentinel=' + repr(self._s) + ', '
+                    + 'storable=' + repr(False) + ')')
 
     def __str__(self) -> str:
-        return "(|" + ", ".join(map(str, self)) + "|)"
+        return '(|' + ', '.join(map(str, self)) + '| ' + repr(self._s) + ' )'
 
     def __bool__(self) -> bool:
         return self._count > 0
@@ -129,11 +144,17 @@ class CA(Generic[_D, _S]):
         """Returns True if all the data stored in both compare as equal.
 
         * worst case is O(n) behavior for the true case
+        * _S can be the same type as _D
+        * both self & other must have the same sentinel value to compare as equal
+        * - then sentinel value storability must also agree
+        * - typing ensures sentinel is of type _D if pushed onto CircularArray
 
         """
         if not isinstance(other, type(self)):
             return False
         if self._s != other._s:
+            return False
+        if self._storable != other._storable:
             return False
 
         frontL,      capacityL,      countL,      frontR,       capacityR,       countR = \
@@ -149,31 +170,48 @@ class CA(Generic[_D, _S]):
 
     def copy(self) -> CA[_D, _S]:
         """Return a shallow copy of the CircularArray."""
-        return CA(*self, s=self._s)
+        return CA(*self, sentinel=self._s, storable=self._storable)
 
     def pushR(self, *ds: _D) -> None:
         """Push data onto the rear of the CircularArray."""
-        for d in ds:
-            if self._count == self._capacity:
-                self.double()
-            self._rear = (self._rear + 1) % self._capacity
-            self._list[self._rear] = d
-            self._count += 1
+        if self._storable:
+            for d in ds:
+                if self._count == self._capacity:
+                    self.double()
+                self._rear = (self._rear + 1) % self._capacity
+                self._list[self._rear] = d
+                self._count += 1
+        else:
+            for d in filter(lambda d: d != self._s, ds):
+                if self._count == self._capacity:
+                    self.double()
+                self._rear = (self._rear + 1) % self._capacity
+                self._list[self._rear] = d
+                self._count += 1
 
     def pushL(self, *ds: _D) -> None:
         """Push data onto the front of the CircularArray."""
-        for d in ds:
-            if self._count == self._capacity:
-                self.double()
-            self._front = (self._front - 1) % self._capacity
-            self._list[self._front] = d
-            self._count += 1
+        if self._storable:
+            for d in ds:
+                if self._count == self._capacity:
+                    self.double()
+                self._front = (self._front - 1) % self._capacity
+                self._list[self._front] = d
+                self._count += 1
+        else:
+            for d in filter(lambda d: d != self._s, ds):
+                if self._count == self._capacity:
+                    self.double()
+                self._front = (self._front - 1) % self._capacity
+                self._list[self._front] = d
+                self._count += 1
 
     def popR(self) -> _D|_S:
         """Pop data off the rear of the CircularArray.
 
-        * returns None if empty
-        * use in a boolean context to determine if empty
+        * returns sentinel value if empty
+        * - don't rely on this to determine if circularArray is empty unless storable is set to false
+        * - otherwise use the circularArray in a boolean context to determine if empty
 
         """
         if self._count == 0:
@@ -186,8 +224,9 @@ class CA(Generic[_D, _S]):
     def popL(self) -> _D|_S:
         """Pop data off the front of the CircularArray.
 
-        * returns None if empty
-        * use in a boolean context to determine if empty
+        * returns sentinel value if empty
+        * - don't rely on this to determine if circularArray is empty unless storable is set to false
+        * - otherwise use the circularArray in a boolean context to determine if empty
 
         """
         if self._count == 0:
@@ -203,7 +242,7 @@ class CA(Generic[_D, _S]):
         * return the results in a new CircularArray
 
         """
-        return CA(*map(f, self), s=self._s)
+        return CA(*map(f, self), sentinel=self._s)
 
     def foldL(self, f: Callable[[_L, _D], _L], initial: Optional[_L]=None) -> _L|_S:
         """Fold left with an initial value.
@@ -258,19 +297,19 @@ class CA(Generic[_D, _S]):
         return self._capacity
 
     def compact(self) -> None:
-        """Compact the CircularArray as much as possible."""
+        """Compact the CircularArray."""
         match self._count:
             case 0:
-                self._capacity, self._front, self._rear, self._list = 2, 0, 1, [self._s]*2
+                self._capacity, self._front, self._rear, self._list = 2, 0, 1, [self._s, self._s]
             case 1:
-                self._capacity, self._front, self._rear, self._list = 1, 0, 0, [self._list[self._front]]
+                self._capacity, self._front, self._rear, self._list = 3, 1, 1, [self._s, self._list[self._front], self._s]
             case _:
                 if self._front <= self._rear:
-                    self._capacity, self._front, self._rear,    self._list = \
-                    self._count,    0,           self._count-1, self._list[self._front:self._rear+1]
+                    self._capacity, self._front, self._rear,  self._list = \
+                    self._count+2,  1,           self._count, [self._s] + self._list[self._front:self._rear+1] + [self._s]
                 else:
-                    self._capacity, self._front, self._rear,    self._list = \
-                    self._count,    0,           self._count-1, self._list[self._front:] + self._list[:self._rear+1]
+                    self._capacity, self._front, self._rear,  self._list = \
+                    self._count+2,  1,           self._count, self._list[self._front:] + self._list[:self._rear+1] + [self._s]
 
     def double(self) -> None:
         """Double the capacity of the CircularArray."""
@@ -298,3 +337,12 @@ class CA(Generic[_D, _S]):
             self._list, self._capacity = self._list+[self._s]*(newSize-capacity), newSize
             if self._count == 0:
                 self._rear = capacity - 1
+
+    def is_sentinel_storable(self) -> bool:
+        """Returns true if sentinel value is storable in the CircularArray.
+
+        * only really matters if _S is a subtype of _D
+        * unless overridden, typing will prevent a value being stored if not of type _D
+
+        """
+        return self._storable

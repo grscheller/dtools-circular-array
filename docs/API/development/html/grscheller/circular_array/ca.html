@@ -50,8 +50,21 @@ hljs.highlightAll();
 <li>not sliceable</li>
 <li>in a boolean context returned False if empty, True otherwise</li>
 <li>intended to implement other data structures, so</li>
+<li>
+<ul>
 <li>does not make defensive copies of data for the purposes of iteration</li>
+</ul>
+</li>
+<li>
+<ul>
 <li>raises: IndexError</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>no convenience default sentinel value</li>
+</ul>
+</li>
 </ul></div>
 <details class="source">
 <summary>
@@ -67,8 +80,9 @@ hljs.highlightAll();
     * not sliceable
     * in a boolean context returned False if empty, True otherwise
     * intended to implement other data structures, so
-    * does not make defensive copies of data for the purposes of iteration
-    * raises: IndexError
+    * - does not make defensive copies of data for the purposes of iteration
+    * - raises: IndexError
+    * - no convenience default sentinel value
 
     &#34;&#34;&#34;
     __slots__ = &#39;_count&#39;, &#39;_capacity&#39;, &#39;_front&#39;, &#39;_rear&#39;, &#39;_list&#39;, &#39;_s&#39;
@@ -200,7 +214,7 @@ hljs.highlightAll();
     def popR(self) -&gt; _D|_S:
         &#34;&#34;&#34;Pop data off the rear of the CircularArray.
 
-        * returns None if empty
+        * returns sentinel value if empty
         * use in a boolean context to determine if empty
 
         &#34;&#34;&#34;
@@ -214,7 +228,7 @@ hljs.highlightAll();
     def popL(self) -&gt; _D|_S:
         &#34;&#34;&#34;Pop data off the front of the CircularArray.
 
-        * returns None if empty
+        * returns sentinel value if empty
         * use in a boolean context to determine if empty
 
         &#34;&#34;&#34;
@@ -404,7 +418,7 @@ hljs.highlightAll();
 <dd>
 <div class="desc"><p>Pop data off the front of the CircularArray.</p>
 <ul>
-<li>returns None if empty</li>
+<li>returns sentinel value if empty</li>
 <li>use in a boolean context to determine if empty</li>
 </ul></div>
 </dd>
@@ -414,7 +428,7 @@ hljs.highlightAll();
 <dd>
 <div class="desc"><p>Pop data off the rear of the CircularArray.</p>
 <ul>
-<li>returns None if empty</li>
+<li>returns sentinel value if empty</li>
 <li>use in a boolean context to determine if empty</li>
 </ul></div>
 </dd>
