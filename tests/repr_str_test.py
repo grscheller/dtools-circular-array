@@ -25,29 +25,29 @@ class Test_repr:
         assert ca2 == ca1
         assert ca2 is not ca1
 
-        ca1.push_rear(1)
-        ca1.push_front('foo')
+        ca1.pushR(1)
+        ca1.pushF('foo')
         assert repr(ca1) == "CA('foo', 1)"
         ca2 = eval(repr(ca1))
         assert ca2 == ca1
         assert ca2 is not ca1
 
-        assert ca1.pop_front_unsafe() == 'foo'
-        ca1.push_rear(2)
-        ca1.push_rear(3)
-        ca1.push_rear(4)
-        ca1.push_rear(5)
-        assert ca1.pop_front_unsafe() == 1
-        ca1.push_front(42)
-        ca1.pop_rear_unsafe()
+        assert ca1.popF_unsafe() == 'foo'
+        ca1.pushR(2)
+        ca1.pushR(3)
+        ca1.pushR(4)
+        ca1.pushR(5)
+        assert ca1.popF_unsafe() == 1
+        ca1.pushF(42)
+        ca1.popR_unsafe()
         assert repr(ca1) == 'CA(42, 2, 3, 4)'
         ca2 = eval(repr(ca1))
         assert ca2 == ca1
         assert ca2 is not ca1
 
         ca3: CA[int] = CA(1, 10, 0, 42, 99)
-        ca3.push_rear(2, 100, 3)
-        assert ca3.pop_front_unsafe() == 1
-        assert ca3.pop_rear_unsafe() == 3
-        ca3.push_front(9, 8)
+        ca3.pushR(2, 100, 3)
+        assert ca3.popF_unsafe() == 1
+        assert ca3.popR_unsafe() == 3
+        ca3.pushF(9, 8)
         assert repr(ca3) == 'CA(8, 9, 10, 0, 42, 99, 2, 100)'

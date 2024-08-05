@@ -21,66 +21,66 @@ from grscheller.fp.nothing import nothing, Nothing
 class TestCircularArray:
     def test_mutate_returns_none(self) -> None:
         ca1: CA[int] = CA()
-        assert ca1.push_front(1) == None  # type: ignore # testing for no return
-        ca1.push_front(0)
-        ca1.push_rear(2)
-        ca1.push_rear(3)
-        assert ca1.pop_front_unsafe() == 0
-        ca1.push_rear(4)
+        assert ca1.pushF(1) == None  # type: ignore # testing for no return
+        ca1.pushF(0)
+        ca1.pushR(2)
+        ca1.pushR(3)
+        assert ca1.popF_unsafe() == 0
+        ca1.pushR(4)
         ca2 = ca1.map(lambda x: x+1)
         assert ca1 is not ca2
         assert ca1 != ca2
         assert len(ca1) == len(ca2)
-        assert ca1.pop_front_unsafe() == 1
+        assert ca1.popF_unsafe() == 1
         while ca1:
-            assert ca1.pop_front_unsafe() == ca2.pop_front_unsafe()
+            assert ca1.popF_unsafe() == ca2.popF_unsafe()
         assert len(ca1) == 0
         assert len(ca2) == 1
-        assert ca2.pop_rear_unsafe() == 5
+        assert ca2.popR_unsafe() == 5
         try:
-            assert ca2.pop_rear_unsafe()
+            assert ca2.popR_unsafe()
         except ValueError as ve:
             assert True
-            assert str(ve) == 'Method pop_rear_unsafe called on an empty CA'
+            assert str(ve) == 'Method popR_unsafe called on an empty CA'
         else:
             assert False
 
     def test_push_then_pop(self) -> None:
         c: CA[str] = CA()
         pushed1 = '42'
-        c.push_front(pushed1)
-        popped1 = c.pop_front_unsafe()
+        c.pushF(pushed1)
+        popped1 = c.popF_unsafe()
         assert pushed1 == popped1
         assert len(c) == 0
         try:
-            c.pop_front_unsafe()
+            c.popF_unsafe()
         except ValueError as ve:
-            assert str(ve) == 'Method pop_front_unsafe called on an empty CA'
+            assert str(ve) == 'Method popF_unsafe called on an empty CA'
         else:
             assert False
         pushed1 = '0'
-        c.push_front(pushed1)
-        popped1 = c.pop_rear_unsafe()
+        c.pushF(pushed1)
+        popped1 = c.popR_unsafe()
         assert pushed1 == popped1 == '0'
         assert not c
         pushed1 = '0'
-        c.push_rear(pushed1)
-        popped1 = c.pop_front_unsafe()
+        c.pushR(pushed1)
+        popped1 = c.popF_unsafe()
         assert popped1 is not None
         assert pushed1 == popped1
         assert len(c) == 0
         pushed2 = ''
-        c.push_rear(pushed2)
-        popped2 = c.pop_rear_unsafe()
+        c.pushR(pushed2)
+        popped2 = c.popR_unsafe()
         assert pushed2 == popped2
         assert len(c) == 0
-        c.push_rear('first')
-        c.push_rear('second')
-        c.push_rear('last')
-        assert c.pop_front_unsafe() == 'first'
-        assert c.pop_rear_unsafe() == 'last'
+        c.pushR('first')
+        c.pushR('second')
+        c.pushR('last')
+        assert c.popF_unsafe() == 'first'
+        assert c.popR_unsafe() == 'last'
         assert c
-        c.pop_front_unsafe()
+        c.popF_unsafe()
         assert len(c) == 0
 
     def test_iterators(self) -> None:
@@ -117,31 +117,31 @@ class TestCircularArray:
     def test_equality(self) -> None:
         c1: CA[object] = CA(1, 2, 3, 'Forty-Two', (7, 11, 'foobar'))
         c2: CA[object] = CA(2, 3, 'Forty-Two')
-        c2.push_front(1)
-        c2.push_rear((7, 11, 'foobar'))
+        c2.pushF(1)
+        c2.pushR((7, 11, 'foobar'))
         assert c1 == c2
 
-        tup2 = c2.pop_rear_unsafe()
+        tup2 = c2.popR_unsafe()
         assert c1 != c2
 
-        c2.push_rear((42, 'foofoo'))
+        c2.pushR((42, 'foofoo'))
         assert c1 != c2
 
-        c1.pop_rear_unsafe()
-        c1.push_rear((42, 'foofoo'))
-        c1.push_rear(tup2)
-        c2.push_rear(tup2)
+        c1.popR_unsafe()
+        c1.pushR((42, 'foofoo'))
+        c1.pushR(tup2)
+        c2.pushR(tup2)
         assert c1 == c2
 
-        holdA = c1.pop_front_unsafe()
+        holdA = c1.popF_unsafe()
         c1.resize(42)
-        holdB = c1.pop_front_unsafe()
-        holdC = c1.pop_rear_unsafe()
-        c1.push_front(holdB)
-        c1.push_rear(holdC)
-        c1.push_front(holdA)
-        c1.push_front(200)
-        c2.push_front(200)
+        holdB = c1.popF_unsafe()
+        holdC = c1.popR_unsafe()
+        c1.pushF(holdB)
+        c1.pushR(holdC)
+        c1.pushF(holdA)
+        c1.pushF(200)
+        c2.pushF(200)
         assert c1 == c2
 
     def test_map(self) -> None:
@@ -160,9 +160,9 @@ class TestCircularArray:
         assert c1 == c2
         c1[2] = 'cat'
         c1[-1] = 'dog'
-        assert c2.pop_rear_unsafe() == 'd'
-        assert c2.pop_rear_unsafe() == 'c'
-        c2.push_rear('cat')
+        assert c2.popR_unsafe() == 'd'
+        assert c2.popR_unsafe() == 'c'
+        c2.pushR('cat')
         try:
             c2[3] = 'dog'       # no such index
         except IndexError:
@@ -170,14 +170,14 @@ class TestCircularArray:
         else:
             assert False
         assert c1 != c2
-        c2.push_rear('dog')
+        c2.pushR('dog')
         assert c1 == c2
         c2[1] = 'bob'
         assert c1 != c2
-        assert c1.pop_front_unsafe() == 'a'
+        assert c1.popF_unsafe() == 'a'
         c1[0] = c2[1]
         assert c1 != c2
-        assert c2.pop_front_unsafe() == 'a'
+        assert c2.popF_unsafe() == 'a'
         assert c1 == c2
 
     def test_foldL(self) -> None:

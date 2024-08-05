@@ -26,16 +26,16 @@ class TestCapacity:
         c = CA(1, 2)
         assert c.fractionFilled() == 2/4
 
-        c.push_front(0)
+        c.pushF(0)
         assert c.fractionFilled() == 3/4
 
-        c.push_rear(3)
+        c.pushR(3)
         assert c.fractionFilled() == 4/4
 
-        c.push_rear(4)
+        c.pushR(4)
         assert c.fractionFilled() == 5/8
 
-        c.push_front(5)
+        c.pushF(5)
         assert c.fractionFilled() == 6/8
 
         assert len(c) == 6
@@ -50,10 +50,10 @@ class TestCapacity:
         c.resize(3)
         assert c.fractionFilled() == 6/8
 
-        c.pop_front_unsafe()
-        c.pop_rear_unsafe()
-        c.pop_front_unsafe()
-        c.pop_rear_unsafe()
+        c.popF_unsafe()
+        c.popR_unsafe()
+        c.popF_unsafe()
+        c.popR_unsafe()
         assert c.fractionFilled() == 2/8
         c.resize(3)
         assert c.fractionFilled() == 2/4
@@ -63,34 +63,34 @@ class TestCapacity:
 
     def test_double(self) -> None:
         c: CA[int] = CA(1, 2, 3)
-        assert c.pop_front_unsafe() == 1
+        assert c.popF_unsafe() == 1
         assert c.capacity() == 5
         c.double()
         assert c.capacity() == 10
         c.double()
-        c.push_front(666)
-        c.push_rear(0)
+        c.pushF(666)
+        c.pushR(0)
         assert len(c) == 4
         assert c.capacity() == 20
         c.resize()
         assert c.capacity() == 6
-        c.push_front(2000)
+        c.pushF(2000)
         assert len(c) == 5
         assert c.capacity() == 6
         for ii in range(45):
             if ii % 3 == 0:
-                c.push_rear(c.pop_front_unsafe())
-                c.push_front(ii+100)
+                c.pushR(c.popF_unsafe())
+                c.pushF(ii+100)
             else:
-                c.push_rear(ii+1000)
+                c.pushR(ii+1000)
         assert len(c) == 50
         assert c.capacity() == 96
         jj = len(c)
         assert jj == 50
         while jj > 0:
-            kk = c.pop_front_unsafe()
+            kk = c.popF_unsafe()
             assert kk != -1
-            c.push_rear(kk)
+            c.pushR(kk)
             jj -= 1
         assert len(c) == 50
         assert c.fractionFilled() == 50/96
@@ -118,23 +118,23 @@ class TestCapacity:
         c.resize(8)
         assert c.capacity() == 8
         assert len(c) == 1
-        popped = c.pop_front_unsafe()
+        popped = c.popF_unsafe()
         assert popped == 42
         assert len(c) == 0
         assert c.capacity() == 8
         try:
-            c.pop_front_unsafe()
+            c.popF_unsafe()
         except ValueError as ve:
             str(ve) == 'foofoo'
         else:
             assert False
         try:
-            c.pop_rear_unsafe()
+            c.popR_unsafe()
         except ValueError as ve:
             str(ve) == 'foofoo'
         else:
             assert False
-        c.push_rear(popped)
+        c.pushR(popped)
         assert len(c) == 1
         assert c.capacity() == 8
         c.resize(5)

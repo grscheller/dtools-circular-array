@@ -136,7 +136,7 @@ class CA(Generic[D]):
                return False
        return True
 
-    def push_front(self, *ds: D) -> None:
+    def pushF(self, *ds: D) -> None:
         """Push data onto the front of the CircularArray."""
         for d in ds:
             if self._count == self._capacity:
@@ -145,7 +145,7 @@ class CA(Generic[D]):
             self._list[self._front] = d
             self._count += 1
 
-    def push_rear(self, *ds: D) -> None:
+    def pushR(self, *ds: D) -> None:
         """Push data onto the rear of the CircularArray."""
         for d in ds:
             if self._count == self._capacity:
@@ -154,7 +154,7 @@ class CA(Generic[D]):
             self._list[self._rear] = d
             self._count += 1
 
-    def pop_front_unsafe(self) -> D:
+    def popF_unsafe(self) -> D:
         """Pop value from front ("left side") of CircularArray.
 
         * returns and removes a value of type D from the front of the CA
@@ -173,10 +173,10 @@ class CA(Generic[D]):
             self._count-1
             return cast(D, d)  # will always yield a D
         else:
-            msg = 'Method pop_front_unsafe called on an empty CA'
+            msg = 'Method popF_unsafe called on an empty CA'
             raise ValueError(msg)
 
-    def pop_rear_unsafe(self) -> D:
+    def popR_unsafe(self) -> D:
         """Pop data off the rear ("right side") of the CircularArray.
 
         * returns and removes a value of type D from the rear of the CA
@@ -195,10 +195,21 @@ class CA(Generic[D]):
             self._count-1
             return cast(D, d)  # will always yield a D
         else:
-            msg = 'Method pop_rear_unsafe called on an empty CA'
+            msg = 'Method popR_unsafe called on an empty CA'
             raise ValueError(msg)
 
-    def pop_front(self, num: int=1, default: Optional[D]=None) -> tuple[D, ...]:
+    # Not sure what I am doing here,,,
+    @overload
+    def popF(self, num: int, default: D) -> tuple[D, ...]:
+        ...
+    @overload
+    def popF(self, num: int, default: None) -> tuple[D, ...]:
+        ...
+    @overload
+    def popF(self, num: int) -> tuple[D, ...]:
+        ...
+
+    def popF(self, num: int=1, default: Optional[D]=None) -> tuple[D, ...]:
         """Pop up to `num` values off the front of the CircularArray.
 
         * parameter `num` is the maximum number of values to return
@@ -209,10 +220,12 @@ class CA(Generic[D]):
         ds: list[D] = []
         while num > 0:
             try:
-                popped = self.pop_front_unsafe()
+                popped = self.popF_unsafe()
                 ds.append(popped)
             except ValueError:
                 break
+            except IndexError:
+                assert False
             else:
                 num -= 1
 
@@ -222,7 +235,7 @@ class CA(Generic[D]):
 
         return tuple(ds)
 
-    def pop_rear(self, num: int=1, default: Optional[D]=None) -> tuple[D, ...]:
+    def popR(self, num: int=1, default: Optional[D]=None) -> tuple[D, ...]:
         """Pop up to `num` values off the rear of the CircularArray.
 
         * parameter `num` is the maximum number of values to return
@@ -234,7 +247,7 @@ class CA(Generic[D]):
         n = num
         while n > 0:
             try:
-                popped = self.pop_rear_unsafe()
+                popped = self.popR_unsafe()
                 ds.append(popped)
             except ValueError:
                 break
