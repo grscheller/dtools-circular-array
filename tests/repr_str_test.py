@@ -19,41 +19,35 @@ from grscheller.fp.nothing import nothing, Nothing
 
 class Test_repr:
     def test_repr(self) -> None:
-        ca1: CA[str|int, Nothing] = CA(sentinel=nothing)
-        assert repr(ca1) == 'CA(sentinel=nothing)'
+        ca1: CA[str|int] = CA()
+        assert repr(ca1) == 'CA()'
         ca2 = eval(repr(ca1))
         assert ca2 == ca1
         assert ca2 is not ca1
 
-        ca1.pushR(1)
-        ca1.pushL('foo')
-        assert repr(ca1) == "CA('foo', 1, sentinel=nothing)"
-        dq2 = eval(repr(ca1))
-        assert dq2 == ca1
-        assert dq2 is not ca1
+        ca1.push_rear(1)
+        ca1.push_front('foo')
+        assert repr(ca1) == "CA('foo', 1)"
+        ca2 = eval(repr(ca1))
+        assert ca2 == ca1
+        assert ca2 is not ca1
 
-        assert ca1.popL() == 'foo'
-        ca1.pushR(2)
-        ca1.pushR(3)
-        ca1.pushR(4)
-        ca1.pushR(5)
-        assert ca1.popL() == 1
-        ca1.pushL(42)
-        ca1.popR()
-        assert repr(ca1) == 'CA(42, 2, 3, 4, sentinel=nothing)'
-        dq2 = eval(repr(ca1))
-        assert dq2 == ca1
-        assert dq2 is not ca1
+        assert ca1.pop_front_unsafe() == 'foo'
+        ca1.push_rear(2)
+        ca1.push_rear(3)
+        ca1.push_rear(4)
+        ca1.push_rear(5)
+        assert ca1.pop_front_unsafe() == 1
+        ca1.push_front(42)
+        ca1.pop_rear_unsafe()
+        assert repr(ca1) == 'CA(42, 2, 3, 4)'
+        ca2 = eval(repr(ca1))
+        assert ca2 == ca1
+        assert ca2 is not ca1
 
-        ca3: CA[int, int] = CA(0, 1, 10, 0, 0, 42, 99, sentinel=0, storable=False)
-        ca4: CA[int, int] = CA(0, 1, 10, 0, 0, 42, 99, sentinel=0, storable=True)
-        assert ca3 != ca4
-        ca3.pushR(0, 100, 0)
-        assert ca3.popL() == 1
-        ca3.pushL(0, 9)
-        ca4.pushR(0, 100, 0)
-        assert ca4.popL() == 0
-        assert ca4.popL() == 1
-        ca4.pushL(0, 9)
-        assert repr(ca3) == 'CA(9, 10, 42, 99, 100, sentinel=0, storable=False)'
-        assert repr(ca4) == 'CA(9, 0, 10, 0, 0, 42, 99, 0, 100, 0, sentinel=0)'
+        ca3: CA[int] = CA(1, 10, 0, 42, 99)
+        ca3.push_rear(2, 100, 3)
+        assert ca3.pop_front_unsafe() == 1
+        assert ca3.pop_rear_unsafe() == 3
+        ca3.push_front(9, 8)
+        assert repr(ca3) == 'CA(8, 9, 10, 0, 42, 99, 2, 100)'

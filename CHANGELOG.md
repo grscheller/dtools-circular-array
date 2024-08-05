@@ -2,7 +2,7 @@
 
 PyPI grscheller.circular-array PyPI project.
 
-## Semantic Versioning
+## Semantic Versioning of PyPI releases (first 3 digits)
 
 * first digit:
   * major event, epoch, or paradigm shift
@@ -16,8 +16,35 @@ PyPI grscheller.circular-array PyPI project.
   * significant documentation updates
 * forth digit:
   * development only
+  * semantic versioning "typically" shifted right
 
 ## Releases and Important Milestones
+
+### Version 3.3.0.1 - commit date 2024-08-05
+
+* made a paradigm "regression", preparing for a 3.4.0 release
+* felt CA was becoming way too complicated
+* grscheller.datastructures needs it to fully embrace type annotations
+  * but I was shifting too many features back into grscheller.circular-array
+  * want ca to be useful for non-functional applications
+* changes made
+  * removed grscheller.fp dependency
+  * remove _sentinel & _storable slots from CA class
+  * remove copy method, just use ca2 = CA(*ca1) to make a copy
+  * adjust __repr__ and __str__ methods
+  * experimenting with Spinx syntax in docstrings (still using pdoc3)
+  * changed nomenclature from "left/right" to "front/rear"
+  * unsafe and safe versions of pop & fold functionality
+  * left and right folds improvements
+    * consolidated `foldL, foldL1, foldR, foldR1` into `foldL` & `foldR`
+    * TODO: rename `foldL` to `fold_forward` & `foldR` to `fold_backward`
+  * tests working
+    * basically I changed pops to unsafe pops and added `try except` blocks
+    * safe versions tests needed
+      * safe pops return multiple values in tuples
+      * will take a `default` value to return
+        * if only asked to return 1 value and CA is empty
+        * seems to work properly from iPython
 
 ### Version 3.2.0 - PyPI release date 2024-07-26
 
@@ -29,10 +56,6 @@ PyPI grscheller.circular-array PyPI project.
 
 * generic typing now being used
 * first PyPI release where mult values can be pushed on CircularArray
-
-### Version 3.0.3.0 - commit date 2024-07-04
-
-* can now directly push multiple values onto a CircularArray
 
 ### Version 3.0.0.0 - commit date 2024-06-28
 
@@ -59,8 +82,8 @@ PyPI grscheller.circular-array PyPI project.
 * NEXT PyPI RELEASE WILL BE 2.0.0 !!!!!!!!!!!
 * BUGFIX: Fixed a subtle resizing bug
   * bug probably present in all previous versions
-    * not previously identified due to inadequate test coverage!
-  * improved test coverage vastly
+    * not previously identified due to inadequate test coverage
+  * test coverage improved vastly
 * made some major code API changes
   * upon initialization minimizing size of the CircularArray
   * have some ideas on how to to improve API for resizing CircularArrays
@@ -86,7 +109,7 @@ PyPI grscheller.circular-array PyPI project.
 ### Version 0.1.0 - PyPI release date 2024-01-28
 
 * initial PyPI grscheller.circular-array release
-* migrated Circulararray class from grscheller.datastrucutes
+* migrated Circulararray class from grscheller.datastructutes
 * update docstrings to reflect current nomenclature
 
 ### Version 0.0.3 - commit date 2024-01-28

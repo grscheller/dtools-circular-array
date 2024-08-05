@@ -22,49 +22,39 @@ __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
 
 from typing import Callable, cast, Generic, Iterator, Optional, TypeVar
+from typing import cast, overload
 
 _D = TypeVar('_D')
-_S = TypeVar('_S')
+_T = TypeVar('_T')
 _L = TypeVar('_L')
 _R = TypeVar('_R')
-_T = TypeVar('_T')
 
-class CA(Generic[_D, _S]):
-    """Class implementing an indexable circular array
+class CA(Generic[_D]):
+    """Class implementing an indexable circular array.
 
-    * stateful generic data structure with a data type and a "fallback/sentinel" value
+    * stateful generic data structure that will resize itself as needed
     * amortized O(1) pushing and popping from either end
     * O(1) random access any element
-    * will resize itself as needed
+    * make a defensive copy of the data for the purposes of iteration
     * not sliceable
-    * in a boolean context returned False if empty, True otherwise
-    * intended to implement other data structures, so
-    * - does not make defensive copies of data for the purposes of iteration
-    * - raises: IndexError
-    * - no convenience default sentinel value
+    * in boolean context returns true if not empty, false if empty
+
+    :raises IndexError: For out-of-bounds indexing
+    :raises ValueError: For popping from or folding an empty CA
 
     """
-    __slots__ = '_list', '_s', '_storable', '_count', '_capacity', '_front', '_rear'
+    __slots__ = '_list', '_count', '_capacity', '_front', '_rear'
 
-    def __init__(self, *data: _D, sentinel: _S, storable: bool=True):
-        self._s = sentinel
-        self._storable = storable
-
-        self._list: list[_D|_S]
-        if storable:
-            self._list = [sentinel] + list(data) + [sentinel]
-        else:
-            self._list = [sentinel] + list(filter(lambda d: d != sentinel, data)) + [sentinel]
-
-        length = len(self._list)
-        self._count = length - 2
-        self._capacity = length
-        if length == 2:
+    def __init__(self, *ds: _D) -> None:
+        self._list: list[_D|None] = [None] + list(ds) + [None]
+        self._capacity = capacity = len(self._list)
+        self._count = capacity - 2
+        if capacity == 2:
             self._front = 0
             self._rear = 1
         else:
             self._front = 1
-            self._rear = length - 2
+            self._rear = capacity - 2
 
     def __iter__(self) -> Iterator[_D]:
         if self._count > 0:
@@ -74,7 +64,7 @@ class CA(Generic[_D, _S]):
             while position != rear:
                 yield cast(_D, currentState[position])  # will always yield a _D
                 position = (position + 1) % capacity
-            yield cast(_D, currentState[position])      # will always yield a _D
+            yield cast(_D, currentState[position])  # will always yield a _D
 
     def __reversed__(self) -> Iterator[_D]:
         if self._count > 0:
@@ -84,23 +74,13 @@ class CA(Generic[_D, _S]):
             while position != front:
                 yield cast(_D, currentState[position])  # will always yield a _D
                 position = (position - 1) % capacity
-            yield cast(_D, currentState[position])      # will always yield a _D
+            yield cast(_D, currentState[position])  # will always yield a _D
 
     def __repr__(self) -> str:
-        if self._storable:
-            return ('CA('
-                    + ', '.join(map(repr, self))
-                    + (', ' if self._count > 0 else '')
-                    + 'sentinel=' + repr(self._s) + ')')
-        else:
-            return ('CA('
-                    + ', '.join(map(repr, self))
-                    + (', ' if self._count > 0 else '')
-                    + 'sentinel=' + repr(self._s) + ', '
-                    + 'storable=' + repr(False) + ')')
+        return 'CA(' + ', '.join(map(repr, self)) + ')'
 
     def __str__(self) -> str:
-        return '(|' + ', '.join(map(str, self)) + '| ' + repr(self._s) + ' )'
+        return '(|' + ', '.join(map(str, self)) + '|)'
 
     def __bool__(self) -> bool:
         return self._count > 0
@@ -111,17 +91,19 @@ class CA(Generic[_D, _S]):
     def __getitem__(self, index: int) -> _D:
         cnt = self._count
         if 0 <= index < cnt:
-            return self._list[(self._front + index) % self._capacity]        # type: ignore # will always return a _D
+            return cast(_D, self._list[(self._front + index)
+                                       % self._capacity])  # will always return a _D
         elif -cnt <= index < 0:
-            return self._list[(self._front + cnt + index) % self._capacity]  # type: ignore # will always return a _D
+            return cast(_D, self._list[(self._front + cnt + index)
+                                       % self._capacity])  # will always return a _D
         else:
             if cnt > 0:
                 msg1 = 'Out of bounds: '
                 msg2 = f'index = {index} not between {-cnt} and {cnt-1} '
-                msg3 = 'while getting value from a CircularArray.'
+                msg3 = 'while getting value from a CA.'
                 raise IndexError(msg1 + msg2 + msg3)
             else:
-                msg0 = 'Trying to get value from an empty CircularArray.'
+                msg0 = 'Trying to get value from an empty CA.'
                 raise IndexError(msg0)
 
     def __setitem__(self, index: int, value: _D) -> None:
@@ -134,126 +116,162 @@ class CA(Generic[_D, _S]):
             if cnt > 0:
                 msg1 = 'Out of bounds: '
                 msg2 = f'index = {index} not between {-cnt} and {cnt-1} '
-                msg3 = 'while setting value from a CircularArray.'
+                msg3 = 'while setting value from a CA.'
                 raise IndexError(msg1 + msg2 + msg3)
             else:
-                msg0 = 'Trying to set value from an empty CircularArray.'
+                msg0 = 'Trying to set value from an empty CA.'
                 raise IndexError(msg0)
 
     def __eq__(self, other: object) -> bool:
-        """Returns True if all the data stored in both compare as equal.
-
-        * worst case is O(n) behavior for the true case
-        * _S can be the same type as _D
-        * both self & other must have the same sentinel value to compare as equal
-        * - then sentinel value storability must also agree
-        * - typing ensures sentinel is of type _D if pushed onto CircularArray
-
-        """
-        if not isinstance(other, type(self)):
-            return False
-        if self._s != other._s:
-            return False
-        if self._storable != other._storable:
+       if not isinstance(other, type(self)):
             return False
 
-        frontL,      capacityL,      countL,      frontR,       capacityR,       countR = \
-        self._front, self._capacity, self._count, other._front, other._capacity, other._count
+       frontL,      capacityL,      countL,      frontR,       capacityR,       countR = \
+       self._front, self._capacity, self._count, other._front, other._capacity, other._count
 
-        if countL != countR:
-            return False
+       if countL != countR:
+           return False
 
-        for nn in range(countL):
-            if self._list[(frontL+nn)%capacityL] != other._list[(frontR+nn)%capacityR]:
-                return False
-        return True
+       for nn in range(countL):
+           if self._list[(frontL+nn)%capacityL] != other._list[(frontR+nn)%capacityR]:
+               return False
+       return True
 
-    def copy(self) -> CA[_D, _S]:
-        """Return a shallow copy of the CircularArray."""
-        return CA(*self, sentinel=self._s, storable=self._storable)
-
-    def pushR(self, *ds: _D) -> None:
+    def push_rear(self, *ds: _D) -> None:
         """Push data onto the rear of the CircularArray."""
-        if self._storable:
-            for d in ds:
-                if self._count == self._capacity:
-                    self.double()
-                self._rear = (self._rear + 1) % self._capacity
-                self._list[self._rear] = d
-                self._count += 1
-        else:
-            for d in filter(lambda d: d != self._s, ds):
-                if self._count == self._capacity:
-                    self.double()
-                self._rear = (self._rear + 1) % self._capacity
-                self._list[self._rear] = d
-                self._count += 1
+        for d in ds:
+            if self._count == self._capacity:
+                self.double()
+            self._rear = (self._rear + 1) % self._capacity
+            self._list[self._rear] = d
+            self._count += 1
 
-    def pushL(self, *ds: _D) -> None:
+    def push_front(self, *ds: _D) -> None:
         """Push data onto the front of the CircularArray."""
-        if self._storable:
-            for d in ds:
-                if self._count == self._capacity:
-                    self.double()
-                self._front = (self._front - 1) % self._capacity
-                self._list[self._front] = d
-                self._count += 1
-        else:
-            for d in filter(lambda d: d != self._s, ds):
-                if self._count == self._capacity:
-                    self.double()
-                self._front = (self._front - 1) % self._capacity
-                self._list[self._front] = d
-                self._count += 1
+        for d in ds:
+            if self._count == self._capacity:
+                self.double()
+            self._front = (self._front - 1) % self._capacity
+            self._list[self._front] = d
+            self._count += 1
 
-    def popR(self) -> _D|_S:
+    def pop_front_unsafe(self) -> _D:
+        """Pop value from left side (front) of queue.
+
+        :raises ValueError: When called on an empty CA
+        """
+        if self._count > 0:
+            d, \
+            self._list[self._front], \
+            self._front, \
+            self._count \
+                = \
+            self._list[self._front], \
+            None, \
+            (self._front+1) % self._capacity, \
+            self._count-1
+            return cast(_D, d)  # will always yield a _D
+        else:
+            msg = 'Method pop_front_unsafe called on an empty CA'
+            raise ValueError(msg)
+
+    def pop_rear_unsafe(self) -> _D:
         """Pop data off the rear of the CircularArray.
 
-        * returns sentinel value if empty
-        * - don't rely on this to determine if circularArray is empty unless storable is set to false
-        * - otherwise use the circularArray in a boolean context to determine if empty
-
+        :return: Removes and returns the value of type _D from end of the CA.
+        :raises ValueError: When called on an empty CA.
         """
-        if self._count == 0:
-            return self._s
+        if self._count > 0:
+            d, \
+            self._list[self._rear], \
+            self._rear, \
+            self._count \
+                = \
+            self._list[self._rear], \
+            None, \
+            (self._rear - 1) % self._capacity, \
+            self._count-1
+            return cast(_D, d)  # will always yield a _D
         else:
-            d, self._count, self._list[self._rear], self._rear = \
-                self._list[self._rear], self._count-1, self._s, (self._rear - 1) % self._capacity
-            return d
+            msg = 'Method pop_rear_unsafe called on an empty CA'
+            raise ValueError(msg)
 
-    def popL(self) -> _D|_S:
-        """Pop data off the front of the CircularArray.
+    def pop_front(self, num: int=1, default: Optional[_D]=None) -> tuple[_D, ...]:
+        """Pop up to n values off the front of the CircularArray.
 
-        * returns sentinel value if empty
-        * - don't rely on this to determine if circularArray is empty unless storable is set to false
-        * - otherwise use the circularArray in a boolean context to determine if empty
+        * returns a tuple of values popped from the left
 
+        :param num: maximum number of values to return
+        :type num: int
+        :return: A Tuple[_D, ...] of at most n values of type _D
         """
-        if self._count == 0:
-            return self._s
-        else:
-            d, self._count, self._list[self._front], self._front = \
-                self._list[self._front], self._count-1, self._s, (self._front+1) % self._capacity
-            return d
+        ds: list[_D] = []
+        while num > 0:
+            try:
+                popped = self.pop_front_unsafe()
+                ds.append(popped)
+            except ValueError:
+                break
+            else:
+                num -= 1
 
-    def map(self, f: Callable[[_D], _T]) -> CA[_T, _S]:
-        """Apply function f over the CircularArray's contents.
+        if num == 1 and len(ds) == 0:
+            if default is not None:
+                ds.append(default)
 
-        * return the results in a new CircularArray
+        return tuple(ds)
 
+    def pop_rear(self, num: int=1, default: Optional[_D]=None) -> tuple[_D, ...]:
+        """Pop up to n values off the rear of the CircularArray.
+
+        :param num: maximum number of values to return
+        :type num: int
+        :param default: value to use when CA is empty and only one value requested
+        :type default: _D
+        :return: A Tuple[_D, ...] of at most n values of type _D
         """
-        return CA(*map(f, self), sentinel=self._s)
+        ds: list[_D] = []
+        n = num
+        while n > 0:
+            try:
+                popped = self.pop_rear_unsafe()
+                ds.append(popped)
+            except ValueError:
+                break
+            else:
+                n -= 1
 
-    def foldL(self, f: Callable[[_L, _D], _L], initial: Optional[_L]=None) -> _L|_S:
-        """Fold left with an initial value.
+        if num == 1 and len(ds) == 0:
+            if default is not None:
+                ds.append(default)
 
-        * first argument of function f is for the accumulated value
-        * if empty, return the sentinel value of type _S
+        return tuple(ds)
 
+    def map(self, f: Callable[[_D], _T]) -> CA[_T]:
+        """Apply function f over the CircularArray's contents and return a new
+        instance.
+
+        :param f: Generic function of type f[_D, _T] -> CA[_T].
+        :return: Returns CA of type CA[_T].
+        """
+        return CA(*map(f, self))
+
+    def foldL(self, f: Callable[[_L, _D], _L], initial: Optional[_L]=None) -> _L:
+        """Left fold CircularArray via a function and an optional initial value.
+
+        :param f: Generic function of type f[_L, _D] -> _L, the first argument
+            to f is for the accumulated value.
+        :param initial: Optional initial value. Note that if not given then it
+            will be the case that _L = _D.
+        :type initial: str
+        :return: Returns the reduced value of type _L, note that _L and _D can
+            be the same type.
+        :raises ValueError: When called on an empty CA
         """
         if self._count == 0:
             if initial is None:
-                return self._s
+                msg = 'Method foldL called on an empty CA without an initial value.'
+                raise ValueError(msg)
             else:
                 return initial
         else:
@@ -268,16 +286,22 @@ class CA(Generic[_D, _S]):
                     acc = f(acc, d)
                 return acc
 
-    def foldR(self, f: Callable[[_D, _R], _R], initial: Optional[_R]=None) -> _R|_S:
-        """Fold right with an initial value.
+    def foldR(self, f: Callable[[_D, _R], _R], initial: Optional[_R]=None) -> _R:
+        """Right fold CircularArray via a function and an optional initial value.
 
-        * second argument of function f is for the accumulated value
-        * if empty, return the sentinel value of type _S
-
+        :param f: Generic function of type f[_D, _R] -> _R, the second argument
+            to f is for the accumulated value.
+        :param initial: Optional initial value. Note that if not given then it
+            will be the case that _R = _D.
+        :type initial: str
+        :return: Returns the reduced value of type _L, note that _L and _D can
+            be the same type.
+        :raises ValueError: When called on an empty CA
         """
         if self._count == 0:
             if initial is None:
-                return self._s
+                msg = 'Method foldR called on an empty CA without an initial value.'
+                raise ValueError(msg)
             else:
                 return initial
         else:
@@ -293,56 +317,72 @@ class CA(Generic[_D, _S]):
                 return acc
 
     def capacity(self) -> int:
-        """Returns current capacity of the CircularArray."""
+        """Returns current capacity of the CircularArray.
+
+        :return: Return the capacity of the CA[_D].
+        :rtype: int
+        """
         return self._capacity
 
     def compact(self) -> None:
-        """Compact the CircularArray."""
+        """Compact the CircularArray.
+
+        :rtype: None
+        """
         match self._count:
             case 0:
-                self._capacity, self._front, self._rear, self._list = 2, 0, 1, [self._s, self._s]
+                self._capacity, self._front, self._rear, self._list = \
+                2,              0,           1,          [None, None]
             case 1:
-                self._capacity, self._front, self._rear, self._list = 3, 1, 1, [self._s, self._list[self._front], self._s]
+                self._capacity, self._front, self._rear, self._list = \
+                3,              1,           1,          [None, self._list[self._front], None]
             case _:
                 if self._front <= self._rear:
                     self._capacity, self._front, self._rear,  self._list = \
-                    self._count+2,  1,           self._count, [self._s] + self._list[self._front:self._rear+1] + [self._s]
+                    self._count+2,  1,           self._count, \
+                    [None] + self._list[self._front:self._rear+1] + [None]
                 else:
                     self._capacity, self._front, self._rear,  self._list = \
-                    self._count+2,  1,           self._count, self._list[self._front:] + self._list[:self._rear+1] + [self._s]
+                    self._count+2,  1,           self._count, [None] \
+                        + self._list[self._front:] + self._list[:self._rear+1] \
+                        + [None]
 
     def double(self) -> None:
-        """Double the capacity of the CircularArray."""
+        """Double the capacity of the CircularArray.
+
+        :rtype: None
+        """
         if self._front <= self._rear:
-            self._list += [self._s]*self._capacity
+            self._list += [None]*self._capacity
             self._capacity *= 2
         else:
-            self._list = self._list[:self._front] + [self._s]*self._capacity + self._list[self._front:]
+            self._list = self._list[:self._front] + [None]*self._capacity + self._list[self._front:]
             self._front += self._capacity
             self._capacity *= 2
 
     def empty(self) -> None:
-        """Empty the CircularArray, keep current capacity."""
-        self._list, self._front, self._rear = [self._s]*self._capacity, 0, self._capacity-1
+        """Empty the CircularArray, keep current capacity.
+
+        :rtype: None
+        """
+        self._list, self._front, self._rear = [None]*self._capacity, 0, self._capacity-1
 
     def fractionFilled(self) -> float:
-        """Returns fractional capacity of the CircularArray."""
+        """Returns fractional capacity of the CircularArray.
+
+        :rtype: float
+        """
         return self._count/self._capacity
 
     def resize(self, newSize: int= 0) -> None:
-        """Compact CircularArray and resize to newSize if less than newSize."""
+        """Compact CircularArray and resize to newSize if less than newSize.
+
+        :param newSize: desired minimal size of the CA[_D]
+        :rtype: None
+        """
         self.compact()
         capacity = self._capacity
         if newSize > capacity:
-            self._list, self._capacity = self._list+[self._s]*(newSize-capacity), newSize
+            self._list, self._capacity = self._list+[None]*(newSize-capacity), newSize
             if self._count == 0:
                 self._rear = capacity - 1
-
-    def is_sentinel_storable(self) -> bool:
-        """Returns true if sentinel value is storable in the CircularArray.
-
-        * only really matters if _S is a subtype of _D
-        * unless overridden, typing will prevent a value being stored if not of type _D
-
-        """
-        return self._storable
