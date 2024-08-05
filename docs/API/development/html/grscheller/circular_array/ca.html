@@ -49,9 +49,9 @@ hljs.highlightAll();
 <li>make a defensive copy of the data for the purposes of iteration</li>
 <li>not sliceable</li>
 <li>in boolean context returns true if not empty, false if empty</li>
-</ul>
-<p>:raises IndexError: For out-of-bounds indexing
-:raises ValueError: For popping from or folding an empty CA</p></div>
+<li>raises <code>IndexError</code> for out-of-bounds indexing</li>
+<li>raises <code>ValueError</code> for popping from or folding an empty CA</li>
+</ul></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -65,9 +65,8 @@ hljs.highlightAll();
     * make a defensive copy of the data for the purposes of iteration
     * not sliceable
     * in boolean context returns true if not empty, false if empty
-
-    :raises IndexError: For out-of-bounds indexing
-    :raises ValueError: For popping from or folding an empty CA
+    * raises `IndexError` for out-of-bounds indexing
+    * raises `ValueError` for popping from or folding an empty CA
 
     &#34;&#34;&#34;
     __slots__ = &#39;_list&#39;, &#39;_count&#39;, &#39;_capacity&#39;, &#39;_front&#39;, &#39;_rear&#39;
@@ -164,15 +163,6 @@ hljs.highlightAll();
                return False
        return True
 
-    def push_rear(self, *ds: _D) -&gt; None:
-        &#34;&#34;&#34;Push data onto the rear of the CircularArray.&#34;&#34;&#34;
-        for d in ds:
-            if self._count == self._capacity:
-                self.double()
-            self._rear = (self._rear + 1) % self._capacity
-            self._list[self._rear] = d
-            self._count += 1
-
     def push_front(self, *ds: _D) -&gt; None:
         &#34;&#34;&#34;Push data onto the front of the CircularArray.&#34;&#34;&#34;
         for d in ds:
@@ -182,10 +172,21 @@ hljs.highlightAll();
             self._list[self._front] = d
             self._count += 1
 
-    def pop_front_unsafe(self) -&gt; _D:
-        &#34;&#34;&#34;Pop value from left side (front) of queue.
+    def push_rear(self, *ds: _D) -&gt; None:
+        &#34;&#34;&#34;Push data onto the rear of the CircularArray.&#34;&#34;&#34;
+        for d in ds:
+            if self._count == self._capacity:
+                self.double()
+            self._rear = (self._rear + 1) % self._capacity
+            self._list[self._rear] = d
+            self._count += 1
 
-        :raises ValueError: When called on an empty CA
+    def pop_front_unsafe(self) -&gt; _D:
+        &#34;&#34;&#34;Pop value from front (&#34;left side&#34;) of CircularArray.
+
+        * returns and removes a value of type _D from the front of the CA
+        * raises `ValueError` when called on an empty CA
+
         &#34;&#34;&#34;
         if self._count &gt; 0:
             d, \
@@ -203,10 +204,11 @@ hljs.highlightAll();
             raise ValueError(msg)
 
     def pop_rear_unsafe(self) -&gt; _D:
-        &#34;&#34;&#34;Pop data off the rear of the CircularArray.
+        &#34;&#34;&#34;Pop data off the rear (&#34;right side&#34;) of the CircularArray.
 
-        :return: Removes and returns the value of type _D from end of the CA.
-        :raises ValueError: When called on an empty CA.
+        * returns and removes a value of type _D from the rear of the CA
+        * raises `ValueError` when called on an empty CA
+
         &#34;&#34;&#34;
         if self._count &gt; 0:
             d, \
@@ -224,13 +226,12 @@ hljs.highlightAll();
             raise ValueError(msg)
 
     def pop_front(self, num: int=1, default: Optional[_D]=None) -&gt; tuple[_D, ...]:
-        &#34;&#34;&#34;Pop up to n values off the front of the CircularArray.
+        &#34;&#34;&#34;Pop up to `num` values off the front of the CircularArray.
 
-        * returns a tuple of values popped from the left
+        * parameter `num` is the maximum number of values to return
+        * parameter `default` is used when CA is empty and only one value requested
+        * returns a `Tuple[_D, ...]` of at most `num` values popped from front of CA
 
-        :param num: maximum number of values to return
-        :type num: int
-        :return: A Tuple[_D, ...] of at most n values of type _D
         &#34;&#34;&#34;
         ds: list[_D] = []
         while num &gt; 0:
@@ -249,13 +250,12 @@ hljs.highlightAll();
         return tuple(ds)
 
     def pop_rear(self, num: int=1, default: Optional[_D]=None) -&gt; tuple[_D, ...]:
-        &#34;&#34;&#34;Pop up to n values off the rear of the CircularArray.
+        &#34;&#34;&#34;Pop up to `num` values off the rear of the CircularArray.
 
-        :param num: maximum number of values to return
-        :type num: int
-        :param default: value to use when CA is empty and only one value requested
-        :type default: _D
-        :return: A Tuple[_D, ...] of at most n values of type _D
+        * parameter `num` is the maximum number of values to return
+        * parameter `default` is used when CA is empty and only one value requested
+        * returns a `Tuple[_D, ...]` of at most `num` values popped from rear of CA
+
         &#34;&#34;&#34;
         ds: list[_D] = []
         n = num
@@ -275,25 +275,25 @@ hljs.highlightAll();
         return tuple(ds)
 
     def map(self, f: Callable[[_D], _T]) -&gt; CA[_T]:
-        &#34;&#34;&#34;Apply function f over the CircularArray&#39;s contents and return a new
-        instance.
+        &#34;&#34;&#34;Apply function f over the CA&#39;s contents and return new instance.
 
-        :param f: Generic function of type f[_D, _T] -&gt; CA[_T].
-        :return: Returns CA of type CA[_T].
+        * parameter `f` generic function of type f[_D, _T] -&gt; CA[_T]
+        * return a new instance of a CA of type CA[_T]
+
         &#34;&#34;&#34;
         return CA(*map(f, self))
 
     def foldL(self, f: Callable[[_L, _D], _L], initial: Optional[_L]=None) -&gt; _L:
         &#34;&#34;&#34;Left fold CircularArray via a function and an optional initial value.
 
-        :param f: Generic function of type f[_L, _D] -&gt; _L, the first argument
-            to f is for the accumulated value.
-        :param initial: Optional initial value. Note that if not given then it
-            will be the case that _L = _D.
-        :type initial: str
-        :return: Returns the reduced value of type _L, note that _L and _D can
-            be the same type.
-        :raises ValueError: When called on an empty CA
+        * parameter `f` generic function of type `f[_L, _D] -&gt; _L`, the first
+            argument to `f` is for the accumulated value.
+        * parameter `initial` is an optional initial value, note that if
+            not given then it will be the case that `_L` = `_D`
+        * returns the reduced value of type `_L`, note that `_L` &amp; `_D` can be
+            the same type
+        * raises `ValueError` when called on an empty CA
+
         &#34;&#34;&#34;
         if self._count == 0:
             if initial is None:
@@ -316,14 +316,14 @@ hljs.highlightAll();
     def foldR(self, f: Callable[[_D, _R], _R], initial: Optional[_R]=None) -&gt; _R:
         &#34;&#34;&#34;Right fold CircularArray via a function and an optional initial value.
 
-        :param f: Generic function of type f[_D, _R] -&gt; _R, the second argument
-            to f is for the accumulated value.
-        :param initial: Optional initial value. Note that if not given then it
-            will be the case that _R = _D.
-        :type initial: str
-        :return: Returns the reduced value of type _L, note that _L and _D can
-            be the same type.
-        :raises ValueError: When called on an empty CA
+        * parameter `f` generic function of type `f[_D, _R] -&gt; _R`, the second
+            argument to f is for the accumulated value
+        * parameter `initial` is an optional initial value, note that if
+            not given then it will be the case that `_R` = `_D`
+        * returns the reduced value of type `_R`, note that `_R` &amp; `_D` can be
+            the same type
+        * raises `ValueError` when called on an empty CA
+
         &#34;&#34;&#34;
         if self._count == 0:
             if initial is None:
@@ -344,18 +344,11 @@ hljs.highlightAll();
                 return acc
 
     def capacity(self) -&gt; int:
-        &#34;&#34;&#34;Returns current capacity of the CircularArray.
-
-        :return: Return the capacity of the CA[_D].
-        :rtype: int
-        &#34;&#34;&#34;
+        &#34;&#34;&#34;Returns current capacity of the CircularArray.&#34;&#34;&#34;
         return self._capacity
 
     def compact(self) -&gt; None:
-        &#34;&#34;&#34;Compact the CircularArray.
-
-        :rtype: None
-        &#34;&#34;&#34;
+        &#34;&#34;&#34;Compact the CircularArray.&#34;&#34;&#34;
         match self._count:
             case 0:
                 self._capacity, self._front, self._rear, self._list = \
@@ -375,10 +368,7 @@ hljs.highlightAll();
                         + [None]
 
     def double(self) -&gt; None:
-        &#34;&#34;&#34;Double the capacity of the CircularArray.
-
-        :rtype: None
-        &#34;&#34;&#34;
+        &#34;&#34;&#34;Double the capacity of the CircularArray.&#34;&#34;&#34;
         if self._front &lt;= self._rear:
             self._list += [None]*self._capacity
             self._capacity *= 2
@@ -388,25 +378,15 @@ hljs.highlightAll();
             self._capacity *= 2
 
     def empty(self) -&gt; None:
-        &#34;&#34;&#34;Empty the CircularArray, keep current capacity.
-
-        :rtype: None
-        &#34;&#34;&#34;
+        &#34;&#34;&#34;Empty the CircularArray, keep current capacity.&#34;&#34;&#34;
         self._list, self._front, self._rear = [None]*self._capacity, 0, self._capacity-1
 
     def fractionFilled(self) -&gt; float:
-        &#34;&#34;&#34;Returns fractional capacity of the CircularArray.
-
-        :rtype: float
-        &#34;&#34;&#34;
+        &#34;&#34;&#34;Returns fractional capacity of the CircularArray.&#34;&#34;&#34;
         return self._count/self._capacity
 
     def resize(self, newSize: int= 0) -&gt; None:
-        &#34;&#34;&#34;Compact CircularArray and resize to newSize if less than newSize.
-
-        :param newSize: desired minimal size of the CA[_D]
-        :rtype: None
-        &#34;&#34;&#34;
+        &#34;&#34;&#34;Compact CircularArray and resize to newSize if less than newSize.&#34;&#34;&#34;
         self.compact()
         capacity = self._capacity
         if newSize &gt; capacity:
@@ -424,112 +404,113 @@ hljs.highlightAll();
 <span>def <span class="ident">capacity</span></span>(<span>self) ‑> int</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Returns current capacity of the CircularArray.</p>
-<p>:return: Return the capacity of the CA[_D].
-:rtype: int</p></div>
+<div class="desc"><p>Returns current capacity of the CircularArray.</p></div>
 </dd>
 <dt id="grscheller.circular_array.ca.CA.compact"><code class="name flex">
 <span>def <span class="ident">compact</span></span>(<span>self) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Compact the CircularArray.</p>
-<p>:rtype: None</p></div>
+<div class="desc"><p>Compact the CircularArray.</p></div>
 </dd>
 <dt id="grscheller.circular_array.ca.CA.double"><code class="name flex">
 <span>def <span class="ident">double</span></span>(<span>self) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Double the capacity of the CircularArray.</p>
-<p>:rtype: None</p></div>
+<div class="desc"><p>Double the capacity of the CircularArray.</p></div>
 </dd>
 <dt id="grscheller.circular_array.ca.CA.empty"><code class="name flex">
 <span>def <span class="ident">empty</span></span>(<span>self) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Empty the CircularArray, keep current capacity.</p>
-<p>:rtype: None</p></div>
+<div class="desc"><p>Empty the CircularArray, keep current capacity.</p></div>
 </dd>
 <dt id="grscheller.circular_array.ca.CA.foldL"><code class="name flex">
 <span>def <span class="ident">foldL</span></span>(<span>self, f: Callable[[_L, _D], _L], initial: Optional[_L] = None) ‑> _L</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Left fold CircularArray via a function and an optional initial value.</p>
-<p>:param f: Generic function of type f[_L, _D] -&gt; _L, the first argument
-to f is for the accumulated value.
-:param initial: Optional initial value. Note that if not given then it
-will be the case that _L = _D.
-:type initial: str
-:return: Returns the reduced value of type _L, note that _L and _D can
-be the same type.
-:raises ValueError: When called on an empty CA</p></div>
+<ul>
+<li>parameter <code>f</code> generic function of type <code>f[_L, _D] -&gt; _L</code>, the first
+argument to <code>f</code> is for the accumulated value.</li>
+<li>parameter <code>initial</code> is an optional initial value, note that if
+not given then it will be the case that <code>_L</code> = <code>_D</code></li>
+<li>returns the reduced value of type <code>_L</code>, note that <code>_L</code> &amp; <code>_D</code> can be
+the same type</li>
+<li>raises <code>ValueError</code> when called on an empty CA</li>
+</ul></div>
 </dd>
 <dt id="grscheller.circular_array.ca.CA.foldR"><code class="name flex">
 <span>def <span class="ident">foldR</span></span>(<span>self, f: Callable[[_D, _R], _R], initial: Optional[_R] = None) ‑> _R</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Right fold CircularArray via a function and an optional initial value.</p>
-<p>:param f: Generic function of type f[_D, _R] -&gt; _R, the second argument
-to f is for the accumulated value.
-:param initial: Optional initial value. Note that if not given then it
-will be the case that _R = _D.
-:type initial: str
-:return: Returns the reduced value of type _L, note that _L and _D can
-be the same type.
-:raises ValueError: When called on an empty CA</p></div>
+<ul>
+<li>parameter <code>f</code> generic function of type <code>f[_D, _R] -&gt; _R</code>, the second
+argument to f is for the accumulated value</li>
+<li>parameter <code>initial</code> is an optional initial value, note that if
+not given then it will be the case that <code>_R</code> = <code>_D</code></li>
+<li>returns the reduced value of type <code>_R</code>, note that <code>_R</code> &amp; <code>_D</code> can be
+the same type</li>
+<li>raises <code>ValueError</code> when called on an empty CA</li>
+</ul></div>
 </dd>
 <dt id="grscheller.circular_array.ca.CA.fractionFilled"><code class="name flex">
 <span>def <span class="ident">fractionFilled</span></span>(<span>self) ‑> float</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Returns fractional capacity of the CircularArray.</p>
-<p>:rtype: float</p></div>
+<div class="desc"><p>Returns fractional capacity of the CircularArray.</p></div>
 </dd>
 <dt id="grscheller.circular_array.ca.CA.map"><code class="name flex">
 <span>def <span class="ident">map</span></span>(<span>self, f: Callable[[_D], _T]) ‑> <a title="grscheller.circular_array.ca.CA" href="#grscheller.circular_array.ca.CA">CA</a>[_T]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Apply function f over the CircularArray's contents and return a new
-instance.</p>
-<p>:param f: Generic function of type f[_D, _T] -&gt; CA[_T].
-:return: Returns CA of type CA[_T].</p></div>
+<div class="desc"><p>Apply function f over the CA's contents and return new instance.</p>
+<ul>
+<li>parameter <code>f</code> generic function of type f[_D, _T] -&gt; CA[_T]</li>
+<li>return a new instance of a CA of type CA[_T]</li>
+</ul></div>
 </dd>
 <dt id="grscheller.circular_array.ca.CA.pop_front"><code class="name flex">
 <span>def <span class="ident">pop_front</span></span>(<span>self, num: int = 1, default: Optional[_D] = None) ‑> tuple[_D, ...]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Pop up to n values off the front of the CircularArray.</p>
+<div class="desc"><p>Pop up to <code>num</code> values off the front of the CircularArray.</p>
 <ul>
-<li>returns a tuple of values popped from the left</li>
-</ul>
-<p>:param num: maximum number of values to return
-:type num: int
-:return: A Tuple[_D, &hellip;] of at most n values of type _D</p></div>
+<li>parameter <code>num</code> is the maximum number of values to return</li>
+<li>parameter <code>default</code> is used when CA is empty and only one value requested</li>
+<li>returns a <code>Tuple[_D, &hellip;]</code> of at most <code>num</code> values popped from front of CA</li>
+</ul></div>
 </dd>
 <dt id="grscheller.circular_array.ca.CA.pop_front_unsafe"><code class="name flex">
 <span>def <span class="ident">pop_front_unsafe</span></span>(<span>self) ‑> _D</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Pop value from left side (front) of queue.</p>
-<p>:raises ValueError: When called on an empty CA</p></div>
+<div class="desc"><p>Pop value from front ("left side") of CircularArray.</p>
+<ul>
+<li>returns and removes a value of type _D from the front of the CA</li>
+<li>raises <code>ValueError</code> when called on an empty CA</li>
+</ul></div>
 </dd>
 <dt id="grscheller.circular_array.ca.CA.pop_rear"><code class="name flex">
 <span>def <span class="ident">pop_rear</span></span>(<span>self, num: int = 1, default: Optional[_D] = None) ‑> tuple[_D, ...]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Pop up to n values off the rear of the CircularArray.</p>
-<p>:param num: maximum number of values to return
-:type num: int
-:param default: value to use when CA is empty and only one value requested
-:type default: _D
-:return: A Tuple[_D, &hellip;] of at most n values of type _D</p></div>
+<div class="desc"><p>Pop up to <code>num</code> values off the rear of the CircularArray.</p>
+<ul>
+<li>parameter <code>num</code> is the maximum number of values to return</li>
+<li>parameter <code>default</code> is used when CA is empty and only one value requested</li>
+<li>returns a <code>Tuple[_D, &hellip;]</code> of at most <code>num</code> values popped from rear of CA</li>
+</ul></div>
 </dd>
 <dt id="grscheller.circular_array.ca.CA.pop_rear_unsafe"><code class="name flex">
 <span>def <span class="ident">pop_rear_unsafe</span></span>(<span>self) ‑> _D</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Pop data off the rear of the CircularArray.</p>
-<p>:return: Removes and returns the value of type _D from end of the CA.
-:raises ValueError: When called on an empty CA.</p></div>
+<div class="desc"><p>Pop data off the rear ("right side") of the CircularArray.</p>
+<ul>
+<li>returns and removes a value of type _D from the rear of the CA</li>
+<li>raises <code>ValueError</code> when called on an empty CA</li>
+</ul></div>
 </dd>
 <dt id="grscheller.circular_array.ca.CA.push_front"><code class="name flex">
 <span>def <span class="ident">push_front</span></span>(<span>self, *ds: _D) ‑> None</span>
@@ -547,9 +528,7 @@ instance.</p>
 <span>def <span class="ident">resize</span></span>(<span>self, newSize: int = 0) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Compact CircularArray and resize to newSize if less than newSize.</p>
-<p>:param newSize: desired minimal size of the CA[_D]
-:rtype: None</p></div>
+<div class="desc"><p>Compact CircularArray and resize to newSize if less than newSize.</p></div>
 </dd>
 </dl>
 </dd>
