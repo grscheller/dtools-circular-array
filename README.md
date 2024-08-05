@@ -21,21 +21,39 @@ relationship.
 ```python
 from grscheller.circular_array.ca import CA
 
-ca = CA(1, 2, 3, s=None)
-assert ca.popL() == 1
-assert ca.popR() == 3
-ca.pushR(42, 0)
-assert repr(ca) == 'CA(2, 42, 0, s=None)'
-assert str(ca) == '(|2, 42, 0|:None)'
-assert ca.popL() == 2
-assert ca.popL() == 42
-assert ca.popL() == 0
-assert ca.popL() == None
+ca = CA(1, 2, 3)
+assert ca.pop_front_unsafe() == 1
+assert ca.pop_rear_unsfe() == 3
+ca.push_rear(42, 0)
+assert repr(ca) == 'CA(2, 42, 0)'
+assert str(ca) == '(|2, 42, 0|)'
 
-ca0 = CA(1, 2, s=0)
-assert ca0.popR() == 2
-assert ca0.popR() == 1
-assert ca0.popR() == 0
+ca = CA(range(1,11))
+assert repr(ca) == 'CA(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)'
+assert str(ca) == '(|1, 2, 3, 4, 5, 6, 7, 8, 9, 10|)'
+assert len(ca) == 10
+tup3 = ca.pop_front(3)
+tup4 = ca.pop_rear(4)
+assert tup3 == (1, 2, 3)
+assert tup4 == (10, 9, 8, 7)
+
+assert ca == CA(4, 5, 6)
+out = ca.pop_front(1000)
+assert out == (4, 5, 6)
+
+assert ca = CA(1, 2)
+out, = ca.pop_front(1, 42)
+assert out == 1
+out, = ca.pop_front(default=42)
+assert out == 2
+out, = ca.pop_front(default=42)
+assert out == 42
+
+assert (42,) == ca.pop_front(default=42) == ca.pop_front(num=1, default=42)
+assert (42,) == ca.pop_front(1, default=42)  # 1 is special
+assert () == ca.pop_front(2, default=42)
+assert () == ca.pop_front(0, default=42)
+assert (100,) == ca.pop_front(1, default=100)
 ```
 
 ---
