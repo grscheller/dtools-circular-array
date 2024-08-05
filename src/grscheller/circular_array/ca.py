@@ -24,12 +24,12 @@ __license__ = "Apache License 2.0"
 from typing import Callable, cast, Generic, Iterator, Optional, TypeVar
 from typing import cast, overload
 
-_D = TypeVar('_D')
-_T = TypeVar('_T')
-_L = TypeVar('_L')
-_R = TypeVar('_R')
+D = TypeVar('D')
+T = TypeVar('T')
+L = TypeVar('L')
+R = TypeVar('R')
 
-class CA(Generic[_D]):
+class CA(Generic[D]):
     """Class implementing an indexable circular array.
 
     * stateful generic data structure that will resize itself as needed
@@ -44,8 +44,8 @@ class CA(Generic[_D]):
     """
     __slots__ = '_list', '_count', '_capacity', '_front', '_rear'
 
-    def __init__(self, *ds: _D) -> None:
-        self._list: list[_D|None] = [None] + list(ds) + [None]
+    def __init__(self, *ds: D) -> None:
+        self._list: list[D|None] = [None] + list(ds) + [None]
         self._capacity = capacity = len(self._list)
         self._count = capacity - 2
         if capacity == 2:
@@ -55,25 +55,25 @@ class CA(Generic[_D]):
             self._front = 1
             self._rear = capacity - 2
 
-    def __iter__(self) -> Iterator[_D]:
+    def __iter__(self) -> Iterator[D]:
         if self._count > 0:
             capacity,       rear,       position,    currentState = \
             self._capacity, self._rear, self._front, self._list.copy()
 
             while position != rear:
-                yield cast(_D, currentState[position])  # will always yield a _D
+                yield cast(D, currentState[position])  # will always yield a D
                 position = (position + 1) % capacity
-            yield cast(_D, currentState[position])  # will always yield a _D
+            yield cast(D, currentState[position])  # will always yield a D
 
-    def __reversed__(self) -> Iterator[_D]:
+    def __reversed__(self) -> Iterator[D]:
         if self._count > 0:
             capacity,       front,       position,   currentState = \
             self._capacity, self._front, self._rear, self._list.copy()
 
             while position != front:
-                yield cast(_D, currentState[position])  # will always yield a _D
+                yield cast(D, currentState[position])  # will always yield a D
                 position = (position - 1) % capacity
-            yield cast(_D, currentState[position])  # will always yield a _D
+            yield cast(D, currentState[position])  # will always yield a D
 
     def __repr__(self) -> str:
         return 'CA(' + ', '.join(map(repr, self)) + ')'
@@ -87,14 +87,14 @@ class CA(Generic[_D]):
     def __len__(self) -> int:
         return self._count
 
-    def __getitem__(self, index: int) -> _D:
+    def __getitem__(self, index: int) -> D:
         cnt = self._count
         if 0 <= index < cnt:
-            return cast(_D, self._list[(self._front + index)
-                                       % self._capacity])  # will always return a _D
+            return cast(D, self._list[(self._front + index)
+                                       % self._capacity])  # will always return a D
         elif -cnt <= index < 0:
-            return cast(_D, self._list[(self._front + cnt + index)
-                                       % self._capacity])  # will always return a _D
+            return cast(D, self._list[(self._front + cnt + index)
+                                       % self._capacity])  # will always return a D
         else:
             if cnt > 0:
                 msg1 = 'Out of bounds: '
@@ -105,7 +105,7 @@ class CA(Generic[_D]):
                 msg0 = 'Trying to get value from an empty CA.'
                 raise IndexError(msg0)
 
-    def __setitem__(self, index: int, value: _D) -> None:
+    def __setitem__(self, index: int, value: D) -> None:
         cnt = self._count
         if 0 <= index < cnt:
             self._list[(self._front + index) % self._capacity] = value
@@ -136,7 +136,7 @@ class CA(Generic[_D]):
                return False
        return True
 
-    def push_front(self, *ds: _D) -> None:
+    def push_front(self, *ds: D) -> None:
         """Push data onto the front of the CircularArray."""
         for d in ds:
             if self._count == self._capacity:
@@ -145,7 +145,7 @@ class CA(Generic[_D]):
             self._list[self._front] = d
             self._count += 1
 
-    def push_rear(self, *ds: _D) -> None:
+    def push_rear(self, *ds: D) -> None:
         """Push data onto the rear of the CircularArray."""
         for d in ds:
             if self._count == self._capacity:
@@ -154,10 +154,10 @@ class CA(Generic[_D]):
             self._list[self._rear] = d
             self._count += 1
 
-    def pop_front_unsafe(self) -> _D:
+    def pop_front_unsafe(self) -> D:
         """Pop value from front ("left side") of CircularArray.
 
-        * returns and removes a value of type _D from the front of the CA
+        * returns and removes a value of type D from the front of the CA
         * raises `ValueError` when called on an empty CA
 
         """
@@ -171,15 +171,15 @@ class CA(Generic[_D]):
             None, \
             (self._front+1) % self._capacity, \
             self._count-1
-            return cast(_D, d)  # will always yield a _D
+            return cast(D, d)  # will always yield a D
         else:
             msg = 'Method pop_front_unsafe called on an empty CA'
             raise ValueError(msg)
 
-    def pop_rear_unsafe(self) -> _D:
+    def pop_rear_unsafe(self) -> D:
         """Pop data off the rear ("right side") of the CircularArray.
 
-        * returns and removes a value of type _D from the rear of the CA
+        * returns and removes a value of type D from the rear of the CA
         * raises `ValueError` when called on an empty CA
 
         """
@@ -193,20 +193,20 @@ class CA(Generic[_D]):
             None, \
             (self._rear - 1) % self._capacity, \
             self._count-1
-            return cast(_D, d)  # will always yield a _D
+            return cast(D, d)  # will always yield a D
         else:
             msg = 'Method pop_rear_unsafe called on an empty CA'
             raise ValueError(msg)
 
-    def pop_front(self, num: int=1, default: Optional[_D]=None) -> tuple[_D, ...]:
+    def pop_front(self, num: int=1, default: Optional[D]=None) -> tuple[D, ...]:
         """Pop up to `num` values off the front of the CircularArray.
 
         * parameter `num` is the maximum number of values to return
         * parameter `default` is used when CA is empty and only one value requested
-        * returns a `Tuple[_D, ...]` of at most `num` values popped from front of CA
+        * returns a `Tuple[D, ...]` of at most `num` values popped from front of CA
 
         """
-        ds: list[_D] = []
+        ds: list[D] = []
         while num > 0:
             try:
                 popped = self.pop_front_unsafe()
@@ -222,15 +222,15 @@ class CA(Generic[_D]):
 
         return tuple(ds)
 
-    def pop_rear(self, num: int=1, default: Optional[_D]=None) -> tuple[_D, ...]:
+    def pop_rear(self, num: int=1, default: Optional[D]=None) -> tuple[D, ...]:
         """Pop up to `num` values off the rear of the CircularArray.
 
         * parameter `num` is the maximum number of values to return
         * parameter `default` is used when CA is empty and only one value requested
-        * returns a `Tuple[_D, ...]` of at most `num` values popped from rear of CA
+        * returns a `Tuple[D, ...]` of at most `num` values popped from rear of CA
 
         """
-        ds: list[_D] = []
+        ds: list[D] = []
         n = num
         while n > 0:
             try:
@@ -247,25 +247,25 @@ class CA(Generic[_D]):
 
         return tuple(ds)
 
-    def map(self, f: Callable[[_D], _T]) -> CA[_T]:
+    def map(self, f: Callable[[D], T]) -> CA[T]:
         """Apply function f over the CA's contents and return new instance.
 
-        * parameter `f` generic function of type f[_D, _T] -> CA[_T]
-        * return a new instance of a CA of type CA[_T]
+        * parameter `f` generic function of type f[D, T] -> CA[T]
+        * return a new instance of a CA of type CA[T]
 
         """
         return CA(*map(f, self))
 
-    def foldL(self, f: Callable[[_L, _D], _L], initial: Optional[_L]=None) -> _L:
+    def foldL(self, f: Callable[[L, D], L], initial: Optional[L]=None) -> L:
         """Left fold CircularArray via a function and an optional initial value.
 
-        * parameter `f` generic function of type `f[_L, _D] -> _L`
+        * parameter `f` generic function of type `f[L, D] -> L`
           * the first argument to `f` is for the accumulated value.
         * parameter `initial` is an optional initial value
-          * note that if not given then it will be the case that `_L` = `_D`
-        * returns the reduced value of type `_L`
-          * note that `_L` & `_D` can be the same type
-          * if `initial` is not given then `_L = _R`
+          * note that if not given then it will be the case that `L` = `D`
+        * returns the reduced value of type `L`
+          * note that `L` & `D` can be the same type
+          * if `initial` is not given then `L = R`
         * raises `ValueError` when called on an empty CA
 
         """
@@ -277,7 +277,7 @@ class CA(Generic[_D]):
                 return initial
         else:
             if initial is None:
-                acc = cast(_L, self[0])                   # in this case _D = _L
+                acc = cast(L, self[0])  # in this case D = L
                 for idx in range(1, self._count):
                     acc = f(acc, self[idx])
                 return acc
@@ -287,16 +287,16 @@ class CA(Generic[_D]):
                     acc = f(acc, d)
                 return acc
 
-    def foldR(self, f: Callable[[_D, _R], _R], initial: Optional[_R]=None) -> _R:
+    def foldR(self, f: Callable[[D, R], R], initial: Optional[R]=None) -> R:
         """Right fold CircularArray via a function and an optional initial value.
 
-        * parameter `f` generic function of type `f[_D, _R] -> _R`
+        * parameter `f` generic function of type `f[D, R] -> R`
           * the second argument to f is for the accumulated value
         * parameter `initial` is an optional initial value
-          * note that if not given then it will be the case that `_R` = `_D`
-        * returns the reduced value of type `_R`
-          * note that `_R` & `_D` can be the same type
-          * if `initial` is not given then `_L = _R`
+          * note that if not given then it will be the case that `R` = `D`
+        * returns the reduced value of type `R`
+          * note that `R` & `D` can be the same type
+          * if `initial` is not given then `L = R`
         * raises `ValueError` when called on an empty CA
 
         """
@@ -308,7 +308,7 @@ class CA(Generic[_D]):
                 return initial
         else:
             if initial is None:
-                acc = cast(_R, self[-1])                  # in this case _D = _R
+                acc = cast(R, self[-1])  # in this case D = R
                 for idx in range(self._count-2, -1, -1):
                     acc = f(self[idx], acc)
                 return acc
