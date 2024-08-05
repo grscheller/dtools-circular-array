@@ -286,12 +286,13 @@ hljs.highlightAll();
     def foldL(self, f: Callable[[_L, _D], _L], initial: Optional[_L]=None) -&gt; _L:
         &#34;&#34;&#34;Left fold CircularArray via a function and an optional initial value.
 
-        * parameter `f` generic function of type `f[_L, _D] -&gt; _L`, the first
-            argument to `f` is for the accumulated value.
-        * parameter `initial` is an optional initial value, note that if
-            not given then it will be the case that `_L` = `_D`
-        * returns the reduced value of type `_L`, note that `_L` &amp; `_D` can be
-            the same type
+        * parameter `f` generic function of type `f[_L, _D] -&gt; _L`
+          * the first argument to `f` is for the accumulated value.
+        * parameter `initial` is an optional initial value
+          * note that if not given then it will be the case that `_L` = `_D`
+        * returns the reduced value of type `_L`
+          * note that `_L` &amp; `_D` can be the same type
+          * if `initial` is not given then `_L = _R`
         * raises `ValueError` when called on an empty CA
 
         &#34;&#34;&#34;
@@ -316,12 +317,13 @@ hljs.highlightAll();
     def foldR(self, f: Callable[[_D, _R], _R], initial: Optional[_R]=None) -&gt; _R:
         &#34;&#34;&#34;Right fold CircularArray via a function and an optional initial value.
 
-        * parameter `f` generic function of type `f[_D, _R] -&gt; _R`, the second
-            argument to f is for the accumulated value
-        * parameter `initial` is an optional initial value, note that if
-            not given then it will be the case that `_R` = `_D`
-        * returns the reduced value of type `_R`, note that `_R` &amp; `_D` can be
-            the same type
+        * parameter `f` generic function of type `f[_D, _R] -&gt; _R`
+          * the second argument to f is for the accumulated value
+        * parameter `initial` is an optional initial value
+          * note that if not given then it will be the case that `_R` = `_D`
+        * returns the reduced value of type `_R`
+          * note that `_R` &amp; `_D` can be the same type
+          * if `initial` is not given then `_L = _R`
         * raises `ValueError` when called on an empty CA
 
         &#34;&#34;&#34;
@@ -430,12 +432,13 @@ hljs.highlightAll();
 <dd>
 <div class="desc"><p>Left fold CircularArray via a function and an optional initial value.</p>
 <ul>
-<li>parameter <code>f</code> generic function of type <code>f[_L, _D] -&gt; _L</code>, the first
-argument to <code>f</code> is for the accumulated value.</li>
-<li>parameter <code>initial</code> is an optional initial value, note that if
-not given then it will be the case that <code>_L</code> = <code>_D</code></li>
-<li>returns the reduced value of type <code>_L</code>, note that <code>_L</code> &amp; <code>_D</code> can be
-the same type</li>
+<li>parameter <code>f</code> generic function of type <code>f[_L, _D] -&gt; _L</code></li>
+<li>the first argument to <code>f</code> is for the accumulated value.</li>
+<li>parameter <code>initial</code> is an optional initial value</li>
+<li>note that if not given then it will be the case that <code>_L</code> = <code>_D</code></li>
+<li>returns the reduced value of type <code>_L</code></li>
+<li>note that <code>_L</code> &amp; <code>_D</code> can be the same type</li>
+<li>if <code>initial</code> is not given then <code>_L = _R</code></li>
 <li>raises <code>ValueError</code> when called on an empty CA</li>
 </ul></div>
 </dd>
@@ -445,12 +448,13 @@ the same type</li>
 <dd>
 <div class="desc"><p>Right fold CircularArray via a function and an optional initial value.</p>
 <ul>
-<li>parameter <code>f</code> generic function of type <code>f[_D, _R] -&gt; _R</code>, the second
-argument to f is for the accumulated value</li>
-<li>parameter <code>initial</code> is an optional initial value, note that if
-not given then it will be the case that <code>_R</code> = <code>_D</code></li>
-<li>returns the reduced value of type <code>_R</code>, note that <code>_R</code> &amp; <code>_D</code> can be
-the same type</li>
+<li>parameter <code>f</code> generic function of type <code>f[_D, _R] -&gt; _R</code></li>
+<li>the second argument to f is for the accumulated value</li>
+<li>parameter <code>initial</code> is an optional initial value</li>
+<li>note that if not given then it will be the case that <code>_R</code> = <code>_D</code></li>
+<li>returns the reduced value of type <code>_R</code></li>
+<li>note that <code>_R</code> &amp; <code>_D</code> can be the same type</li>
+<li>if <code>initial</code> is not given then <code>_L = _R</code></li>
 <li>raises <code>ValueError</code> when called on an empty CA</li>
 </ul></div>
 </dd>

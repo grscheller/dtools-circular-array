@@ -259,12 +259,13 @@ class CA(Generic[_D]):
     def foldL(self, f: Callable[[_L, _D], _L], initial: Optional[_L]=None) -> _L:
         """Left fold CircularArray via a function and an optional initial value.
 
-        * parameter `f` generic function of type `f[_L, _D] -> _L`, the first
-            argument to `f` is for the accumulated value.
-        * parameter `initial` is an optional initial value, note that if
-            not given then it will be the case that `_L` = `_D`
-        * returns the reduced value of type `_L`, note that `_L` & `_D` can be
-            the same type
+        * parameter `f` generic function of type `f[_L, _D] -> _L`
+          * the first argument to `f` is for the accumulated value.
+        * parameter `initial` is an optional initial value
+          * note that if not given then it will be the case that `_L` = `_D`
+        * returns the reduced value of type `_L`
+          * note that `_L` & `_D` can be the same type
+          * if `initial` is not given then `_L = _R`
         * raises `ValueError` when called on an empty CA
 
         """
@@ -289,12 +290,13 @@ class CA(Generic[_D]):
     def foldR(self, f: Callable[[_D, _R], _R], initial: Optional[_R]=None) -> _R:
         """Right fold CircularArray via a function and an optional initial value.
 
-        * parameter `f` generic function of type `f[_D, _R] -> _R`, the second
-            argument to f is for the accumulated value
-        * parameter `initial` is an optional initial value, note that if
-            not given then it will be the case that `_R` = `_D`
-        * returns the reduced value of type `_R`, note that `_R` & `_D` can be
-            the same type
+        * parameter `f` generic function of type `f[_D, _R] -> _R`
+          * the second argument to f is for the accumulated value
+        * parameter `initial` is an optional initial value
+          * note that if not given then it will be the case that `_R` = `_D`
+        * returns the reduced value of type `_R`
+          * note that `_R` & `_D` can be the same type
+          * if `initial` is not given then `_L = _R`
         * raises `ValueError` when called on an empty CA
 
         """
