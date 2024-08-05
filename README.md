@@ -49,11 +49,11 @@ assert out == 2
 out, = ca.pop_front(default=42)
 assert out == 42
 
-assert (42,) == ca.pop_front(default=42) == ca.pop_front(num=1, default=42)
-assert (42,) == ca.pop_front(1, default=42)  # 1 is special
-assert () == ca.pop_front(2, default=42)
-assert () == ca.pop_front(0, default=42)
-assert (100,) == ca.pop_front(1, default=100)
+assert (42,) == CA().pop_front(default=42) == CA().pop_front(num=1, default=42)
+assert (42,) == CA().pop_front(1, default=42)  # 1 is special
+assert () == CA().pop_front(2, default=42)
+assert () == CA().pop_front(0, default=42)
+assert (100,) == CA().pop_front(1, default=100)
 ```
 
 ---
