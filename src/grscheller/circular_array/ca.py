@@ -26,7 +26,7 @@ from typing import cast, overload
 
 D = TypeVar('D')
 T = TypeVar('T')
-L = TypeVar('L')
+F = TypeVar('F')
 R = TypeVar('R')
 
 class CA(Generic[D]):
@@ -154,12 +154,10 @@ class CA(Generic[D]):
             self._list[self._rear] = d
             self._count += 1
 
-    def popF_unsafe(self) -> D:
+    def popF(self) -> D:
         """Pop value from front ("left side") of CircularArray.
 
-        * returns and removes a value of type D from the front of the CA
         * raises `ValueError` when called on an empty CA
-
         """
         if self._count > 0:
             d, \
@@ -173,15 +171,13 @@ class CA(Generic[D]):
             self._count-1
             return cast(D, d)  # will always yield a D
         else:
-            msg = 'Method popF_unsafe called on an empty CA'
+            msg = 'Method popF called on an empty CA'
             raise ValueError(msg)
 
-    def popR_unsafe(self) -> D:
+    def popR(self) -> D:
         """Pop data off the rear ("right side") of the CircularArray.
 
-        * returns and removes a value of type D from the rear of the CA
         * raises `ValueError` when called on an empty CA
-
         """
         if self._count > 0:
             d, \
@@ -195,68 +191,57 @@ class CA(Generic[D]):
             self._count-1
             return cast(D, d)  # will always yield a D
         else:
-            msg = 'Method popR_unsafe called on an empty CA'
+            msg = 'Method popR called on an empty CA'
             raise ValueError(msg)
 
-    # Not sure what I am doing here,,,
-    @overload
-    def popF(self, num: int, default: D) -> tuple[D, ...]:
-        ...
-    @overload
-    def popF(self, num: int, default: None) -> tuple[D, ...]:
-        ...
-    @overload
-    def popF(self, num: int) -> tuple[D, ...]:
-        ...
+    def popFD(self, default: D) -> D:
+        """Pop from front with a default value.
 
-    def popF(self, num: int=1, default: Optional[D]=None) -> tuple[D, ...]:
-        """Pop up to `num` values off the front of the CircularArray.
-
-        * parameter `num` is the maximum number of values to return
-        * parameter `default` is used when CA is empty and only one value requested
-        * returns a `Tuple[D, ...]` of at most `num` values popped from front of CA
-
+        * safe version of popF
+        * returns a default value in the event the CA is empty
         """
+        try:
+            return self.popF()
+        except ValueError:
+            return default
+
+    def popRD(self, default: D) -> D:
+        """Pop from rear with a default value.
+
+        * safe version of popR
+        * returns a default value in the event the CA is empty
+        """
+        try:
+            return self.popR()
+        except ValueError:
+            return default
+
+    def popFT(self, max: int=1) -> tuple[D, ...]:
+        """Return a tuple of up to max values popped off the front of the CA."""
         ds: list[D] = []
-        while num > 0:
+
+        while max > 0:
             try:
-                popped = self.popF_unsafe()
-                ds.append(popped)
+                ds.append(self.popF())
             except ValueError:
                 break
-            except IndexError:
-                assert False
             else:
-                num -= 1
-
-        if num == 1 and len(ds) == 0:
-            if default is not None:
-                ds.append(default)
+                max -= 1
 
         return tuple(ds)
 
-    def popR(self, num: int=1, default: Optional[D]=None) -> tuple[D, ...]:
-        """Pop up to `num` values off the rear of the CircularArray.
-
-        * parameter `num` is the maximum number of values to return
-        * parameter `default` is used when CA is empty and only one value requested
-        * returns a `Tuple[D, ...]` of at most `num` values popped from rear of CA
-
-        """
+    def popRT(self, max: int=1) -> tuple[D, ...]:
+        """Return a tuple of up to max values popped off the rear of the CA."""
         ds: list[D] = []
-        n = num
+
+        n = max
         while n > 0:
             try:
-                popped = self.popR_unsafe()
-                ds.append(popped)
+                ds.append(self.popR())
             except ValueError:
                 break
             else:
                 n -= 1
-
-        if num == 1 and len(ds) == 0:
-            if default is not None:
-                ds.append(default)
 
         return tuple(ds)
 
@@ -269,7 +254,7 @@ class CA(Generic[D]):
         """
         return CA(*map(f, self))
 
-    def foldL(self, f: Callable[[L, D], L], initial: Optional[L]=None) -> L:
+    def foldL(self, f: Callable[[F, D], F], initial: Optional[F]=None) -> F:
         """Left fold CircularArray via a function and an optional initial value.
 
         * parameter `f` generic function of type `f[L, D] -> L`
@@ -290,7 +275,7 @@ class CA(Generic[D]):
                 return initial
         else:
             if initial is None:
-                acc = cast(L, self[0])  # in this case D = L
+                acc = cast(F, self[0])  # in this case D = L
                 for idx in range(1, self._count):
                     acc = f(acc, self[idx])
                 return acc

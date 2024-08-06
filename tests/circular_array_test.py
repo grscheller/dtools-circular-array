@@ -25,23 +25,23 @@ class TestCircularArray:
         ca1.pushF(0)
         ca1.pushR(2)
         ca1.pushR(3)
-        assert ca1.popF_unsafe() == 0
+        assert ca1.popFD(-1) == 0
         ca1.pushR(4)
         ca2 = ca1.map(lambda x: x+1)
         assert ca1 is not ca2
         assert ca1 != ca2
         assert len(ca1) == len(ca2)
-        assert ca1.popF_unsafe() == 1
+        assert ca1.popFD(-1) == 1
         while ca1:
-            assert ca1.popF_unsafe() == ca2.popF_unsafe()
+            assert ca1.popFD(-1) == ca2.popFD(-2)
         assert len(ca1) == 0
         assert len(ca2) == 1
-        assert ca2.popR_unsafe() == 5
+        assert ca2.popR() == 5
         try:
-            assert ca2.popR_unsafe()
+            assert ca2.popR()
         except ValueError as ve:
             assert True
-            assert str(ve) == 'Method popR_unsafe called on an empty CA'
+            assert str(ve) == 'Method popR called on an empty CA'
         else:
             assert False
 
@@ -49,38 +49,40 @@ class TestCircularArray:
         c: CA[str] = CA()
         pushed1 = '42'
         c.pushF(pushed1)
-        popped1 = c.popF_unsafe()
+        popped1 = c.popF()
         assert pushed1 == popped1
         assert len(c) == 0
         try:
-            c.popF_unsafe()
+            c.popF()
         except ValueError as ve:
-            assert str(ve) == 'Method popF_unsafe called on an empty CA'
+            assert str(ve) == 'Method popF called on an empty CA'
         else:
             assert False
         pushed1 = '0'
         c.pushF(pushed1)
-        popped1 = c.popR_unsafe()
+        popped1 = c.popR()
         assert pushed1 == popped1 == '0'
         assert not c
         pushed1 = '0'
         c.pushR(pushed1)
-        popped1 = c.popF_unsafe()
-        assert popped1 is not None
+        popped1 = c.popFD('666')
+        assert popped1 != '666'
         assert pushed1 == popped1
         assert len(c) == 0
         pushed2 = ''
         c.pushR(pushed2)
-        popped2 = c.popR_unsafe()
+        popped2 = c.popRD('42')
+        assert popped2 != '42'
         assert pushed2 == popped2
         assert len(c) == 0
         c.pushR('first')
         c.pushR('second')
         c.pushR('last')
-        assert c.popF_unsafe() == 'first'
-        assert c.popR_unsafe() == 'last'
+        assert c.popFD('error') == 'first'
+        assert c.popRD('error') == 'last'
         assert c
-        c.popF_unsafe()
+        assert len(c) == 1
+        c.popF()
         assert len(c) == 0
 
     def test_iterators(self) -> None:
@@ -121,22 +123,22 @@ class TestCircularArray:
         c2.pushR((7, 11, 'foobar'))
         assert c1 == c2
 
-        tup2 = c2.popR_unsafe()
+        tup2 = c2.popR()
         assert c1 != c2
 
         c2.pushR((42, 'foofoo'))
         assert c1 != c2
 
-        c1.popR_unsafe()
+        c1.popR()
         c1.pushR((42, 'foofoo'))
         c1.pushR(tup2)
         c2.pushR(tup2)
         assert c1 == c2
 
-        holdA = c1.popF_unsafe()
+        holdA = c1.popF()
         c1.resize(42)
-        holdB = c1.popF_unsafe()
-        holdC = c1.popR_unsafe()
+        holdB = c1.popF()
+        holdC = c1.popR()
         c1.pushF(holdB)
         c1.pushR(holdC)
         c1.pushF(holdA)
@@ -160,8 +162,8 @@ class TestCircularArray:
         assert c1 == c2
         c1[2] = 'cat'
         c1[-1] = 'dog'
-        assert c2.popR_unsafe() == 'd'
-        assert c2.popR_unsafe() == 'c'
+        assert c2.popR() == 'd'
+        assert c2.popR() == 'c'
         c2.pushR('cat')
         try:
             c2[3] = 'dog'       # no such index
@@ -174,10 +176,10 @@ class TestCircularArray:
         assert c1 == c2
         c2[1] = 'bob'
         assert c1 != c2
-        assert c1.popF_unsafe() == 'a'
+        assert c1.popFD('error') == 'a'
         c1[0] = c2[1]
         assert c1 != c2
-        assert c2.popF_unsafe() == 'a'
+        assert c2.popFD('error') == 'a'
         assert c1 == c2
 
     def test_foldL(self) -> None:
@@ -226,3 +228,69 @@ class TestCircularArray:
         empty: list[int] = []
         assert c3 == CA(0, 1, 2, 3, 4)
         assert c3.foldR(f, empty) == [4, 3, 2, 1, 0]
+
+    def test_pop_tuples(self) -> None:
+        ca1 = CA(*range(100))
+        zero, one, two, *rest = ca1.popFT(10)
+        assert zero == 0
+        assert one == 1
+        assert two == 2
+        assert rest == [3, 4, 5, 6, 7, 8, 9]
+        assert len(ca1) == 90
+
+        last, next_to_last, *rest = ca1.popRT(5)
+        assert last == 99
+        assert next_to_last == 98
+        assert rest == [97, 96, 95]
+        assert len(ca1) == 85
+
+        ca2 = CA(*ca1)
+        assert len(ca1.popRT(0)) == 0
+        assert ca1 == ca2
+
+    def test_fold(self) -> None:
+        ca1 = CA(*range(1, 101))
+        assert ca1.foldL(lambda acc, d: acc + d) == 5050
+        assert ca1.foldR(lambda d, acc: d + acc) == 5050
+
+        def fl(acc: int, d: int) -> int:
+            return acc*acc - d
+
+        def fr(d: int, acc: int) -> int:
+            return acc*acc - d
+
+        ca2 = CA(2, 3, 4)
+        assert ca2.foldL(fl) == -3
+        assert ca2.foldR(fr) == 167
+
+    def test_readme(self) -> None:
+        ca = CA(1, 2, 3)
+        assert ca.popF() == 1
+        assert ca.popR() == 3
+        ca.pushR(42, 0)
+        ca.pushF(0, 1)
+        assert repr(ca) == 'CA(1, 0, 2, 42, 0)'
+        assert str(ca) == '(|1, 0, 2, 42, 0|)'
+
+        ca = CA(*range(1,11))
+        assert repr(ca) == 'CA(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)'
+        assert str(ca) == '(|1, 2, 3, 4, 5, 6, 7, 8, 9, 10|)'
+        assert len(ca) == 10
+        tup3 = ca.popFT(3)
+        tup4 = ca.popRT(4)
+        assert tup3 == (1, 2, 3)
+        assert tup4 == (10, 9, 8, 7)
+
+        assert ca == CA(4, 5, 6)
+        four, *rest = ca.popFT(1000)
+        assert four == 4
+        assert rest == [5, 6]
+        assert len(ca) == 0
+
+        ca = CA(1, 2, 3)
+        assert ca.popFD(42) == 1
+        assert ca.popRD(42) == 3
+        assert ca.popFD(42) == 2
+        assert ca.popRD(42) == 42
+        assert ca.popFD(42) == 42
+        assert len(ca) == 0

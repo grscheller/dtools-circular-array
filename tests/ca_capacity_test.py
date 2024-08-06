@@ -14,7 +14,6 @@
 
 from __future__ import annotations
 
-from typing import Optional
 from grscheller.circular_array.ca import CA
 
 class TestCapacity:
@@ -50,10 +49,10 @@ class TestCapacity:
         c.resize(3)
         assert c.fractionFilled() == 6/8
 
-        c.popF_unsafe()
-        c.popR_unsafe()
-        c.popF_unsafe()
-        c.popR_unsafe()
+        c.popFD(0)
+        c.popRD(0)
+        c.popFD(0)
+        c.popRD(0)
         assert c.fractionFilled() == 2/8
         c.resize(3)
         assert c.fractionFilled() == 2/4
@@ -63,7 +62,7 @@ class TestCapacity:
 
     def test_double(self) -> None:
         c: CA[int] = CA(1, 2, 3)
-        assert c.popF_unsafe() == 1
+        assert c.popFD(0) == 1
         assert c.capacity() == 5
         c.double()
         assert c.capacity() == 10
@@ -79,7 +78,7 @@ class TestCapacity:
         assert c.capacity() == 6
         for ii in range(45):
             if ii % 3 == 0:
-                c.pushR(c.popF_unsafe())
+                c.pushR(c.popFD(42))
                 c.pushF(ii+100)
             else:
                 c.pushR(ii+1000)
@@ -88,7 +87,7 @@ class TestCapacity:
         jj = len(c)
         assert jj == 50
         while jj > 0:
-            kk = c.popF_unsafe()
+            kk = c.popF()
             assert kk != -1
             c.pushR(kk)
             jj -= 1
@@ -118,22 +117,25 @@ class TestCapacity:
         c.resize(8)
         assert c.capacity() == 8
         assert len(c) == 1
-        popped = c.popF_unsafe()
+        popped = c.popFD(0)
         assert popped == 42
         assert len(c) == 0
         assert c.capacity() == 8
+
         try:
-            c.popF_unsafe()
+            c.popF()
         except ValueError as ve:
             str(ve) == 'foofoo'
         else:
             assert False
+
         try:
-            c.popR_unsafe()
+            c.popR()
         except ValueError as ve:
             str(ve) == 'foofoo'
         else:
             assert False
+
         c.pushR(popped)
         assert len(c) == 1
         assert c.capacity() == 8

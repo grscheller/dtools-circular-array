@@ -22,38 +22,35 @@ relationship.
 from grscheller.circular_array.ca import CA
 
 ca = CA(1, 2, 3)
-assert ca.popF_unsafe() == 1
-assert ca.popR_unsafe() == 3
+assert ca.popF() == 1
+assert ca.popR() == 3
 ca.pushR(42, 0)
-assert repr(ca) == 'CA(2, 42, 0)'
-assert str(ca) == '(|2, 42, 0|)'
+ca.pushF(0, 1)
+assert repr(ca) == 'CA(1, 0, 2, 42, 0)'
+assert str(ca) == '(|1, 0, 2, 42, 0|)'
 
 ca = CA(*range(1,11))
 assert repr(ca) == 'CA(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)'
 assert str(ca) == '(|1, 2, 3, 4, 5, 6, 7, 8, 9, 10|)'
 assert len(ca) == 10
-tup3 = ca.popF(3)
-tup4 = ca.popR(4)
+tup3 = ca.popFT(3)
+tup4 = ca.popRT(4)
 assert tup3 == (1, 2, 3)
 assert tup4 == (10, 9, 8, 7)
 
 assert ca == CA(4, 5, 6)
-out = ca.popF(1000)
-assert out == (4, 5, 6)
+four, *rest = ca.popFT(1000)
+assert four == 4
+assert rest == [5, 6]
+assert len(ca) == 0
 
-assert ca == CA(1, 2)
-out, = ca.popF(1, 42)
-assert out == 1
-out, = ca.popF(default=42)
-assert out == 2
-out, = ca.popF(default=42)
-assert out == 42
-
-assert (42,) == CA().popF(default=42) == CA().popF(num=1, default=42)
-assert (42,) == CA().popF(1, default=42)  # 1 is special
-assert () == CA().popF(2, default=42)
-assert () == CA().popF(0, default=42)
-assert (100,) == CA().popF(1, default=100)
+ca = CA(1, 2, 3)
+assert ca.popFD(42) == 1
+assert ca.popRD(42) == 3
+assert ca.popFD(42) == 2
+assert ca.popRD(42) == 42
+assert ca.popFD(42) == 42
+assert len(ca) == 0
 ```
 
 ---
