@@ -26,19 +26,19 @@ class Test_repr:
         assert ca2 is not ca1
 
         ca1.pushR(1)
-        ca1.pushF('foo')
+        ca1.pushL('foo')
         assert repr(ca1) == "CA('foo', 1)"
         ca2 = eval(repr(ca1))
         assert ca2 == ca1
         assert ca2 is not ca1
 
-        assert ca1.popFD('bar') == 'foo'
+        assert ca1.popLD('bar') == 'foo'
         ca1.pushR(2)
         ca1.pushR(3)
         ca1.pushR(4)
         ca1.pushR(5)
-        assert ca1.popF() == 1
-        ca1.pushF(42)
+        assert ca1.popL() == 1
+        ca1.pushL(42)
         ca1.popR()
         assert repr(ca1) == 'CA(42, 2, 3, 4)'
         ca2 = eval(repr(ca1))
@@ -47,7 +47,7 @@ class Test_repr:
 
         ca3: CA[int] = CA(1, 10, 0, 42, 99)
         ca3.pushR(2, 100, 3)
-        assert ca3.popF() == 1
+        assert ca3.popL() == 1
         popped = ca3.popR()
-        ca3.pushF(9, 8)
+        ca3.pushL(9, 8)
         assert repr(ca3) == 'CA(8, 9, 10, 0, 42, 99, 2, 100)'

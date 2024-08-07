@@ -21,19 +21,19 @@ from grscheller.fp.nothing import nothing, Nothing
 class TestCircularArray:
     def test_mutate_returns_none(self) -> None:
         ca1: CA[int] = CA()
-        assert ca1.pushF(1) == None  # type: ignore # testing for no return
-        ca1.pushF(0)
+        assert ca1.pushL(1) == None  # type: ignore # testing for no return
+        ca1.pushL(0)
         ca1.pushR(2)
         ca1.pushR(3)
-        assert ca1.popFD(-1) == 0
+        assert ca1.popLD(-1) == 0
         ca1.pushR(4)
         ca2 = ca1.map(lambda x: x+1)
         assert ca1 is not ca2
         assert ca1 != ca2
         assert len(ca1) == len(ca2)
-        assert ca1.popFD(-1) == 1
+        assert ca1.popLD(-1) == 1
         while ca1:
-            assert ca1.popFD(-1) == ca2.popFD(-2)
+            assert ca1.popLD(-1) == ca2.popLD(-2)
         assert len(ca1) == 0
         assert len(ca2) == 1
         assert ca2.popR() == 5
@@ -46,44 +46,44 @@ class TestCircularArray:
             assert False
 
     def test_push_then_pop(self) -> None:
-        c: CA[str] = CA()
+        ca: CA[str] = CA()
         pushed1 = '42'
-        c.pushF(pushed1)
-        popped1 = c.popF()
+        ca.pushL(pushed1)
+        popped1 = ca.popL()
         assert pushed1 == popped1
-        assert len(c) == 0
+        assert len(ca) == 0
         try:
-            c.popF()
+            ca.popL()
         except ValueError as ve:
-            assert str(ve) == 'Method popF called on an empty CA'
+            assert str(ve) == 'Method popL called on an empty CA'
         else:
             assert False
         pushed1 = '0'
-        c.pushF(pushed1)
-        popped1 = c.popR()
+        ca.pushL(pushed1)
+        popped1 = ca.popR()
         assert pushed1 == popped1 == '0'
-        assert not c
+        assert not ca
         pushed1 = '0'
-        c.pushR(pushed1)
-        popped1 = c.popFD('666')
+        ca.pushR(pushed1)
+        popped1 = ca.popLD('666')
         assert popped1 != '666'
         assert pushed1 == popped1
-        assert len(c) == 0
+        assert len(ca) == 0
         pushed2 = ''
-        c.pushR(pushed2)
-        popped2 = c.popRD('42')
+        ca.pushR(pushed2)
+        popped2 = ca.popRD('42')
         assert popped2 != '42'
         assert pushed2 == popped2
-        assert len(c) == 0
-        c.pushR('first')
-        c.pushR('second')
-        c.pushR('last')
-        assert c.popFD('error') == 'first'
-        assert c.popRD('error') == 'last'
-        assert c
-        assert len(c) == 1
-        c.popF()
-        assert len(c) == 0
+        assert len(ca) == 0
+        ca.pushR('first')
+        ca.pushR('second')
+        ca.pushR('last')
+        assert ca.popLD('error') == 'first'
+        assert ca.popRD('error') == 'last'
+        assert ca
+        assert len(ca) == 1
+        ca.popL()
+        assert len(ca) == 0
 
     def test_iterators(self) -> None:
         data: list[int] = [*range(100)]
@@ -119,7 +119,7 @@ class TestCircularArray:
     def test_equality(self) -> None:
         c1: CA[object] = CA(1, 2, 3, 'Forty-Two', (7, 11, 'foobar'))
         c2: CA[object] = CA(2, 3, 'Forty-Two')
-        c2.pushF(1)
+        c2.pushL(1)
         c2.pushR((7, 11, 'foobar'))
         assert c1 == c2
 
@@ -135,15 +135,15 @@ class TestCircularArray:
         c2.pushR(tup2)
         assert c1 == c2
 
-        holdA = c1.popF()
+        holdA = c1.popL()
         c1.resize(42)
-        holdB = c1.popF()
+        holdB = c1.popL()
         holdC = c1.popR()
-        c1.pushF(holdB)
+        c1.pushL(holdB)
         c1.pushR(holdC)
-        c1.pushF(holdA)
-        c1.pushF(200)
-        c2.pushF(200)
+        c1.pushL(holdA)
+        c1.pushL(200)
+        c2.pushL(200)
         assert c1 == c2
 
     def test_map(self) -> None:
@@ -176,10 +176,10 @@ class TestCircularArray:
         assert c1 == c2
         c2[1] = 'bob'
         assert c1 != c2
-        assert c1.popFD('error') == 'a'
+        assert c1.popLD('error') == 'a'
         c1[0] = c2[1]
         assert c1 != c2
-        assert c2.popFD('error') == 'a'
+        assert c2.popLD('error') == 'a'
         assert c1 == c2
 
     def test_foldL(self) -> None:
@@ -231,7 +231,7 @@ class TestCircularArray:
 
     def test_pop_tuples(self) -> None:
         ca1 = CA(*range(100))
-        zero, one, two, *rest = ca1.popFT(10)
+        zero, one, two, *rest = ca1.popLT(10)
         assert zero == 0
         assert one == 1
         assert two == 2
@@ -265,10 +265,10 @@ class TestCircularArray:
 
     def test_readme(self) -> None:
         ca = CA(1, 2, 3)
-        assert ca.popF() == 1
+        assert ca.popL() == 1
         assert ca.popR() == 3
         ca.pushR(42, 0)
-        ca.pushF(0, 1)
+        ca.pushL(0, 1)
         assert repr(ca) == 'CA(1, 0, 2, 42, 0)'
         assert str(ca) == '(|1, 0, 2, 42, 0|)'
 
@@ -276,21 +276,21 @@ class TestCircularArray:
         assert repr(ca) == 'CA(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)'
         assert str(ca) == '(|1, 2, 3, 4, 5, 6, 7, 8, 9, 10|)'
         assert len(ca) == 10
-        tup3 = ca.popFT(3)
+        tup3 = ca.popLT(3)
         tup4 = ca.popRT(4)
         assert tup3 == (1, 2, 3)
         assert tup4 == (10, 9, 8, 7)
 
         assert ca == CA(4, 5, 6)
-        four, *rest = ca.popFT(1000)
+        four, *rest = ca.popLT(1000)
         assert four == 4
         assert rest == [5, 6]
         assert len(ca) == 0
 
         ca = CA(1, 2, 3)
-        assert ca.popFD(42) == 1
+        assert ca.popLD(42) == 1
         assert ca.popRD(42) == 3
-        assert ca.popFD(42) == 2
+        assert ca.popLD(42) == 2
         assert ca.popRD(42) == 42
-        assert ca.popFD(42) == 42
+        assert ca.popLD(42) == 42
         assert len(ca) == 0

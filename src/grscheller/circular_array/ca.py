@@ -22,25 +22,24 @@ __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
 
 from typing import Callable, cast, Generic, Iterator, Optional, TypeVar
-from typing import cast, overload
 
 D = TypeVar('D')
 T = TypeVar('T')
-F = TypeVar('F')
+L = TypeVar('L')
 R = TypeVar('R')
 
 class CA(Generic[D]):
-    """Class implementing an indexable circular array.
+    """Class implementing an indexable circular array data structure.
 
-    * stateful generic data structure that will resize itself as needed
+    * generic, stateful data structure
     * amortized O(1) pushing and popping from either end
     * O(1) random access any element
-    * make a defensive copy of the data for the purposes of iteration
+    * will resize itself as needed
+    * makes defensive copies of contents for the purposes of iteration
     * not sliceable
     * in boolean context returns true if not empty, false if empty
     * raises `IndexError` for out-of-bounds indexing
     * raises `ValueError` for popping from or folding an empty CA
-
     """
     __slots__ = '_list', '_count', '_capacity', '_front', '_rear'
 
@@ -102,7 +101,7 @@ class CA(Generic[D]):
                 msg3 = 'while getting value from a CA.'
                 raise IndexError(msg1 + msg2 + msg3)
             else:
-                msg0 = 'Trying to get value from an empty CA.'
+                msg0 = 'Trying to get a value from an empty CA.'
                 raise IndexError(msg0)
 
     def __setitem__(self, index: int, value: D) -> None:
@@ -118,7 +117,7 @@ class CA(Generic[D]):
                 msg3 = 'while setting value from a CA.'
                 raise IndexError(msg1 + msg2 + msg3)
             else:
-                msg0 = 'Trying to set value from an empty CA.'
+                msg0 = 'Trying to set a value from an empty CA.'
                 raise IndexError(msg0)
 
     def __eq__(self, other: object) -> bool:
@@ -136,8 +135,8 @@ class CA(Generic[D]):
                return False
        return True
 
-    def pushF(self, *ds: D) -> None:
-        """Push data onto the front of the CircularArray."""
+    def pushL(self, *ds: D) -> None:
+        """Push data from the left onto the CircularArray."""
         for d in ds:
             if self._count == self._capacity:
                 self.double()
@@ -146,7 +145,7 @@ class CA(Generic[D]):
             self._count += 1
 
     def pushR(self, *ds: D) -> None:
-        """Push data onto the rear of the CircularArray."""
+        """Push data from the right onto the CircularArray."""
         for d in ds:
             if self._count == self._capacity:
                 self.double()
@@ -154,8 +153,8 @@ class CA(Generic[D]):
             self._list[self._rear] = d
             self._count += 1
 
-    def popF(self) -> D:
-        """Pop value from front ("left side") of CircularArray.
+    def popL(self) -> D:
+        """Pop one value off the left side of the CircularArray.
 
         * raises `ValueError` when called on an empty CA
         """
@@ -171,11 +170,11 @@ class CA(Generic[D]):
             self._count-1
             return cast(D, d)  # will always yield a D
         else:
-            msg = 'Method popF called on an empty CA'
+            msg = 'Method popL called on an empty CA'
             raise ValueError(msg)
 
     def popR(self) -> D:
-        """Pop data off the rear ("right side") of the CircularArray.
+        """Pop one value off the right side of the CircularArray.
 
         * raises `ValueError` when called on an empty CA
         """
@@ -194,35 +193,41 @@ class CA(Generic[D]):
             msg = 'Method popR called on an empty CA'
             raise ValueError(msg)
 
-    def popFD(self, default: D) -> D:
-        """Pop from front with a default value.
+    def popLD(self, default: D) -> D:
+        """Pop one value from left side, provide a mandatory default value.
 
-        * safe version of popF
-        * returns a default value in the event the CA is empty
+        * safe version of popL
+        * returns a default value in the event the `CA` is empty
         """
         try:
-            return self.popF()
+            return self.popL()
         except ValueError:
             return default
 
     def popRD(self, default: D) -> D:
-        """Pop from rear with a default value.
+        """Pop one value from right side, provide a mandatory default value.
 
         * safe version of popR
-        * returns a default value in the event the CA is empty
+        * returns a default value in the event the `CA` is empty
         """
         try:
             return self.popR()
         except ValueError:
             return default
 
-    def popFT(self, max: int=1) -> tuple[D, ...]:
-        """Return a tuple of up to max values popped off the front of the CA."""
+    def popLT(self, max: int=1) -> tuple[D, ...]:
+        """Pop multiple values from left side of CircularArray
+
+        * returns the results in a `tuple` of type `tuple[~D, ...]`
+        * returns an empty tuple if `CA` is empty
+        * pop no more that `max` values
+        * will pop less if `CA` becomes empty
+        """
         ds: list[D] = []
 
         while max > 0:
             try:
-                ds.append(self.popF())
+                ds.append(self.popL())
             except ValueError:
                 break
             else:
@@ -231,41 +236,43 @@ class CA(Generic[D]):
         return tuple(ds)
 
     def popRT(self, max: int=1) -> tuple[D, ...]:
-        """Return a tuple of up to max values popped off the rear of the CA."""
-        ds: list[D] = []
+        """Pop multiple values from right side of CircularArray
 
-        n = max
-        while n > 0:
+        * returns the results in a `tuple` of type `tuple[~D, ...]`
+        * returns an empty tuple if `CA` is empty
+        * pop no more that `max` values
+        * will pop less if `CA` becomes empty
+        """
+        ds: list[D] = []
+        while max > 0:
             try:
                 ds.append(self.popR())
             except ValueError:
                 break
             else:
-                n -= 1
+                max -= 1
 
         return tuple(ds)
 
     def map(self, f: Callable[[D], T]) -> CA[T]:
-        """Apply function f over the CA's contents and return new instance.
+        """Apply function f over contents, returns a new CircularArray instance.
 
-        * parameter `f` generic function of type f[D, T] -> CA[T]
-        * return a new instance of a CA of type CA[T]
-
+        * parameter `f` generic function of type `f[~D, ~T] -> CA[~T]`
+        * returns a new instance of type `CA[~T]``
         """
         return CA(*map(f, self))
 
-    def foldL(self, f: Callable[[F, D], F], initial: Optional[F]=None) -> F:
+    def foldL(self, f: Callable[[L, D], L], initial: Optional[L]=None) -> L:
         """Left fold CircularArray via a function and an optional initial value.
 
-        * parameter `f` generic function of type `f[L, D] -> L`
+        * parameter `f` generic function of type `f[~L, ~D] -> ~L`
           * the first argument to `f` is for the accumulated value.
         * parameter `initial` is an optional initial value
-          * note that if not given then it will be the case that `L` = `D`
-        * returns the reduced value of type `L`
-          * note that `L` & `D` can be the same type
-          * if `initial` is not given then `L = R`
-        * raises `ValueError` when called on an empty CA
-
+          * note that if not given then it will be the case that `~L = ~D`
+        * returns the reduced value of type `~L`
+          * note that `~L` and `~D` can be the same type
+          * if an initial value is not given then by necessity `~L = ~D` 
+        * raises `ValueError` when called on an empty `CA` and `initial` not given
         """
         if self._count == 0:
             if initial is None:
@@ -275,7 +282,7 @@ class CA(Generic[D]):
                 return initial
         else:
             if initial is None:
-                acc = cast(F, self[0])  # in this case D = L
+                acc = cast(L, self[0])  # in this case D = L
                 for idx in range(1, self._count):
                     acc = f(acc, self[idx])
                 return acc
@@ -288,15 +295,14 @@ class CA(Generic[D]):
     def foldR(self, f: Callable[[D, R], R], initial: Optional[R]=None) -> R:
         """Right fold CircularArray via a function and an optional initial value.
 
-        * parameter `f` generic function of type `f[D, R] -> R`
+        * generic function `f` of type `f[~D, ~R] -> ~R`
           * the second argument to f is for the accumulated value
         * parameter `initial` is an optional initial value
-          * note that if not given then it will be the case that `R` = `D`
-        * returns the reduced value of type `R`
-          * note that `R` & `D` can be the same type
-          * if `initial` is not given then `L = R`
-        * raises `ValueError` when called on an empty CA
-
+          * note that if not given then it will be the case that `~R = ~D`
+        * returns the reduced value of type `~R`
+          * note that `~R` and `~D` can be the same type
+          * if `initial` is not given then by necessity `~R = ~D`
+        * raises `ValueError` when called on an empty `CA` and `initial` not given
         """
         if self._count == 0:
             if initial is None:
