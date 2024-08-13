@@ -34,6 +34,8 @@ class CA(Generic[D]):
     * makes defensive copies of contents for the purposes of iteration
     * not sliceable
     * in boolean context returns true if not empty, false if empty
+    * in comparisons will compare contents with identity before equality
+      * like Python builtins like tuples, lists, and dicts do
     * raises `IndexError` for out-of-bounds indexing
     * raises `ValueError` for popping from or folding an empty CA
     """
@@ -117,19 +119,23 @@ class CA(Generic[D]):
                 raise IndexError(msg0)
 
     def __eq__(self, other: object) -> bool:
-       if not isinstance(other, type(self)):
+        if self is other:
+            return True
+        if not isinstance(other, type(self)):
             return False
 
-       frontL,      capacityL,      countL,      frontR,       capacityR,       countR = \
-       self._front, self._capacity, self._count, other._front, other._capacity, other._count
+        frontL,      capacityL,      countL,      frontR,       capacityR,       countR = \
+        self._front, self._capacity, self._count, other._front, other._capacity, other._count
 
-       if countL != countR:
-           return False
+        if countL != countR:
+            return False
 
-       for nn in range(countL):
-           if self._list[(frontL+nn)%capacityL] != other._list[(frontR+nn)%capacityR]:
-               return False
-       return True
+        for nn in range(countL):
+            if self._list[(frontL+nn)%capacityL] is other._list[(frontR+nn)%capacityR]:
+                continue
+            if self._list[(frontL+nn)%capacityL] != other._list[(frontR+nn)%capacityR]:
+                return False
+        return True
 
     def pushL(self, *ds: D) -> None:
         """Push data from the left onto the CircularArray."""
