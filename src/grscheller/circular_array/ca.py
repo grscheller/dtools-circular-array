@@ -15,13 +15,9 @@
 """Module for an indexable circular array data structure."""
 
 from __future__ import annotations
+from typing import Callable, cast, Generic, Iterator, Optional, TypeVar
 
 __all__ = ['CA']
-__author__ = "Geoffrey R. Scheller"
-__copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
-__license__ = "Apache License 2.0"
-
-from typing import Callable, cast, Generic, Iterator, Optional, TypeVar
 
 D = TypeVar('D')
 T = TypeVar('T')

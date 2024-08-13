@@ -13,9 +13,7 @@
 # limitations under the License.
 
 from __future__ import annotations
-
 from grscheller.circular_array.ca import CA
-from grscheller.fp.nothing import nothing, Nothing
 
 class Test_repr:
     def test_repr(self) -> None:

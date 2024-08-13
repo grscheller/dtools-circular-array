@@ -2,21 +2,21 @@
 
 PyPI grscheller.circular-array PyPI project.
 
-## Semantic Versioning of PyPI releases (first 3 digits)
+#### Semantic Versioning
 
-* first digit:
+* first digit
   * major event, epoch, or paradigm shift
-* second digit:
+* second digit
   * breaking API changes
   * major changes
-* third digit:
+* third digit
   * API additions
   * bug fixes
   * minor changes
   * significant documentation updates
-* forth digit:
-  * development only
-  * semantic versioning "typically" shifted right
+* forth digit (development environment only)
+  * commit count of "non-trivial" changes/regressions
+  * third digit now plays the role of the second
 
 ## Releases and Important Milestones
 
@@ -30,7 +30,7 @@ PyPI grscheller.circular-array PyPI project.
 * changes made
   * removed grscheller.fp dependency
   * remove _sentinel & _storable slots from CA class
-  * remove copy method, just use ca2 = CA(*ca1) to make a copy
+  * remove copy method, just use ca2 = CA(*ca1) to make a shallow copy
   * adjust __repr__ and __str__ methods
   * experimenting with Spinx syntax in docstrings (still using pdoc3)
   * changed nomenclature from "left/right" to "front/rear"

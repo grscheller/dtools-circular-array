@@ -13,10 +13,8 @@
 # limitations under the License.
 
 from __future__ import annotations
-
 from typing import Optional
 from grscheller.circular_array.ca import CA
-from grscheller.fp.nothing import nothing, Nothing
 
 class TestCircularArray:
     def test_mutate_returns_none(self) -> None:
