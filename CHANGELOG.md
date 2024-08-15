@@ -20,6 +20,14 @@ PyPI grscheller.circular-array PyPI project.
 
 ## Releases and Important Milestones
 
+### Version 3.4.0 - PyPI release date 2024-08-15
+
+* updated __eq__ comparisons
+  * first compare elements by identity before equality
+    * noticed that what Python builtins do
+    * makes dealing with grscheller.fp.nada module easier
+* standardizing docstrings across grscheller PyPI projects
+
 ### Version 3.3.0.1 - commit date 2024-08-05
 
 * made a paradigm "regression", preparing for a 3.4.0 release
