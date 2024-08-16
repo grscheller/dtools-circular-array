@@ -4,7 +4,7 @@ Python module implementing an indexable, double sided,
 auto-resizing queue data structure.
 
 * **Repositories**
-  * [grscheller.untyped][1] project on *PyPI*
+  * [grscheller.circular-array][1] project on *PyPI*
   * [Source code][2] on *GitHub*
 * **Detailed documentation**
   * [Detailed API documentation][3] on *GH-Pages*
