@@ -12,7 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""#### Module for an indexable circular array data structure."""
+"""
+### Module for an indexable circular array data structure.
+
+"""
 
 from __future__ import annotations
 from typing import Callable, cast, Generic, Iterator, Optional, TypeVar
@@ -20,12 +23,13 @@ from typing import Callable, cast, Generic, Iterator, Optional, TypeVar
 __all__ = ['CA']
 
 D = TypeVar('D')
-T = TypeVar('T')
+U = TypeVar('U')
 L = TypeVar('L')
 R = TypeVar('R')
 
 class CA(Generic[D]):
-    """#### Class implementing an indexable circular array data structure.
+    """
+    #### Indexable circular array data structure
 
     * generic, stateful data structure
     * amortized O(1) pushing and popping from either end
@@ -34,8 +38,8 @@ class CA(Generic[D]):
     * makes defensive copies of contents for the purposes of iteration
     * not sliceable
     * in boolean context returns true if not empty, false if empty
-    * in comparisons will compare contents with identity before equality
-      * like Python builtins like tuples, lists, and dicts do
+    * in comparisons contents compare with identity before equality
+      * as do Python tuples, lists, and dicts
     * raises `IndexError` for out-of-bounds indexing
     * raises `ValueError` for popping from or folding an empty CA
     """
@@ -138,7 +142,10 @@ class CA(Generic[D]):
         return True
 
     def pushL(self, *ds: D) -> None:
-        """##### Push data from the left onto the CircularArray."""
+        """
+        Push data from the left onto the CA.
+
+        """
         for d in ds:
             if self._count == self._capacity:
                 self.double()
@@ -147,7 +154,10 @@ class CA(Generic[D]):
             self._count += 1
 
     def pushR(self, *ds: D) -> None:
-        """##### Push data from the right onto the CircularArray."""
+        """
+        Push data from the right onto the CA.
+
+        """
         for d in ds:
             if self._count == self._capacity:
                 self.double()
@@ -156,9 +166,12 @@ class CA(Generic[D]):
             self._count += 1
 
     def popL(self) -> D:
-        """##### Pop one value off the left side of the CircularArray.
+        """
+        Pop one value off the left side of the CA.
 
-            * raises `ValueError` when called on an empty CA"""
+        * raises `ValueError` when called on an empty CA
+
+        """
         if self._count > 0:
             d, \
             self._list[self._front], \
@@ -175,9 +188,11 @@ class CA(Generic[D]):
             raise ValueError(msg)
 
     def popR(self) -> D:
-        """##### Pop one value off the right side of the CircularArray.
+        """
+        Pop one value off the right side of the CA.
 
-            * raises `ValueError` when called on an empty CA
+        * raises `ValueError` when called on an empty CA
+
         """
         if self._count > 0:
             d, \
@@ -195,10 +210,12 @@ class CA(Generic[D]):
             raise ValueError(msg)
 
     def popLD(self, default: D) -> D:
-        """##### Pop one value from left, provide a mandatory default value.
+        """
+        Pop one value from left, provide a mandatory default value.
 
-            * safe version of popL
-            * returns a default value in the event the `CA` is empty
+        * safe version of popL
+        * returns a default value in the event the `CA` is empty
+
         """
         try:
             return self.popL()
@@ -206,10 +223,12 @@ class CA(Generic[D]):
             return default
 
     def popRD(self, default: D) -> D:
-        """##### Pop one value from right, provide a mandatory default value.
+        """
+        Pop one value from right, provide a mandatory default value.
 
-            * safe version of popR
-            * returns a default value in the event the `CA` is empty
+        * safe version of popR
+        * returns a default value in the event the `CA` is empty
+
         """
         try:
             return self.popR()
@@ -217,12 +236,14 @@ class CA(Generic[D]):
             return default
 
     def popLT(self, max: int=1) -> tuple[D, ...]:
-        """##### Pop multiple values from left side of CircularArray
+        """
+        Pop multiple values from left side of CA
 
-            * returns the results in a `tuple` of type `tuple[~D, ...]`
-            * returns an empty tuple if `CA` is empty
-            * pop no more that `max` values
-            * will pop less if `CA` becomes empty
+        * returns the results in a `tuple` of type `tuple[~D, ...]`
+        * returns an empty tuple if `CA` is empty
+        * pop no more that `max` values
+        * will pop less if `CA` becomes empty
+
         """
         ds: list[D] = []
 
@@ -237,12 +258,14 @@ class CA(Generic[D]):
         return tuple(ds)
 
     def popRT(self, max: int=1) -> tuple[D, ...]:
-        """##### Pop multiple values from right side of CircularArray
+        """
+        Pop multiple values from right side of CA
 
-            * returns the results in a `tuple` of type `tuple[~D, ...]`
-            * returns an empty tuple if `CA` is empty
-            * pop no more that `max` values
-            * will pop less if `CA` becomes empty
+        * returns the results in a `tuple` of type `tuple[~D, ...]`
+        * returns an empty tuple if `CA` is empty
+        * pop no more that `max` values
+        * will pop less if `CA` becomes empty
+
         """
         ds: list[D] = []
         while max > 0:
@@ -255,25 +278,28 @@ class CA(Generic[D]):
 
         return tuple(ds)
 
-    def map(self, f: Callable[[D], T]) -> CA[T]:
-        """##### Apply function f over contents, returns new CircularArray instance.
+    def map(self, f: Callable[[D], U]) -> CA[U]:
+        """
+        Apply function f over contents, returns new CA instance.
 
-            * parameter `f` generic function of type `f[~D, ~T] -> CA[~T]`
-            * returns a new instance of type `CA[~T]``
+        * parameter `f` function of type `f[~D, _U] -> CA[_U]`
+        * returns a new instance of type `CA[_U]``
+
         """
         return CA(*map(f, self))
 
     def foldL(self, f: Callable[[L, D], L], initial: Optional[L]=None) -> L:
-        """##### Left fold CircularArray via function and optional initial value.
+        """
+        Left fold CA via function and optional initial value.
 
-            * parameter `f` generic function of type `f[~L, ~D] -> ~L`
-              * the first argument to `f` is for the accumulated value.
-            * parameter `initial` is an optional initial value
-              * note that if not given then it will be the case that `~L = ~D`
-            * returns the reduced value of type `~L`
-              * note that `~L` and `~D` can be the same type
-              * if an initial value is not given then by necessity `~L = ~D` 
-            * raises `ValueError` when called on an empty `CA` and `initial` not given
+        * parameter `f` function of type `f[~L, ~D] -> ~L`
+          * the first argument to `f` is for the accumulated value.
+        * parameter `initial` is an optional initial value
+        * returns the reduced value of type `~L`
+          * note that `~L` and `~D` can be the same type
+          * if an initial value is not given then by necessity `~L = ~D` 
+        * raises `ValueError` when called on an empty `CA` and `initial` not given
+
         """
         if self._count == 0:
             if initial is None:
@@ -294,16 +320,16 @@ class CA(Generic[D]):
                 return acc
 
     def foldR(self, f: Callable[[D, R], R], initial: Optional[R]=None) -> R:
-        """##### Right fold CircularArray via function and optional initial value.
+        """
+        Right fold CA via function and optional initial value.
 
-            * generic function `f` of type `f[~D, ~R] -> ~R`
-              * the second argument to f is for the accumulated value
-            * parameter `initial` is an optional initial value
-              * note that if not given then it will be the case that `~R = ~D`
-            * returns the reduced value of type `~R`
-              * note that `~R` and `~D` can be the same type
-              * if `initial` is not given then by necessity `~R = ~D`
-            * raises `ValueError` when called on an empty `CA` and `initial` not given
+        * parameter `f` function of type `f[~D, ~R] -> ~R`
+          * the second argument to f is for the accumulated value
+        * parameter `initial` is an optional initial value
+        * returns the reduced value of type `~R`
+          * note that `~R` and `~D` can be the same type
+          * if an initial value is not given then by necessity `~R = ~D`
+        * raises `ValueError` when called on an empty `CA` and `initial` not given
         """
         if self._count == 0:
             if initial is None:
@@ -324,11 +350,17 @@ class CA(Generic[D]):
                 return acc
 
     def capacity(self) -> int:
-        """##### Returns current capacity of the CircularArray."""
+        """
+        Returns current capacity of the CA.
+
+        """
         return self._capacity
 
     def compact(self) -> None:
-        """##### Compact the CircularArray."""
+        """
+        Compact the CA.
+
+        """
         match self._count:
             case 0:
                 self._capacity, self._front, self._rear, self._list = \
@@ -348,7 +380,10 @@ class CA(Generic[D]):
                         + [None]
 
     def double(self) -> None:
-        """##### Double the capacity of the CircularArray."""
+        """
+        Double the capacity of the CA.
+
+        """
         if self._front <= self._rear:
             self._list += [None]*self._capacity
             self._capacity *= 2
@@ -358,15 +393,24 @@ class CA(Generic[D]):
             self._capacity *= 2
 
     def empty(self) -> None:
-        """##### Empty the CircularArray, keep current capacity."""
+        """
+        Empty the CA, keep current capacity.
+
+        """
         self._list, self._front, self._rear = [None]*self._capacity, 0, self._capacity-1
 
     def fractionFilled(self) -> float:
-        """##### Returns fractional capacity of the CircularArray."""
+        """
+        Returns fractional capacity of the CA.
+
+        """
         return self._count/self._capacity
 
     def resize(self, newSize: int= 0) -> None:
-        """##### Compact CircularArray and resize to newSize if less than newSize."""
+        """
+        Compact CA and resize to newSize if less than newSize.
+
+        """
         self.compact()
         capacity = self._capacity
         if newSize > capacity:
