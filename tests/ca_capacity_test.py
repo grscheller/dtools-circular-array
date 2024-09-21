@@ -65,7 +65,7 @@ class TestCapacity:
         c.pushL(1, 2, 3, 4, 5)
         assert c.capacity() == 8
         assert c.popLT(2) == (5, 4)
-        c.compact()
+        c.resize()
         assert c.capacity() == 5
         c.resize(11)
         assert c.capacity() == 11
@@ -78,7 +78,7 @@ class TestCapacity:
     def test_one(self) -> None:
         c = CA(42)
         assert c.capacity() == 3
-        c.compact()
+        c.resize()
         assert c.capacity() == 3
         c.resize(8)
         assert c.capacity() == 8

@@ -36,16 +36,16 @@ class CA(Generic[D]):
     * makes defensive copies of contents for the purposes of iteration
     * not sliceable
     * in boolean context returns true if not empty, false if empty
-    * in comparisons contents compare with identity before equality
-      * as do Python tuples, lists, and dicts
+    * in comparisons compare identity before equality
+      * as Python tuples, lists, and dicts do
     * raises `IndexError` for out-of-bounds indexing
     * raises `ValueError` for popping from or folding an empty CA
     """
-    __slots__ = '_list', '_count', '_capacity', '_front', '_rear'
+    __slots__ = '_data', '_count', '_capacity', '_front', '_rear'
 
     def __init__(self, *ds: D) -> None:
-        self._list: list[D|None] = [None] + list(ds) + [None]
-        self._capacity = capacity = len(self._list)
+        self._data: list[D|None] = [None] + list(ds) + [None]
+        self._capacity = capacity = len(self._data)
         self._count = capacity - 2
         if capacity == 2:
             self._front = 0
@@ -56,16 +56,31 @@ class CA(Generic[D]):
 
     def _double_storage_capacity(self) -> None:
         if self._front <= self._rear:
-            self._list += [None]*self._capacity
+            self._data += [None]*self._capacity
             self._capacity *= 2
         else:
-            self._list = self._list[:self._front] + [None]*self._capacity + self._list[self._front:]
+            self._data = self._data[:self._front] + [None]*self._capacity + self._data[self._front:]
             self._front, self._capacity = self._front + self._capacity, 2*self._capacity
+
+    def _compact_storage_capacity(self) -> None:
+        """Compact the CA."""
+        match self._count:
+            case 0:
+                self._capacity, self._front, self._rear, self._data = 2, 0, 1, [None, None]
+            case 1:
+                self._capacity, self._front, self._rear, self._data = 3, 1, 1, [None, self._data[self._front], None]
+            case _:
+                if self._front <= self._rear:
+                    self._capacity, self._front, self._rear, self._data = \
+                        self._count+2, 1, self._count, [None] + self._data[self._front:self._rear+1] + [None]
+                else:
+                    self._capacity, self._front, self._rear, self._data = \
+                        self._count+2, 1, self._count, [None] + self._data[self._front:] + self._data[:self._rear+1] + [None]
 
     def __iter__(self) -> Iterator[D]:
         if self._count > 0:
             capacity, rear, position, current_state = \
-                self._capacity, self._rear, self._front, self._list.copy()
+                self._capacity, self._rear, self._front, self._data.copy()
 
             while position != rear:
                 yield cast(D, current_state[position])
@@ -75,7 +90,7 @@ class CA(Generic[D]):
     def __reversed__(self) -> Iterator[D]:
         if self._count > 0:
             capacity, front, position, current_state = \
-                self._capacity, self._front, self._rear, self._list.copy()
+                self._capacity, self._front, self._rear, self._data.copy()
 
             while position != front:
                 yield cast(D, current_state[position])
@@ -97,9 +112,9 @@ class CA(Generic[D]):
     def __getitem__(self, index: int) -> D:
         cnt = self._count
         if 0 <= index < cnt:
-            return cast(D, self._list[(self._front + index) % self._capacity])
+            return cast(D, self._data[(self._front + index) % self._capacity])
         elif -cnt <= index < 0:
-            return cast(D, self._list[(self._front + cnt + index) % self._capacity])
+            return cast(D, self._data[(self._front + cnt + index) % self._capacity])
         else:
             if cnt > 0:
                 msg1 = 'Out of bounds: '
@@ -113,9 +128,9 @@ class CA(Generic[D]):
     def __setitem__(self, index: int, value: D) -> None:
         cnt = self._count
         if 0 <= index < cnt:
-            self._list[(self._front + index) % self._capacity] = value
+            self._data[(self._front + index) % self._capacity] = value
         elif -cnt <= index < 0:
-            self._list[(self._front + cnt + index) % self._capacity] = value
+            self._data[(self._front + cnt + index) % self._capacity] = value
         else:
             if cnt > 0:
                 msg1 = 'Out of bounds: '
@@ -143,9 +158,9 @@ class CA(Generic[D]):
             return False
 
         for nn in range(countL):
-            if self._list[(frontL+nn)%capacityL] is other._list[(frontR+nn)%capacityR]:
+            if self._data[(frontL+nn)%capacityL] is other._data[(frontR+nn)%capacityR]:
                 continue
-            if self._list[(frontL+nn)%capacityL] != other._list[(frontR+nn)%capacityR]:
+            if self._data[(frontL+nn)%capacityL] != other._data[(frontR+nn)%capacityR]:
                 return False
         return True
 
@@ -155,7 +170,7 @@ class CA(Generic[D]):
             if self._count == self._capacity:
                 self._double_storage_capacity()
             self._front = (self._front - 1) % self._capacity
-            self._list[self._front], self._count = d, self._count + 1
+            self._data[self._front], self._count = d, self._count + 1
 
     def pushR(self, *ds: D) -> None:
         """Push data from the right onto the CA."""
@@ -163,7 +178,7 @@ class CA(Generic[D]):
             if self._count == self._capacity:
                 self._double_storage_capacity()
             self._rear = (self._rear + 1) % self._capacity
-            self._list[self._rear], self._count = d, self._count + 1
+            self._data[self._rear], self._count = d, self._count + 1
 
     def popL(self) -> D|Never:
         """Pop one value off the left side of the CA.
@@ -171,14 +186,14 @@ class CA(Generic[D]):
         * raises `ValueError` when called on an empty CA
         """
         if self._count > 1:
-            d, self._list[self._front], self._front, self._count = \
-                self._list[self._front], None, (self._front+1) % self._capacity, self._count - 1
+            d, self._data[self._front], self._front, self._count = \
+                self._data[self._front], None, (self._front+1) % self._capacity, self._count - 1
         elif self._count < 1:
             msg = 'Method popL called on an empty CA'
             raise ValueError(msg)
         else:
-            d, self._list[self._front], self._count, self._front, self._rear = \
-                self._list[self._front], None, 0, 0, self._capacity - 1
+            d, self._data[self._front], self._count, self._front, self._rear = \
+                self._data[self._front], None, 0, 0, self._capacity - 1
         return cast(D, d)
 
     def popR(self) -> D|Never:
@@ -187,14 +202,14 @@ class CA(Generic[D]):
         * raises `ValueError` when called on an empty CA
         """
         if self._count > 0:
-            d, self._list[self._rear], self._rear, self._count = \
-                self._list[self._rear], None, (self._rear - 1) % self._capacity, self._count - 1
+            d, self._data[self._rear], self._rear, self._count = \
+                self._data[self._rear], None, (self._rear - 1) % self._capacity, self._count - 1
         elif self._count < 1:
             msg = 'Method popR called on an empty CA'
             raise ValueError(msg)
         else:
-            d, self._list[self._front], self._count, self._front, self._rear = \
-                self._list[self._front], None, 0, 0, self._capacity - 1
+            d, self._data[self._front], self._count, self._front, self._rear = \
+                self._data[self._front], None, 0, 0, self._capacity - 1
         return cast(D, d)
 
     def popLD(self, default: D) -> D:
@@ -219,10 +234,10 @@ class CA(Generic[D]):
         except ValueError:
             return default
 
-    def popLT(self, max: int=1) -> tuple[D, ...]:
+    def popLT(self, max: int) -> tuple[D, ...]:
         """Pop multiple values from left side of CA.
 
-        * returns the results in a `tuple` of type `tuple[~D, ...]`
+        * returns the results in a tuple of type `tuple[~D, ...]`
         * returns an empty tuple if `CA` is empty
         * pop no more that `max` values
         * will pop less if `CA` becomes empty
@@ -239,10 +254,10 @@ class CA(Generic[D]):
 
         return tuple(ds)
 
-    def popRT(self, max: int=1) -> tuple[D, ...]:
+    def popRT(self, max: int) -> tuple[D, ...]:
         """Pop multiple values from right side of CA.
 
-        * returns the results in a `tuple` of type `tuple[~D, ...]`
+        * returns the results in a tuple of type `tuple[~D, ...]`
         * returns an empty tuple if `CA` is empty
         * pop no more that `max` values
         * will pop less if `CA` becomes empty
@@ -328,24 +343,9 @@ class CA(Generic[D]):
         """Returns current capacity of the CA."""
         return self._capacity
 
-    def compact(self) -> None:
-        """Compact the CA."""
-        match self._count:
-            case 0:
-                self._capacity, self._front, self._rear, self._list = 2, 0, 1, [None, None]
-            case 1:
-                self._capacity, self._front, self._rear, self._list = 3, 1, 1, [None, self._list[self._front], None]
-            case _:
-                if self._front <= self._rear:
-                    self._capacity, self._front, self._rear, self._list = \
-                        self._count+2, 1, self._count, [None] + self._list[self._front:self._rear+1] + [None]
-                else:
-                    self._capacity, self._front, self._rear, self._list = \
-                        self._count+2, 1, self._count, [None] + self._list[self._front:] + self._list[:self._rear+1] + [None]
-
     def empty(self) -> None:
         """Empty the CA, keep current capacity."""
-        self._list, self._front, self._rear = [None]*self._capacity, 0, self._capacity-1
+        self._data, self._front, self._rear = [None]*self._capacity, 0, self._capacity-1
 
     def fractionFilled(self) -> float:
         """Returns fractional capacity of the CA."""
@@ -353,10 +353,10 @@ class CA(Generic[D]):
 
     def resize(self, new_capacity: int=2) -> None:
         """Compact `CA` and resize to `new_capacity` if necessary."""
-        self.compact()
+        self._compact_storage_capacity()
         if new_capacity > self._capacity:
-            self._capacity, self._list = \
-                new_capacity, self._list + [None]*(new_capacity-self._capacity)
+            self._capacity, self._data = \
+                new_capacity, self._data + [None]*(new_capacity-self._capacity)
             if self._count == 0:
                 self._front = 0
                 self._rear = self._capacity - 1
