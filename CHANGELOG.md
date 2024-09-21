@@ -20,6 +20,11 @@ PyPI grscheller.circular-array PyPI project.
 
 ## Releases and Important Milestones
 
+### Version 3.4.1 - PyPI release date 2024-08-17
+
+* updated README.md to reflect name changes of CA methods
+* docstring improvements
+
 ### Version 3.4.0 - PyPI release date 2024-08-15
 
 * updated __eq__ comparisons
@@ -82,7 +87,7 @@ PyPI grscheller.circular-array PyPI project.
 * new epoch due to resizing bug fixed on previous commit
   * much improved and cleaned up
   * much better test suite
-* method _double() made "public" and renamed double() 
+* method _double() made "public" and renamed double()
 * resize(new_size) now resizes to at least new_size
 
 ### Version 1.1.0.0 - commit date 2024-03-08

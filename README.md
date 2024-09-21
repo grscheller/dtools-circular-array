@@ -11,10 +11,12 @@ auto-resizing queue data structure.
 
 ### Overview
 
-O(1) indexing and O(1) pushes and pops either end. Useful if used
-directly as an improved version of a Python List and in the
-implementation of other data structures in a "has-a" relationship.
-Does not support slicing.
+Useful if used directly as an improved version of a Python List or in
+a "has-a" relationship when implementing other data structures.
+
+* O(1) pushes and pops either end.
+* O(1) indexing
+* does not support slicing
 
 ### Usage
 

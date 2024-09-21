@@ -43,9 +43,11 @@ class Test_repr:
         assert ca2 == ca1
         assert ca2 is not ca1
 
-        ca3: CA[int] = CA(1, 10, 0, 42, 99)
+        ca3: CA[int] = CA(1, 10, 0, 42)
         ca3.pushR(2, 100, 3)
         assert ca3.popL() == 1
-        popped = ca3.popR()
+        assert ca3.popR() == 3
         ca3.pushL(9, 8)
-        assert repr(ca3) == 'CA(8, 9, 10, 0, 42, 99, 2, 100)'
+        assert ca3.popRT(2) == (100, 2)
+        ca3.pushR(1, 2, 3)
+        assert repr(ca3) == 'CA(8, 9, 10, 0, 42, 1, 2, 3)'

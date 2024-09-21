@@ -292,3 +292,18 @@ class TestCircularArray:
         assert ca.popRD(42) == 42
         assert ca.popLD(42) == 42
         assert len(ca) == 0
+
+        foo: CA[int] = CA(0,1,2,3,4,5,6)
+        assert foo.popL() == 0
+        assert foo.popR() == 6
+        assert foo == CA(1,2,3,4,5)
+        foo.pushL(0)
+        foo.pushR(6)
+        assert foo == CA(0,1,2,3,4,5,6)
+        foo.pushL(10,11,12)
+        assert foo == CA(12,11,10,0,1,2,3,4,5,6)
+        foo.pushR(86, 99)
+        assert foo == CA(12,11,10,0,1,2,3,4,5,6,86,99)
+        control = foo.popRT(2)
+        assert control == (99, 86)
+        assert foo == CA(12,11,10,0,1,2,3,4,5,6)
