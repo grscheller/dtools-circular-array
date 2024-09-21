@@ -58,55 +58,22 @@ class TestCapacity:
         ca.resize(7)
         assert ca.fractionFilled() == 2/7
 
-
-    def test_double(self) -> None:
-        ca: CA[int] = CA(1, 2, 3)
-        assert ca.popLD(0) == 1
-        assert ca.capacity() == 5
-        ca.double()
-        assert ca.capacity() == 10
-        ca.double()
-        ca.pushL(666)
-        ca.pushR(0)
-        assert len(ca) == 4
-        assert ca.capacity() == 20
-        ca.resize()
-        assert ca.capacity() == 6
-        ca.pushL(2000)
-        assert len(ca) == 5
-        assert ca.capacity() == 6
-        for ii in range(45):
-            if ii % 3 == 0:
-                ca.pushR(ca.popLD(42))
-                ca.pushL(ii+100)
-            else:
-                ca.pushR(ii+1000)
-        assert len(ca) == 50
-        assert ca.capacity() == 96
-        jj = len(ca)
-        assert jj == 50
-        while jj > 0:
-            kk = ca.popL()
-            assert kk != -1
-            ca.pushR(kk)
-            jj -= 1
-        assert len(ca) == 50
-        assert ca.fractionFilled() == 50/96
-        assert ca.capacity() == 96
-        ca.compact()
-        assert ca.capacity() == 52
-
     def test_empty(self) -> None:
         c: CA[int] = CA()
         assert c == CA()
         assert c.capacity() == 2
-        c.double()
-        assert c.capacity() == 4
+        c.pushL(1, 2, 3, 4, 5)
+        assert c.capacity() == 8
+        assert c.popLT(2) == (5, 4)
         c.compact()
-        assert c.capacity() == 2
-        c.resize(6)
-        assert c.capacity() == 6
-        assert len(c) == 0
+        assert c.capacity() == 5
+        c.resize(11)
+        assert c.capacity() == 11
+        assert len(c) == 3
+        c.pushL(*range(8))
+        assert c.capacity() == 11
+        c.pushR(*range(2))
+        assert c.capacity() == 22
 
     def test_one(self) -> None:
         c = CA(42)

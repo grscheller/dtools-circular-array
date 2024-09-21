@@ -54,6 +54,14 @@ class CA(Generic[D]):
             self._front = 1
             self._rear = capacity - 2
 
+    def _double_storage_capacity(self) -> None:
+        if self._front <= self._rear:
+            self._list += [None]*self._capacity
+            self._capacity *= 2
+        else:
+            self._list = self._list[:self._front] + [None]*self._capacity + self._list[self._front:]
+            self._front, self._capacity = self._front + self._capacity, 2*self._capacity
+
     def __iter__(self) -> Iterator[D]:
         if self._count > 0:
             capacity, rear, position, current_state = \
@@ -145,7 +153,7 @@ class CA(Generic[D]):
         """Push data from the left onto the CA."""
         for d in ds:
             if self._count == self._capacity:
-                self.double()
+                self._double_storage_capacity()
             self._front = (self._front - 1) % self._capacity
             self._list[self._front], self._count = d, self._count + 1
 
@@ -153,7 +161,7 @@ class CA(Generic[D]):
         """Push data from the right onto the CA."""
         for d in ds:
             if self._count == self._capacity:
-                self.double()
+                self._double_storage_capacity()
             self._rear = (self._rear + 1) % self._capacity
             self._list[self._rear], self._count = d, self._count + 1
 
@@ -334,15 +342,6 @@ class CA(Generic[D]):
                 else:
                     self._capacity, self._front, self._rear, self._list = \
                         self._count+2, 1, self._count, [None] + self._list[self._front:] + self._list[:self._rear+1] + [None]
-
-    def double(self) -> None:
-        """Double the capacity of the CA."""
-        if self._front <= self._rear:
-            self._list += [None]*self._capacity
-            self._capacity *= 2
-        else:
-            self._list = self._list[:self._front] + [None]*self._capacity + self._list[self._front:]
-            self._front, self._capacity = self._front + self._capacity, 2*self._capacity
 
     def empty(self) -> None:
         """Empty the CA, keep current capacity."""

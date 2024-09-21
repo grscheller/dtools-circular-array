@@ -20,6 +20,14 @@ PyPI grscheller.circular-array PyPI project.
 
 ## Releases and Important Milestones
 
+### Version 3.5.0 - PyPI release date 2024-09-21
+
+* made CA double method private
+  * now called _double_storage_capacity
+* major docstring improvements
+* improved indentation and code alignment
+  * now much more Pythonic
+
 ### Version 3.4.1 - PyPI release date 2024-08-17
 
 * updated README.md to reflect name changes of CA methods
