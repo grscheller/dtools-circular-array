@@ -16,14 +16,24 @@ PyPI grscheller.circular-array PyPI project.
   * significant documentation updates
 * forth digit (development environment only)
   * commit count of "non-trivial" changes/regressions
-  * third digit now plays the role of the second
 
 ## Releases and Important Milestones
 
+### Version 3.6.0 - PyPI release date 2024-09-21
+
+* no future changes planned for the foreseeable future
+  * feature complete
+  * no external dependencies
+  * well tested with other grscheller namespace packages
+* final API tweaks made
+* several more pytest tests added
+* made the `compact` method private
+  * now called `_compact_storage_capacity`
+
 ### Version 3.5.0 - PyPI release date 2024-09-21
 
-* made CA double method private
-  * now called _double_storage_capacity
+* made the `double` method private
+  * now called `_double_storage_capacity`
 * major docstring improvements
 * improved indentation and code alignment
   * now much more Pythonic
@@ -35,9 +45,9 @@ PyPI grscheller.circular-array PyPI project.
 
 ### Version 3.4.0 - PyPI release date 2024-08-15
 
-* updated __eq__ comparisons
+* updated `__eq__` comparisons
   * first compare elements by identity before equality
-    * noticed that what Python builtins do
+    * noticed that is what Python builtins do
     * makes dealing with grscheller.fp.nada module easier
 * standardizing docstrings across grscheller PyPI projects
 
@@ -45,7 +55,7 @@ PyPI grscheller.circular-array PyPI project.
 
 * made a paradigm "regression", preparing for a 3.4.0 release
 * felt CA was becoming way too complicated
-* grscheller.datastructures needs it to fully embrace type annotations
+* grscheller.datastructures needed it to fully embrace type annotations
   * but I was shifting too many features back into grscheller.circular-array
   * want ca to be useful for non-functional applications
 * changes made

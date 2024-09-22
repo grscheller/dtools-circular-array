@@ -12,16 +12,22 @@ readme = "README.md"
 requires-python = ">=3.12"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
-    "Programming Language :: Python :: 3",
+    "Framework :: Pytest",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
-    "License :: OSI Approved :: Apache Software License"
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Typing :: Typed"
 ]
 dependencies = []
 dynamic = ["version", "description"]
 keywords = [
-    "circular-array", "circular array", "O(1)",
-    "auto-resizing", "auto resizing",
-    "pop", "push", "popL", "popR", "pushL", "pushR"
+    "circular array", "circle array", "CA",
+    "double ended queue", "dequeue", "dqueue",
+    "pop", "push", "popL", "popR", "pushL", "pushR", "indexable",
+    "auto-resizing", "auto resizing", "resizing"
 ]
 
 [project.optional-dependencies]

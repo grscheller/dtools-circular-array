@@ -285,25 +285,73 @@ class TestCircularArray:
         assert rest == [5, 6]
         assert len(ca) == 0
 
-        ca = CA(1, 2, 3)
-        assert ca.popLD(42) == 1
-        assert ca.popRD(42) == 3
-        assert ca.popLD(42) == 2
-        assert ca.popRD(42) == 42
-        assert ca.popLD(42) == 42
-        assert len(ca) == 0
+    def test_pop(self) -> None:
 
-        foo: CA[int] = CA(0,1,2,3,4,5,6)
-        assert foo.popL() == 0
-        assert foo.popR() == 6
-        assert foo == CA(1,2,3,4,5)
-        foo.pushL(0)
-        foo.pushR(6)
-        assert foo == CA(0,1,2,3,4,5,6)
-        foo.pushL(10,11,12)
-        assert foo == CA(12,11,10,0,1,2,3,4,5,6)
-        foo.pushR(86, 99)
-        assert foo == CA(12,11,10,0,1,2,3,4,5,6,86,99)
-        control = foo.popRT(2)
+        ca1 = CA(1, 2, 3)
+        assert ca1.popLD(42) == 1
+        assert ca1.popRD(42) == 3
+        assert ca1.popLD(42) == 2
+        assert ca1.popRD(42) == 42
+        assert ca1.popLD(42) == 42
+        assert len(ca1) == 0
+
+        ca2: CA[int] = CA(0,1,2,3,4,5,6)
+        assert ca2.popL() == 0
+        assert ca2.popR() == 6
+        assert ca2 == CA(1,2,3,4,5)
+        ca2.pushL(0)
+        ca2.pushR(6)
+        assert ca2 == CA(0,1,2,3,4,5,6)
+        ca2.pushL(10,11,12)
+        assert ca2 == CA(12,11,10,0,1,2,3,4,5,6)
+        ca2.pushR(86, 99)
+        assert ca2 == CA(12,11,10,0,1,2,3,4,5,6,86,99)
+        control = ca2.popRT(2)
         assert control == (99, 86)
-        assert foo == CA(12,11,10,0,1,2,3,4,5,6)
+        assert ca2 == CA(12,11,10,0,1,2,3,4,5,6)
+
+        ca3: CA[int] = CA(*range(1, 10001))
+        ca3_L_first100 = ca3.popLT(100)
+        ca3_R_last100 = ca3.popRT(100)
+        ca3_L_prev10 = ca3.popLT(10)
+        ca3_R_prev10 = ca3.popRT(10)
+        assert ca3_L_first100 == tuple(range(1, 101))
+        assert ca3_R_last100 == tuple(range(10000, 9900, -1))
+        assert ca3_L_prev10 == tuple(range(101, 111))
+        assert ca3_R_prev10 == tuple(range(9900, 9890, -1))
+
+        ca4: CA[int] = CA(*range(1, 10001))
+        ca4_L_first100 = ca4.popLT(100)
+        ca4_L_next100 = ca4.popLT(100)
+        ca4_L_first10 = ca4.popLT(10)
+        ca4_L_next10 = ca4.popLT(10)
+        assert ca4_L_first100 == tuple(range(1, 101))
+        assert ca4_L_next100 == tuple(range(101, 201))
+        assert ca4_L_first10 == tuple(range(201, 211))
+        assert ca4_L_next10 == tuple(range(211, 221))
+
+        # Below seems to show CPython tuples are evaluated left to right
+        ca5: CA[int] = CA(*range(1, 10001))
+        ca5_L_first100, ca5_L_next100, ca5_L_first10, ca5_L_next10 = \
+          ca5.popLT(100), ca5.popLT(100), ca5.popLT(10), ca5.popLT(10)
+        assert ca5_L_first100 == tuple(range(1, 101))
+        assert ca5_L_next100 == tuple(range(101, 201))
+        assert ca5_L_first10 == tuple(range(201, 211))
+        assert ca5_L_next10 == tuple(range(211, 221))
+
+    def test_state_caching(self) -> None:
+        expected = CA((0, 0), (0, 1), (0, 2), (0, 3), (0, 4),
+                      (1, 0), (1, 1), (1, 2), (1, 3), (1, 4), (1, 1),
+                      (2, 0), (2, 1), (2, 2), (2, 3), (2, 4), (2, 1),
+                      (3, 0), (3, 1), (3, 2), (3, 3), (3, 4), (3, 1), (3, 3),
+                      (4, 0), (4, 1), (4, 2), (4, 3), (4, 4), (4, 1), (4, 3))
+        foo = CA(0, 1, 2, 3, 4)
+        bar = CA[tuple[int, int]]()
+
+        for ii in foo:
+            if ii % 2 == 1:
+                foo.pushR(ii)
+            for jj in foo:
+                bar.pushR((ii, jj))
+
+        assert  bar == expected  # if foo were a list, outer loop above never returns

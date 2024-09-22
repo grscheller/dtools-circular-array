@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-### Module for an indexable circular array data structure.
+### Indexable circular array data structure module.
 """
 from __future__ import annotations
 from typing import Callable, cast, Generic, Iterator, Optional, TypeVar, Never
@@ -351,12 +351,14 @@ class CA(Generic[D]):
         """Returns fractional capacity of the CA."""
         return self._count/self._capacity
 
-    def resize(self, new_capacity: int=2) -> None:
-        """Compact `CA` and resize to `new_capacity` if necessary."""
+    def resize(self, min_capacity: int=2) -> None:
+        """Compact `CA` and resize to `min_capacity` if necessary.
+
+        * to just compact the `CA`, do not provide a min_capacity
+        """
         self._compact_storage_capacity()
-        if new_capacity > self._capacity:
+        if min_capacity > self._capacity:
             self._capacity, self._data = \
-                new_capacity, self._data + [None]*(new_capacity-self._capacity)
+                min_capacity, self._data + [None]*(min_capacity-self._capacity)
             if self._count == 0:
-                self._front = 0
-                self._rear = self._capacity - 1
+                self._front, self._rear = 0, self._capacity - 1
