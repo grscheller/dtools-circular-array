@@ -1,6 +1,6 @@
 # CHANGELOG
 
-PyPI grscheller.circular-array PyPI project.
+PyPI grscheller.circular-array project.
 
 #### Semantic Versioning
 
