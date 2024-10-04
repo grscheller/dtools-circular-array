@@ -36,7 +36,7 @@ class CA(Generic[D]):
     * makes defensive copies of contents for the purposes of iteration
     * not sliceable
     * in boolean context returns true if not empty, false if empty
-    * in comparisons compare identity before equality
+    * in comparisons compare identity before equality (like Python built-ins do)
       * as Python tuples, lists, and dicts do
     * raises `IndexError` for out-of-bounds indexing
     * raises `ValueError` for popping from or folding an empty CA
