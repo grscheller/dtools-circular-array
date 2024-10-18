@@ -18,7 +18,6 @@ classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
-    "Programming Language :: Python :: 3.14",
     "Typing :: Typed"
 ]
 dependencies = []
@@ -31,7 +30,7 @@ keywords = [
 ]
 
 [project.optional-dependencies]
-test = ["pytest >=7.4"]
+test = ["pytest >=8.3"]
 
 [project.urls]
 Source = "https://github.com/grscheller/circular-array"
@@ -49,6 +48,10 @@ report_progress = true
 
 [tool.mypy]
 enable_incomplete_feature = ["NewGenericSyntax"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+consider_namespace_packages = true
 
 [tool.ruff]
 target-version = "py313"
