@@ -59,4 +59,4 @@ assert len(ca) == 0
 
 [1]: https://pypi.org/project/grscheller.circular-array
 [2]: https://github.com/grscheller/circular-array
-[3]: https://grscheller.github.io/circular-array
+[3]: https://grscheller.github.io/grscheller-pypi-namespace-docs/circular-array/
