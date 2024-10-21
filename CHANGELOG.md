@@ -4,25 +4,23 @@ PyPI grscheller.circular-array project.
 
 #### Semantic Versioning
 
-* first digit
-  * major event, epoch, or paradigm shift
-* second digit
-  * breaking API changes
-  * major changes
-* third digit
-  * API additions
-  * bug fixes
-  * minor changes
-  * significant documentation updates
-* forth digit (development environment only)
-  * commit count of "non-trivial" changes/regressions
+* first digit - major event, epoch, or paradigm shift
+* second digit - breaking API changes, major changes
+* third digit - bug fixes, API additions, breaking API in dev env
+* forth digit - commit count changes/regressions (dev environment only)
 
 ## Releases and Important Milestones
+
+### Version 3.6.2 - PyPI release date 2024-10-20
+
+* removed docs from repo
+* docs for all grscheller namespace projects maintained here
+  * https://grscheller.github.io/grscheller-pypi-namespace-docs/
 
 ### Version 3.6.1 - PyPI release date 2024-10-18
 
 * infrastructure and minor docstring changes
-  * should be compatible with v3.6.0
+  * should be compatible with version 3.6.0
 
 ### Version 3.6.0 - PyPI release date 2024-09-21
 
@@ -93,7 +91,7 @@ PyPI grscheller.circular-array project.
 * generic typing now being used
 * first PyPI release where mult values can be pushed on CircularArray
 
-### Version 3.0.0.0 - commit date 2024-06-28
+### Version 3.0.0 - commit date 2024-06-28
 
 * CircularArray class now using Generic Type Parameter
 

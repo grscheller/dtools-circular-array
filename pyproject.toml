@@ -35,7 +35,7 @@ test = ["pytest >=8.3"]
 [project.urls]
 Source = "https://github.com/grscheller/circular-array"
 Changelog = "https://github.com/grscheller/circular-array/blob/main/CHANGELOG.md"
-Documentation = "https://grscheller.github.io/circular-array/"
+Documentation = "https://grscheller.github.io/grscheller-pypi-namespace-docs/circular-array"
 
 [tool.flit.sdist]
 exclude = ["dist", "docs", ".gitignore", ".mypy_cache"]
