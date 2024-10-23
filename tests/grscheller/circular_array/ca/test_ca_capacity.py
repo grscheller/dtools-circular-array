@@ -13,54 +13,54 @@
 # limitations under the License.
 
 from __future__ import annotations
-from grscheller.circular_array.ca import CA
+from grscheller.circular_array.ca import ca
 
 class TestCapacity:
 
     def test_capacity_original(self) -> None:
-        ca: CA[int] = CA()
-        assert ca.capacity() == 2
+        ca0: ca[int] = ca()
+        assert ca0.capacity() == 2
 
-        ca = CA(1, 2)
-        assert ca.fractionFilled() == 2/4
+        ca0 = ca(1, 2)
+        assert ca0.fractionFilled() == 2/4
 
-        ca.pushL(0)
-        assert ca.fractionFilled() == 3/4
+        ca0.pushL(0)
+        assert ca0.fractionFilled() == 3/4
 
-        ca.pushR(3)
-        assert ca.fractionFilled() == 4/4
+        ca0.pushR(3)
+        assert ca0.fractionFilled() == 4/4
 
-        ca.pushR(4)
-        assert ca.fractionFilled() == 5/8
+        ca0.pushR(4)
+        assert ca0.fractionFilled() == 5/8
 
-        ca.pushL(5)
-        assert ca.fractionFilled() == 6/8
+        ca0.pushL(5)
+        assert ca0.fractionFilled() == 6/8
 
-        assert len(ca) == 6
-        assert ca.capacity() == 8
+        assert len(ca0) == 6
+        assert ca0.capacity() == 8
 
-        ca.resize()
-        assert ca.fractionFilled() == 6/8
+        ca0.resize()
+        assert ca0.fractionFilled() == 6/8
 
-        ca.resize(30)
-        assert ca.fractionFilled() == 6/30
+        ca0.resize(30)
+        assert ca0.fractionFilled() == 6/30
 
-        ca.resize(3)
-        assert ca.fractionFilled() == 6/8
+        ca0.resize(3)
+        assert ca0.fractionFilled() == 6/8
 
-        ca.popLD(0)
-        ca.popRD(0)
-        ca.popLD(0)
-        ca.popRD(0)
-        assert ca.fractionFilled() == 2/8
-        ca.resize(3)
-        assert ca.fractionFilled() == 2/4
-        ca.resize(7)
-        assert ca.fractionFilled() == 2/7
+        ca0.popLD(0)
+        ca0.popRD(0)
+        ca0.popLD(0)
+        ca0.popRD(0)
+        assert ca0.fractionFilled() == 2/8
+        ca0.resize(3)
+        assert ca0.fractionFilled() == 2/4
+        ca0.resize(7)
+        assert ca0.fractionFilled() == 2/7
 
     def test_empty(self) -> None:
-        c: CA[int] = CA()
-        assert c == CA()
+        c: ca[int] = ca()
+        assert c == ca()
         assert c.capacity() == 2
         c.pushL(1, 2, 3, 4, 5)
         assert c.capacity() == 8
@@ -76,7 +76,7 @@ class TestCapacity:
         assert c.capacity() == 22
 
     def test_one(self) -> None:
-        c = CA(42)
+        c = ca(42)
         assert c.capacity() == 3
         c.resize()
         assert c.capacity() == 3

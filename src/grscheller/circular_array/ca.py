@@ -18,9 +18,9 @@
 from __future__ import annotations
 from typing import Callable, cast, Iterator, Optional, TypeVar, Never
 
-__all__ = ['CA']
+__all__ = ['ca']
 
-class CA[D]():
+class ca[D]():
     """
     #### Indexable circular array data structure
 
@@ -34,7 +34,7 @@ class CA[D]():
     * in comparisons compare identity before equality (like Python built-ins do)
       * as Python tuples, lists, and dicts do
     * raises `IndexError` for out-of-bounds indexing
-    * raises `ValueError` for popping from or folding an empty CA
+    * raises `ValueError` for popping from or folding an empty `ca`
     """
     __slots__ = '_data', '_count', '_capacity', '_front', '_rear'
 
@@ -58,7 +58,7 @@ class CA[D]():
             self._front, self._capacity = self._front + self._capacity, 2*self._capacity
 
     def _compact_storage_capacity(self) -> None:
-        """Compact the CA."""
+        """Compact the ca."""
         match self._count:
             case 0:
                 self._capacity, self._front, self._rear, self._data = 2, 0, 1, [None, None]
@@ -93,7 +93,7 @@ class CA[D]():
             yield cast(D, current_state[position])
 
     def __repr__(self) -> str:
-        return 'CA(' + ', '.join(map(repr, self)) + ')'
+        return 'ca(' + ', '.join(map(repr, self)) + ')'
 
     def __str__(self) -> str:
         return '(|' + ', '.join(map(str, self)) + '|)'
@@ -114,10 +114,10 @@ class CA[D]():
             if cnt > 0:
                 msg1 = 'Out of bounds: '
                 msg2 = f'index = {index} not between {-cnt} and {cnt-1} '
-                msg3 = 'while getting value from a CA.'
+                msg3 = 'while getting value from a ca.'
                 raise IndexError(msg1 + msg2 + msg3)
             else:
-                msg0 = 'Trying to get a value from an empty CA.'
+                msg0 = 'Trying to get a value from an empty ca.'
                 raise IndexError(msg0)
 
     def __setitem__(self, index: int, value: D) -> None:
@@ -130,10 +130,10 @@ class CA[D]():
             if cnt > 0:
                 msg1 = 'Out of bounds: '
                 msg2 = f'index = {index} not between {-cnt} and {cnt-1} '
-                msg3 = 'while setting value from a CA.'
+                msg3 = 'while setting value from a ca.'
                 raise IndexError(msg1 + msg2 + msg3)
             else:
-                msg0 = 'Trying to set a value from an empty CA.'
+                msg0 = 'Trying to set a value from an empty ca.'
                 raise IndexError(msg0)
 
     def __eq__(self, other: object) -> bool:
@@ -160,7 +160,7 @@ class CA[D]():
         return True
 
     def pushL(self, *ds: D) -> None:
-        """Push data from the left onto the CA."""
+        """Push data from the left onto the ca."""
         for d in ds:
             if self._count == self._capacity:
                 self._double_storage_capacity()
@@ -168,7 +168,7 @@ class CA[D]():
             self._data[self._front], self._count = d, self._count + 1
 
     def pushR(self, *ds: D) -> None:
-        """Push data from the right onto the CA."""
+        """Push data from the right onto the ca."""
         for d in ds:
             if self._count == self._capacity:
                 self._double_storage_capacity()
@@ -176,15 +176,15 @@ class CA[D]():
             self._data[self._rear], self._count = d, self._count + 1
 
     def popL(self) -> D|Never:
-        """Pop one value off the left side of the CA.
+        """Pop one value off the left side of the ca.
 
-        * raises `ValueError` when called on an empty CA
+        * raises `ValueError` when called on an empty ca
         """
         if self._count > 1:
             d, self._data[self._front], self._front, self._count = \
                 self._data[self._front], None, (self._front+1) % self._capacity, self._count - 1
         elif self._count < 1:
-            msg = 'Method popL called on an empty CA'
+            msg = 'Method popL called on an empty ca'
             raise ValueError(msg)
         else:
             d, self._data[self._front], self._count, self._front, self._rear = \
@@ -192,15 +192,15 @@ class CA[D]():
         return cast(D, d)
 
     def popR(self) -> D|Never:
-        """Pop one value off the right side of the CA.
+        """Pop one value off the right side of the ca.
 
-        * raises `ValueError` when called on an empty CA
+        * raises `ValueError` when called on an empty ca
         """
         if self._count > 0:
             d, self._data[self._rear], self._rear, self._count = \
                 self._data[self._rear], None, (self._rear - 1) % self._capacity, self._count - 1
         elif self._count < 1:
-            msg = 'Method popR called on an empty CA'
+            msg = 'Method popR called on an empty ca'
             raise ValueError(msg)
         else:
             d, self._data[self._front], self._count, self._front, self._rear = \
@@ -211,7 +211,7 @@ class CA[D]():
         """Pop one value from left, provide a mandatory default value.
 
         * safe version of popL
-        * returns a default value in the event the `CA` is empty
+        * returns a default value in the event the `ca` is empty
         """
         try:
             return self.popL()
@@ -222,7 +222,7 @@ class CA[D]():
         """Pop one value from right, provide a mandatory default value.
 
         * safe version of popR
-        * returns a default value in the event the `CA` is empty
+        * returns a default value in the event the `ca` is empty
         """
         try:
             return self.popR()
@@ -230,12 +230,12 @@ class CA[D]():
             return default
 
     def popLT(self, max: int) -> tuple[D, ...]:
-        """Pop multiple values from left side of CA.
+        """Pop multiple values from left side of ca.
 
         * returns the results in a tuple of type `tuple[~D, ...]`
-        * returns an empty tuple if `CA` is empty
+        * returns an empty tuple if `ca` is empty
         * pop no more that `max` values
-        * will pop less if `CA` becomes empty
+        * will pop less if `ca` becomes empty
         """
         ds: list[D] = []
 
@@ -250,12 +250,12 @@ class CA[D]():
         return tuple(ds)
 
     def popRT(self, max: int) -> tuple[D, ...]:
-        """Pop multiple values from right side of CA.
+        """Pop multiple values from right side of `ca`.
 
         * returns the results in a tuple of type `tuple[~D, ...]`
-        * returns an empty tuple if `CA` is empty
+        * returns an empty tuple if `ca` is empty
         * pop no more that `max` values
-        * will pop less if `CA` becomes empty
+        * will pop less if `ca` becomes empty
         """
         ds: list[D] = []
         while max > 0:
@@ -268,16 +268,16 @@ class CA[D]():
 
         return tuple(ds)
 
-    def map[U](self, f: Callable[[D], U]) -> CA[U]:
-        """Apply function f over contents, returns new CA instance.
+    def map[U](self, f: Callable[[D], U]) -> ca[U]:
+        """Apply function f over contents, returns new `ca` instance.
 
-        * parameter `f` function of type `f[~D, ~U] -> CA[~U]`
-        * returns a new instance of type `CA[~U]``
+        * parameter `f` function of type `f[~D, ~U] -> ca[~U]`
+        * returns a new instance of type `ca[~U]`
         """
-        return CA(*map(f, self))
+        return ca(*map(f, self))
 
     def foldL[L](self, f: Callable[[L, D], L], initial: Optional[L]=None) -> L:
-        """Left fold CA via function and optional initial value.
+        """Left fold ca via function and optional initial value.
 
         * parameter `f` function of type `f[~L, ~D] -> ~L`
           * the first argument to `f` is for the accumulated value.
@@ -285,11 +285,11 @@ class CA[D]():
         * returns the reduced value of type `~L`
           * note that `~L` and `~D` can be the same type
           * if an initial value is not given then by necessity `~L = ~D` 
-        * raises `ValueError` when called on an empty `CA` and `initial` not given
+        * raises `ValueError` when called on an empty `ca` and `initial` not given
         """
         if self._count == 0:
             if initial is None:
-                msg = 'Method foldL called on an empty CA without an initial value.'
+                msg = 'Method foldL called on an empty ca without an initial value.'
                 raise ValueError(msg)
             else:
                 return initial
@@ -306,7 +306,7 @@ class CA[D]():
                 return acc
 
     def foldR[R](self, f: Callable[[D, R], R], initial: Optional[R]=None) -> R:
-        """Right fold CA via function and optional initial value.
+        """Right fold ca via function and optional initial value.
 
         * parameter `f` function of type `f[~D, ~R] -> ~R`
           * the second argument to f is for the accumulated value
@@ -314,11 +314,11 @@ class CA[D]():
         * returns the reduced value of type `~R`
           * note that `~R` and `~D` can be the same type
           * if an initial value is not given then by necessity `~R = ~D`
-        * raises `ValueError` when called on an empty `CA` and `initial` not given
+        * raises `ValueError` when called on an empty `ca` and `initial` not given
         """
         if self._count == 0:
             if initial is None:
-                msg = 'Method foldR called on an empty CA without an initial value.'
+                msg = 'Method foldR called on an empty ca without an initial value.'
                 raise ValueError(msg)
             else:
                 return initial
@@ -335,21 +335,21 @@ class CA[D]():
                 return acc
 
     def capacity(self) -> int:
-        """Returns current capacity of the CA."""
+        """Returns current capacity of the ca."""
         return self._capacity
 
     def empty(self) -> None:
-        """Empty the CA, keep current capacity."""
+        """Empty the ca, keep current capacity."""
         self._data, self._front, self._rear = [None]*self._capacity, 0, self._capacity-1
 
     def fractionFilled(self) -> float:
-        """Returns fractional capacity of the CA."""
+        """Returns fractional capacity of the ca."""
         return self._count/self._capacity
 
     def resize(self, min_capacity: int=2) -> None:
-        """Compact `CA` and resize to `min_capacity` if necessary.
+        """Compact `ca` and resize to `min_capacity` if necessary.
 
-        * to just compact the `CA`, do not provide a min_capacity
+        * to just compact the `ca`, do not provide a min_capacity
         """
         self._compact_storage_capacity()
         if min_capacity > self._capacity:
