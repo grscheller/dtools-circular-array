@@ -16,9 +16,10 @@
 ### Indexable circular array data structure module.
 """
 from __future__ import annotations
-from typing import Callable, cast, Iterator, Optional, TypeVar, Never
+from typing import Callable, cast, final, Iterable, Iterator
+from typing import Optional, Sequence, TypeVar, Never
 
-__all__ = ['ca']
+__all__ = ['ca', 'CA']
 
 class ca[D]():
     """
@@ -35,11 +36,17 @@ class ca[D]():
       * as Python tuples, lists, and dicts do
     * raises `IndexError` for out-of-bounds indexing
     * raises `ValueError` for popping from or folding an empty `ca`
+    * raises `TypeError` if more than 2 arguments are passed to constructor
+
     """
     __slots__ = '_data', '_count', '_capacity', '_front', '_rear'
 
-    def __init__(self, *ds: D) -> None:
-        self._data: list[D|None] = [None] + list(ds) + [None]
+    def __init__(self, *dss: Iterable[D]) -> None:
+        if len(dss) < 2:
+            self._data: list[Optional[D]] = [None] + list(*dss) + [None]
+        else:
+            msg = f'ca expected at most 1 argument, got {len(dss)}'
+            raise TypeError(msg)
         self._capacity = capacity = len(self._data)
         self._count = capacity - 2
         if capacity == 2:
@@ -93,7 +100,7 @@ class ca[D]():
             yield cast(D, current_state[position])
 
     def __repr__(self) -> str:
-        return 'ca(' + ', '.join(map(repr, self)) + ')'
+        return 'CA(' + ', '.join(map(repr, self)) + ')'
 
     def __str__(self) -> str:
         return '(|' + ', '.join(map(str, self)) + '|)'
@@ -274,7 +281,7 @@ class ca[D]():
         * parameter `f` function of type `f[~D, ~U] -> ca[~U]`
         * returns a new instance of type `ca[~U]`
         """
-        return ca(*map(f, self))
+        return ca(map(f, self))
 
     def foldL[L](self, f: Callable[[L, D], L], initial: Optional[L]=None) -> L:
         """Left fold ca via function and optional initial value.
@@ -357,3 +364,7 @@ class ca[D]():
                 min_capacity, self._data + [None]*(min_capacity-self._capacity)
             if self._count == 0:
                 self._front, self._rear = 0, self._capacity - 1
+
+def CA[T](*ds: T) -> ca[T]:
+    """Function to produce a `ca` array from a variable number of arguments."""
+    return ca(ds)

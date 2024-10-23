@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from __future__ import annotations
-from grscheller.circular_array.ca import ca
+from grscheller.circular_array.ca import ca, CA
 
 class TestCapacity:
 
@@ -21,7 +21,7 @@ class TestCapacity:
         ca0: ca[int] = ca()
         assert ca0.capacity() == 2
 
-        ca0 = ca(1, 2)
+        ca0 = CA(1, 2)
         assert ca0.fractionFilled() == 2/4
 
         ca0.pushL(0)
@@ -76,7 +76,7 @@ class TestCapacity:
         assert c.capacity() == 22
 
     def test_one(self) -> None:
-        c = ca(42)
+        c = CA(42)
         assert c.capacity() == 3
         c.resize()
         assert c.capacity() == 3
