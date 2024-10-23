@@ -16,16 +16,11 @@
 ### Indexable circular array data structure module.
 """
 from __future__ import annotations
-from typing import Callable, cast, Generic, Iterator, Optional, TypeVar, Never
+from typing import Callable, cast, Iterator, Optional, TypeVar, Never
 
 __all__ = ['CA']
 
-D = TypeVar('D')
-U = TypeVar('U')
-L = TypeVar('L')
-R = TypeVar('R')
-
-class CA(Generic[D]):
+class CA[D]():
     """
     #### Indexable circular array data structure
 
@@ -273,7 +268,7 @@ class CA(Generic[D]):
 
         return tuple(ds)
 
-    def map(self, f: Callable[[D], U]) -> CA[U]:
+    def map[U](self, f: Callable[[D], U]) -> CA[U]:
         """Apply function f over contents, returns new CA instance.
 
         * parameter `f` function of type `f[~D, ~U] -> CA[~U]`
@@ -281,7 +276,7 @@ class CA(Generic[D]):
         """
         return CA(*map(f, self))
 
-    def foldL(self, f: Callable[[L, D], L], initial: Optional[L]=None) -> L:
+    def foldL[L](self, f: Callable[[L, D], L], initial: Optional[L]=None) -> L:
         """Left fold CA via function and optional initial value.
 
         * parameter `f` function of type `f[~L, ~D] -> ~L`
@@ -310,7 +305,7 @@ class CA(Generic[D]):
                     acc = f(acc, d)
                 return acc
 
-    def foldR(self, f: Callable[[D, R], R], initial: Optional[R]=None) -> R:
+    def foldR[R](self, f: Callable[[D, R], R], initial: Optional[R]=None) -> R:
         """Right fold CA via function and optional initial value.
 
         * parameter `f` function of type `f[~D, ~R] -> ~R`
