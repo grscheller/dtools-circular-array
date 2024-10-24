@@ -365,6 +365,6 @@ class ca[D]():
             if self._count == 0:
                 self._front, self._rear = 0, self._capacity - 1
 
-def CA[T](*ds: T) -> ca[T]:
+def CA[U](*ds: U) -> ca[U]:
     """Function to produce a `ca` array from a variable number of arguments."""
     return ca(ds)
