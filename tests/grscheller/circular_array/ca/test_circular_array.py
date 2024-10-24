@@ -14,12 +14,12 @@
 
 from __future__ import annotations
 from typing import Optional
-from grscheller.circular_array.ca import ca
+from grscheller.circular_array.ca import ca, CA
 
 class TestCircularArray:
     def test_mutate_returns_none(self) -> None:
         ca1: ca[int] = ca()
-        assert ca1.pushL(1) == None
+        assert ca1.pushL(1) == None  # type: ignore # this is test!
         ca1.pushL(0)
         ca1.pushR(2)
         ca1.pushR(3)
@@ -85,7 +85,7 @@ class TestCircularArray:
 
     def test_iterators(self) -> None:
         data: list[int] = [*range(100)]
-        c: ca[int] = ca(*data)
+        c: ca[int] = ca(data)
         ii = 0
         for item in c:
             assert data[ii] == item
@@ -93,7 +93,7 @@ class TestCircularArray:
         assert ii == 100
 
         data.append(100)
-        c = ca(*data)
+        c = ca(data)
         data.reverse()
         ii = 0
         for item in reversed(c):
@@ -108,15 +108,15 @@ class TestCircularArray:
             assert False
 
         data2: list[str] = []
-        c0 = ca(*data2, )
+        c0 = ca(data2, )
         for _ in c0:
             assert False
         for _ in reversed(c0):
             assert False
 
     def test_equality(self) -> None:
-        c1: ca[object] = ca(1, 2, 3, 'Forty-Two', (7, 11, 'foobar'))
-        c2: ca[object] = ca(2, 3, 'Forty-Two')
+        c1: ca[object] = CA(1, 2, 3, 'Forty-Two', (7, 11, 'foobar'))
+        c2: ca[object] = CA(2, 3, 'Forty-Two')
         c2.pushL(1)
         c2.pushR((7, 11, 'foobar'))
         assert c1 == c2
@@ -145,18 +145,18 @@ class TestCircularArray:
         assert c1 == c2
 
     def test_map(self) -> None:
-        c0: ca[int] = ca(1,2,3,10)
-        c1 = ca(*c0)
+        c0: ca[int] = CA(1,2,3,10)
+        c1 = ca(c0)
         c2 = c1.map(lambda x: str(x*x - 1))
-        assert c2 == ca('0', '3', '8', '99')
+        assert c2 == CA('0', '3', '8', '99')
         assert c1 != c2
         assert c1 == c0
         assert c1 is not c0
         assert len(c1) == len(c2) == 4
 
     def test_get_set_items(self) -> None:
-        c1 = ca('a', 'b', 'c', 'd')
-        c2 = ca(*c1)
+        c1 = CA('a', 'b', 'c', 'd')
+        c2 = ca(c1)
         assert c1 == c2
         c1[2] = 'cat'
         c1[-1] = 'dog'
@@ -191,11 +191,11 @@ class TestCircularArray:
         assert c1.foldL(lambda x, y: x + y, initial=42) == 42
         assert c1.foldL(lambda x, y: x + y, initial=0) == 0
 
-        c3: ca[int] = ca(*range(1, 11))
+        c3: ca[int] = ca(range(1, 11))
         assert c3.foldL(lambda x, y: x + y) == 55
         assert c3.foldL(lambda x, y: x + y, initial=10) == 65
 
-        c4: ca[int] = ca(*(0,1,2,3,4))
+        c4: ca[int] = ca((0,1,2,3,4))
 
         def f(vs: list[int], v: int) -> list[int]:
             vs.append(v)
@@ -214,7 +214,7 @@ class TestCircularArray:
             assert False
         assert c1.foldR(lambda x, y: x * y, initial=42) == 42
 
-        c2: ca[int] = ca(*range(1, 6))
+        c2: ca[int] = ca(range(1, 6))
         assert c2.foldR(lambda x, y: x * y) == 120
         assert c2.foldR(lambda x, y: x * y, initial=10) == 1200
 
@@ -222,13 +222,13 @@ class TestCircularArray:
             vs.append(v)
             return vs
 
-        c3: ca[int] = ca(*range(5))
+        c3: ca[int] = ca(range(5))
         empty: list[int] = []
-        assert c3 == ca(0, 1, 2, 3, 4)
+        assert c3 == CA(0, 1, 2, 3, 4)
         assert c3.foldR(f, empty) == [4, 3, 2, 1, 0]
 
     def test_pop_tuples(self) -> None:
-        ca1 = ca(*range(100))
+        ca1 = ca(range(100))
         zero, one, two, *rest = ca1.popLT(10)
         assert zero == 0
         assert one == 1
@@ -242,12 +242,12 @@ class TestCircularArray:
         assert rest == [97, 96, 95]
         assert len(ca1) == 85
 
-        ca2 = ca(*ca1)
+        ca2 = ca(ca1)
         assert len(ca1.popRT(0)) == 0
         assert ca1 == ca2
 
     def test_fold(self) -> None:
-        ca1 = ca(*range(1, 101))
+        ca1 = ca(range(1, 101))
         assert ca1.foldL(lambda acc, d: acc + d) == 5050
         assert ca1.foldR(lambda d, acc: d + acc) == 5050
 
@@ -257,21 +257,21 @@ class TestCircularArray:
         def fr(d: int, acc: int) -> int:
             return acc*acc - d
 
-        ca2 = ca(2, 3, 4)
+        ca2 = CA(2, 3, 4)
         assert ca2.foldL(fl) == -3
         assert ca2.foldR(fr) == 167
 
     def test_readme(self) -> None:
-        ca0 = ca(1, 2, 3)
+        ca0 = CA(1, 2, 3)
         assert ca0.popL() == 1
         assert ca0.popR() == 3
         ca0.pushR(42, 0)
         ca0.pushL(0, 1)
-        assert repr(ca0) == 'ca(1, 0, 2, 42, 0)'
+        assert repr(ca0) == 'CA(1, 0, 2, 42, 0)'
         assert str(ca0) == '(|1, 0, 2, 42, 0|)'
 
-        ca0 = ca(*range(1,11))
-        assert repr(ca0) == 'ca(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)'
+        ca0 = ca(range(1,11))
+        assert repr(ca0) == 'CA(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)'
         assert str(ca0) == '(|1, 2, 3, 4, 5, 6, 7, 8, 9, 10|)'
         assert len(ca0) == 10
         tup3 = ca0.popLT(3)
@@ -279,7 +279,7 @@ class TestCircularArray:
         assert tup3 == (1, 2, 3)
         assert tup4 == (10, 9, 8, 7)
 
-        assert ca0 == ca(4, 5, 6)
+        assert ca0 == CA(4, 5, 6)
         four, *rest = ca0.popLT(1000)
         assert four == 4
         assert rest == [5, 6]
@@ -287,7 +287,7 @@ class TestCircularArray:
 
     def test_pop(self) -> None:
 
-        ca1 = ca(1, 2, 3)
+        ca1 = CA(1, 2, 3)
         assert ca1.popLD(42) == 1
         assert ca1.popRD(42) == 3
         assert ca1.popLD(42) == 2
@@ -295,22 +295,22 @@ class TestCircularArray:
         assert ca1.popLD(42) == 42
         assert len(ca1) == 0
 
-        ca2: ca[int] = ca(0,1,2,3,4,5,6)
+        ca2: ca[int] = CA(0,1,2,3,4,5,6)
         assert ca2.popL() == 0
         assert ca2.popR() == 6
-        assert ca2 == ca(1,2,3,4,5)
+        assert ca2 == CA(1,2,3,4,5)
         ca2.pushL(0)
         ca2.pushR(6)
-        assert ca2 == ca(0,1,2,3,4,5,6)
+        assert ca2 == CA(0,1,2,3,4,5,6)
         ca2.pushL(10,11,12)
-        assert ca2 == ca(12,11,10,0,1,2,3,4,5,6)
+        assert ca2 == CA(12,11,10,0,1,2,3,4,5,6)
         ca2.pushR(86, 99)
-        assert ca2 == ca(12,11,10,0,1,2,3,4,5,6,86,99)
+        assert ca2 == CA(12,11,10,0,1,2,3,4,5,6,86,99)
         control = ca2.popRT(2)
         assert control == (99, 86)
-        assert ca2 == ca(12,11,10,0,1,2,3,4,5,6)
+        assert ca2 == CA(12,11,10,0,1,2,3,4,5,6)
 
-        ca3: ca[int] = ca(*range(1, 10001))
+        ca3: ca[int] = ca(range(1, 10001))
         ca3_L_first100 = ca3.popLT(100)
         ca3_R_last100 = ca3.popRT(100)
         ca3_L_prev10 = ca3.popLT(10)
@@ -320,7 +320,7 @@ class TestCircularArray:
         assert ca3_L_prev10 == tuple(range(101, 111))
         assert ca3_R_prev10 == tuple(range(9900, 9890, -1))
 
-        ca4: ca[int] = ca(*range(1, 10001))
+        ca4: ca[int] = ca(range(1, 10001))
         ca4_L_first100 = ca4.popLT(100)
         ca4_L_next100 = ca4.popLT(100)
         ca4_L_first10 = ca4.popLT(10)
@@ -331,7 +331,7 @@ class TestCircularArray:
         assert ca4_L_next10 == tuple(range(211, 221))
 
         # Below seems to show CPython tuples are evaluated left to right
-        ca5: ca[int] = ca(*range(1, 10001))
+        ca5: ca[int] = ca(range(1, 10001))
         ca5_L_first100, ca5_L_next100, ca5_L_first10, ca5_L_next10 = \
           ca5.popLT(100), ca5.popLT(100), ca5.popLT(10), ca5.popLT(10)
         assert ca5_L_first100 == tuple(range(1, 101))
@@ -340,12 +340,12 @@ class TestCircularArray:
         assert ca5_L_next10 == tuple(range(211, 221))
 
     def test_state_caching(self) -> None:
-        expected = ca((0, 0), (0, 1), (0, 2), (0, 3), (0, 4),
+        expected = CA((0, 0), (0, 1), (0, 2), (0, 3), (0, 4),
                       (1, 0), (1, 1), (1, 2), (1, 3), (1, 4), (1, 1),
                       (2, 0), (2, 1), (2, 2), (2, 3), (2, 4), (2, 1),
                       (3, 0), (3, 1), (3, 2), (3, 3), (3, 4), (3, 1), (3, 3),
                       (4, 0), (4, 1), (4, 2), (4, 3), (4, 4), (4, 1), (4, 3))
-        foo = ca(0, 1, 2, 3, 4)
+        foo = CA(0, 1, 2, 3, 4)
         bar = ca[tuple[int, int]]()
 
         for ii in foo:

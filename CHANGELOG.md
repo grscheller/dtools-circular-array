@@ -11,6 +11,15 @@ PyPI grscheller.circular-array project.
 
 ## Releases and Important Milestones
 
+### Version 3.6.3.2 - Commit date 2024-10-20
+
+* preparing for a 3.7.0 PyPI release
+  * renamed class ca -> CA
+    * ca now takes 0 or 1 iterables
+  * created factory function for original constructor use case
+    * CA[D](*ds: D) -> ca[D]
+* generated docs in docs repo - 2024-10-23
+
 ### Version 3.6.2 - PyPI release date 2024-10-20
 
 * removed docs from repo
