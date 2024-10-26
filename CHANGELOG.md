@@ -11,6 +11,10 @@ PyPI grscheller.circular-array project.
 
 ## Releases and Important Milestones
 
+### Version 3.7.0 - PyPI release date 2024-10-26
+
+* regenerated docs for PyPI release
+
 ### Version 3.6.3.2 - Commit date 2024-10-20
 
 * preparing for a 3.7.0 PyPI release
