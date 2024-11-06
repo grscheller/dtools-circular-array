@@ -12,9 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-### Indexable circular array data structure module.
-"""
+"""### Indexable circular array data structure module."""
 from __future__ import annotations
 from typing import Callable, cast, final, Iterable, Iterator
 from typing import Optional, Sequence, TypeVar, Never

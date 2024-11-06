@@ -15,6 +15,12 @@
 """### Circular Array
 
 Package for an indexable circular array data structure.
+
+#### Modules
+
+**CircularArray:**
+  **CA**
+
 """
 __version__ = "3.7.0"
 __author__ = "Geoffrey R. Scheller"
