@@ -15,7 +15,7 @@
 """### Indexable circular array data structure module."""
 from __future__ import annotations
 from typing import Callable, cast, final, Iterable, Iterator
-from typing import Optional, Sequence, TypeVar, Never
+from typing import Sequence, TypeVar, Never
 
 __all__ = ['ca', 'CA']
 
@@ -41,7 +41,9 @@ class ca[D]():
 
     def __init__(self, *dss: Iterable[D]) -> None:
         if len(dss) < 2:
-            self._data: list[Optional[D]] = [None] + list(*dss) + [None]
+            self._data: list[D|None] = [None] + \
+                                       cast(list[D|None], list(*dss)) + \
+                                       [None]
         else:
             msg = f'ca expected at most 1 argument, got {len(dss)}'
             raise TypeError(msg)
@@ -109,7 +111,7 @@ class ca[D]():
     def __len__(self) -> int:
         return self._count
 
-    def __getitem__(self, index: int) -> D:
+    def __getitem__(self, index: int, /) -> D:
         cnt = self._count
         if 0 <= index < cnt:
             return cast(D, self._data[(self._front + index) % self._capacity])
@@ -125,7 +127,7 @@ class ca[D]():
                 msg0 = 'Trying to get a value from an empty ca.'
                 raise IndexError(msg0)
 
-    def __setitem__(self, index: int, value: D) -> None:
+    def __setitem__(self, index: int, value: D, /) -> None:
         cnt = self._count
         if 0 <= index < cnt:
             self._data[(self._front + index) % self._capacity] = value
@@ -141,7 +143,7 @@ class ca[D]():
                 msg0 = 'Trying to set a value from an empty ca.'
                 raise IndexError(msg0)
 
-    def __eq__(self, other: object) -> bool:
+    def __eq__(self, other: object, /) -> bool:
         if self is other:
             return True
         if not isinstance(other, type(self)):
@@ -212,7 +214,7 @@ class ca[D]():
                 self._data[self._front], None, 0, 0, self._capacity - 1
         return cast(D, d)
 
-    def popLD(self, default: D) -> D:
+    def popLD(self, default: D, /) -> D:
         """Pop one value from left, provide a mandatory default value.
 
         * safe version of popL
@@ -223,7 +225,7 @@ class ca[D]():
         except ValueError:
             return default
 
-    def popRD(self, default: D) -> D:
+    def popRD(self, default: D, /) -> D:
         """Pop one value from right, provide a mandatory default value.
 
         * safe version of popR
@@ -273,7 +275,7 @@ class ca[D]():
 
         return tuple(ds)
 
-    def map[U](self, f: Callable[[D], U]) -> ca[U]:
+    def map[U](self, f: Callable[[D], U], /) -> ca[U]:
         """Apply function f over contents, returns new `ca` instance.
 
         * parameter `f` function of type `f[~D, ~U] -> ca[~U]`
@@ -281,7 +283,7 @@ class ca[D]():
         """
         return ca(map(f, self))
 
-    def foldL[L](self, f: Callable[[L, D], L], initial: Optional[L]=None) -> L:
+    def foldL[L](self, f: Callable[[L, D], L], /, initial: L|None=None) -> L:
         """Left fold ca via function and optional initial value.
 
         * parameter `f` function of type `f[~L, ~D] -> ~L`
@@ -310,7 +312,7 @@ class ca[D]():
                     acc = f(acc, d)
                 return acc
 
-    def foldR[R](self, f: Callable[[D, R], R], initial: Optional[R]=None) -> R:
+    def foldR[R](self, f: Callable[[D, R], R], /, initial: R|None=None) -> R:
         """Right fold ca via function and optional initial value.
 
         * parameter `f` function of type `f[~D, ~R] -> ~R`

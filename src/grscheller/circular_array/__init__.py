@@ -18,11 +18,10 @@ Package for an indexable circular array data structure.
 
 #### Modules
 
-**CircularArray:**
-  **CA**
+* module **ca:**
 
 """
-__version__ = "3.7.0"
+__version__ = "3.7.0.1"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
