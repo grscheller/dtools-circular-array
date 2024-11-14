@@ -13,7 +13,6 @@
 # limitations under the License.
 
 from __future__ import annotations
-from typing import Optional
 from grscheller.circular_array.ca import ca, CA
 
 class TestCircularArray:
