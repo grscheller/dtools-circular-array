@@ -18,7 +18,7 @@ Package for an indexable circular array data structure.
 
 #### Modules
 
-* module **ca:**
+* module grscheller.circular_array.ca: circular array Python data structure
 
 """
 __version__ = "3.7.1"
