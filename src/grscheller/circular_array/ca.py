@@ -14,12 +14,13 @@
 
 """### Indexable circular array data structure module."""
 from __future__ import annotations
-from typing import Callable, cast, final, Iterable, Iterator
+from collections.abc import Callable, Iterable, Iterator, Sequence
+from typing import cast
 from typing import Sequence, TypeVar, Never
 
 __all__ = ['ca', 'CA']
 
-class ca[D]():
+class ca[D](Sequence[D]):
     """
     #### Indexable circular array data structure
 
@@ -41,9 +42,7 @@ class ca[D]():
 
     def __init__(self, *dss: Iterable[D]) -> None:
         if len(dss) < 2:
-            self._data: list[D|None] = [None] + \
-                                       cast(list[D|None], list(*dss)) + \
-                                       [None]
+            self._data: list[D|None] = [None] + cast(list[D|None], list(*dss)) + [None]
         else:
             msg = f'ca expected at most 1 argument, got {len(dss)}'
             raise TypeError(msg)
