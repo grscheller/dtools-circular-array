@@ -37,7 +37,7 @@ class ca[D](Sequence[D]):
     * raises `TypeError` if more than 2 arguments are passed to constructor
 
     """
-    __slots__ = '_data', '_count', '_capacity', '_front', '_rear'
+    __slots__ = '_data', '_cnt', '_cap', '_front', '_rear'
 
     def __init__(self, *dss: Iterable[D]) -> None:
         if len(dss) < 2:
@@ -45,42 +45,44 @@ class ca[D](Sequence[D]):
         else:
             msg = f'ca expected at most 1 argument, got {len(dss)}'
             raise TypeError(msg)
-        self._capacity = capacity = len(self._data)
-        self._count = capacity - 2
-        if capacity == 2:
+        self._cap = cap = len(self._data)
+        self._cnt = cap - 2
+        if cap == 2:
             self._front = 0
             self._rear = 1
         else:
             self._front = 1
-            self._rear = capacity - 2
+            self._rear = cap - 2
 
     def _double_storage_capacity(self) -> None:
         if self._front <= self._rear:
-            self._data += [None]*self._capacity
-            self._capacity *= 2
+            self._data += [None]*self._cap
+            self._cap *= 2
         else:
-            self._data = self._data[:self._front] + [None]*self._capacity + self._data[self._front:]
-            self._front, self._capacity = self._front + self._capacity, 2*self._capacity
+            self._data = self._data[:self._front] + [None]*self._cap + self._data[self._front:]
+            self._front, self._cap = self._front + self._cap, 2*self._cap
 
     def _compact_storage_capacity(self) -> None:
         """Compact the ca."""
-        match self._count:
+        match self._cnt:
             case 0:
-                self._capacity, self._front, self._rear, self._data = 2, 0, 1, [None, None]
+                self._cap, self._front, self._rear, self._data = \
+                    2, 0, 1, [None, None]
             case 1:
-                self._capacity, self._front, self._rear, self._data = 3, 1, 1, [None, self._data[self._front], None]
+                self._cap, self._front, self._rear, self._data = \
+                    3, 1, 1, [None, self._data[self._front], None]
             case _:
                 if self._front <= self._rear:
-                    self._capacity, self._front, self._rear, self._data = \
-                        self._count+2, 1, self._count, [None] + self._data[self._front:self._rear+1] + [None]
+                    self._cap, self._front, self._rear, self._data = \
+                        self._cnt+2, 1, self._cnt, [None] + self._data[self._front:self._rear+1] + [None]
                 else:
-                    self._capacity, self._front, self._rear, self._data = \
-                        self._count+2, 1, self._count, [None] + self._data[self._front:] + self._data[:self._rear+1] + [None]
+                    self._cap, self._front, self._rear, self._data = \
+                        self._cnt+2, 1, self._cnt, [None] + self._data[self._front:] + self._data[:self._rear+1] + [None]
 
     def __iter__(self) -> Iterator[D]:
-        if self._count > 0:
+        if self._cnt > 0:
             capacity, rear, position, current_state = \
-                self._capacity, self._rear, self._front, self._data.copy()
+                self._cap, self._rear, self._front, self._data.copy()
 
             while position != rear:
                 yield cast(D, current_state[position])
@@ -88,9 +90,9 @@ class ca[D](Sequence[D]):
             yield cast(D, current_state[position])
 
     def __reversed__(self) -> Iterator[D]:
-        if self._count > 0:
+        if self._cnt > 0:
             capacity, front, position, current_state = \
-                self._capacity, self._front, self._rear, self._data.copy()
+                self._cap, self._front, self._rear, self._data.copy()
 
             while position != front:
                 yield cast(D, current_state[position])
@@ -104,10 +106,10 @@ class ca[D](Sequence[D]):
         return '(|' + ', '.join(map(str, self)) + '|)'
 
     def __bool__(self) -> bool:
-        return self._count > 0
+        return self._cnt > 0
 
     def __len__(self) -> int:
-        return self._count
+        return self._cnt
 
     @overload
     def __getitem__(self, index: int, /) -> D: ...
@@ -118,11 +120,11 @@ class ca[D](Sequence[D]):
         if isinstance(idx, slice):
             raise NotImplementedError
 
-        cnt = self._count
+        cnt = self._cnt
         if 0 <= idx < cnt:
-            return cast(D, self._data[(self._front + idx) % self._capacity])
+            return cast(D, self._data[(self._front + idx) % self._cap])
         elif -cnt <= idx < 0:
-            return cast(D, self._data[(self._front + cnt + idx) % self._capacity])
+            return cast(D, self._data[(self._front + cnt + idx) % self._cap])
         else:
             if cnt > 0:
                 msg1 = 'Out of bounds: '
@@ -134,11 +136,11 @@ class ca[D](Sequence[D]):
                 raise IndexError(msg0)
 
     def __setitem__(self, index: int, value: D, /) -> None:
-        cnt = self._count
+        cnt = self._cnt
         if 0 <= index < cnt:
-            self._data[(self._front + index) % self._capacity] = value
+            self._data[(self._front + index) % self._cap] = value
         elif -cnt <= index < 0:
-            self._data[(self._front + cnt + index) % self._capacity] = value
+            self._data[(self._front + cnt + index) % self._cap] = value
         else:
             if cnt > 0:
                 msg1 = 'Out of bounds: '
@@ -159,8 +161,8 @@ class ca[D](Sequence[D]):
         countL, countR, \
         capacityL, capacityR = \
             self._front, other._front, \
-            self._count, other._count, \
-            self._capacity, other._capacity
+            self._cnt, other._cnt, \
+            self._cap, other._cap
 
         if countL != countR:
             return False
@@ -175,33 +177,33 @@ class ca[D](Sequence[D]):
     def pushL(self, *ds: D) -> None:
         """Push data from the left onto the ca."""
         for d in ds:
-            if self._count == self._capacity:
+            if self._cnt == self._cap:
                 self._double_storage_capacity()
-            self._front = (self._front - 1) % self._capacity
-            self._data[self._front], self._count = d, self._count + 1
+            self._front = (self._front - 1) % self._cap
+            self._data[self._front], self._cnt = d, self._cnt + 1
 
     def pushR(self, *ds: D) -> None:
         """Push data from the right onto the ca."""
         for d in ds:
-            if self._count == self._capacity:
+            if self._cnt == self._cap:
                 self._double_storage_capacity()
-            self._rear = (self._rear + 1) % self._capacity
-            self._data[self._rear], self._count = d, self._count + 1
+            self._rear = (self._rear + 1) % self._cap
+            self._data[self._rear], self._cnt = d, self._cnt + 1
 
     def popL(self) -> D|Never:
         """Pop one value off the left side of the ca.
 
         * raises `ValueError` when called on an empty ca
         """
-        if self._count > 1:
-            d, self._data[self._front], self._front, self._count = \
-                self._data[self._front], None, (self._front+1) % self._capacity, self._count - 1
-        elif self._count < 1:
+        if self._cnt > 1:
+            d, self._data[self._front], self._front, self._cnt = \
+                self._data[self._front], None, (self._front+1) % self._cap, self._cnt - 1
+        elif self._cnt < 1:
             msg = 'Method popL called on an empty ca'
             raise ValueError(msg)
         else:
-            d, self._data[self._front], self._count, self._front, self._rear = \
-                self._data[self._front], None, 0, 0, self._capacity - 1
+            d, self._data[self._front], self._cnt, self._front, self._rear = \
+                self._data[self._front], None, 0, 0, self._cap - 1
         return cast(D, d)
 
     def popR(self) -> D|Never:
@@ -209,15 +211,15 @@ class ca[D](Sequence[D]):
 
         * raises `ValueError` when called on an empty ca
         """
-        if self._count > 0:
-            d, self._data[self._rear], self._rear, self._count = \
-                self._data[self._rear], None, (self._rear - 1) % self._capacity, self._count - 1
-        elif self._count < 1:
+        if self._cnt > 0:
+            d, self._data[self._rear], self._rear, self._cnt = \
+                self._data[self._rear], None, (self._rear - 1) % self._cap, self._cnt - 1
+        elif self._cnt < 1:
             msg = 'Method popR called on an empty ca'
             raise ValueError(msg)
         else:
-            d, self._data[self._front], self._count, self._front, self._rear = \
-                self._data[self._front], None, 0, 0, self._capacity - 1
+            d, self._data[self._front], self._cnt, self._front, self._rear = \
+                self._data[self._front], None, 0, 0, self._cap - 1
         return cast(D, d)
 
     def popLD(self, default: D, /) -> D:
@@ -300,7 +302,7 @@ class ca[D](Sequence[D]):
           * if an initial value is not given then by necessity `~L = ~D`
         * raises `ValueError` when called on an empty `ca` and `initial` not given
         """
-        if self._count == 0:
+        if self._cnt == 0:
             if initial is None:
                 msg = 'Method foldL called on an empty ca without an initial value.'
                 raise ValueError(msg)
@@ -309,7 +311,7 @@ class ca[D](Sequence[D]):
         else:
             if initial is None:
                 acc = cast(L, self[0])  # in this case D = L
-                for idx in range(1, self._count):
+                for idx in range(1, self._cnt):
                     acc = f(acc, self[idx])
                 return acc
             else:
@@ -329,7 +331,7 @@ class ca[D](Sequence[D]):
           * if an initial value is not given then by necessity `~R = ~D`
         * raises `ValueError` when called on an empty `ca` and `initial` not given
         """
-        if self._count == 0:
+        if self._cnt == 0:
             if initial is None:
                 msg = 'Method foldR called on an empty ca without an initial value.'
                 raise ValueError(msg)
@@ -338,7 +340,7 @@ class ca[D](Sequence[D]):
         else:
             if initial is None:
                 acc = cast(R, self[-1])  # in this case D = R
-                for idx in range(self._count-2, -1, -1):
+                for idx in range(self._cnt-2, -1, -1):
                     acc = f(self[idx], acc)
                 return acc
             else:
@@ -349,27 +351,27 @@ class ca[D](Sequence[D]):
 
     def capacity(self) -> int:
         """Returns current capacity of the ca."""
-        return self._capacity
+        return self._cap
 
     def empty(self) -> None:
         """Empty the ca, keep current capacity."""
-        self._data, self._front, self._rear = [None]*self._capacity, 0, self._capacity-1
+        self._data, self._front, self._rear = [None]*self._cap, 0, self._cap
 
     def fractionFilled(self) -> float:
         """Returns fractional capacity of the ca."""
-        return self._count/self._capacity
+        return self._cnt/self._cap
 
-    def resize(self, min_capacity: int=2) -> None:
-        """Compact `ca` and resize to `min_capacity` if necessary.
+    def resize(self, minimum_capacity: int=2) -> None:
+        """Compact `ca` and resize to `min_cap` if necessary.
 
-        * to just compact the `ca`, do not provide a min_capacity
+        * to just compact the `ca`, do not provide a min_cap
         """
         self._compact_storage_capacity()
-        if min_capacity > self._capacity:
-            self._capacity, self._data = \
-                min_capacity, self._data + [None]*(min_capacity-self._capacity)
-            if self._count == 0:
-                self._front, self._rear = 0, self._capacity - 1
+        if (min_cap := minimum_capacity) > self._cap:
+            self._cap, self._data = \
+                min_cap, self._data + [None]*(min_cap - self._cap)
+            if self._cnt == 0:
+                self._front, self._rear = 0, self._cap - 1
 
 def CA[U](*ds: U) -> ca[U]:
     """Function to produce a `ca` array from a variable number of arguments."""
