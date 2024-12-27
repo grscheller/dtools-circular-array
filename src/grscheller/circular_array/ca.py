@@ -15,8 +15,7 @@
 """### Indexable circular array data structure module."""
 from __future__ import annotations
 from collections.abc import Callable, Iterable, Iterator, Sequence
-from typing import cast
-from typing import Sequence, TypeVar, Never
+from typing import Any, cast, Never, overload
 
 __all__ = ['ca', 'CA']
 
@@ -110,16 +109,24 @@ class ca[D](Sequence[D]):
     def __len__(self) -> int:
         return self._count
 
-    def __getitem__(self, index: int, /) -> D:
+    @overload
+    def __getitem__(self, index: int, /) -> D: ...
+    @overload
+    def __getitem__(self, slicei: slice, /) -> ca[D]: ...
+
+    def __getitem__(self, idx: int|slice, /) -> D|ca[D]|Never:
+        if isinstance(idx, slice):
+            raise NotImplementedError
+
         cnt = self._count
-        if 0 <= index < cnt:
-            return cast(D, self._data[(self._front + index) % self._capacity])
-        elif -cnt <= index < 0:
-            return cast(D, self._data[(self._front + cnt + index) % self._capacity])
+        if 0 <= idx < cnt:
+            return cast(D, self._data[(self._front + idx) % self._capacity])
+        elif -cnt <= idx < 0:
+            return cast(D, self._data[(self._front + cnt + idx) % self._capacity])
         else:
             if cnt > 0:
                 msg1 = 'Out of bounds: '
-                msg2 = f'index = {index} not between {-cnt} and {cnt-1} '
+                msg2 = f'index = {idx} not between {-cnt} and {cnt-1} '
                 msg3 = 'while getting value from a ca.'
                 raise IndexError(msg1 + msg2 + msg3)
             else:
@@ -290,7 +297,7 @@ class ca[D](Sequence[D]):
         * parameter `initial` is an optional initial value
         * returns the reduced value of type `~L`
           * note that `~L` and `~D` can be the same type
-          * if an initial value is not given then by necessity `~L = ~D` 
+          * if an initial value is not given then by necessity `~L = ~D`
         * raises `ValueError` when called on an empty `ca` and `initial` not given
         """
         if self._count == 0:
