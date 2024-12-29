@@ -82,6 +82,25 @@ class TestCircularArray:
         ca0.popL()
         assert len(ca0) == 0
 
+    def test_rotate(self) -> None:
+        ca0 = ca[int]()
+        ca0.rotL(42)
+        assert ca0 == ca()
+
+        ca1 = CA(42)
+        ca1.rotR()
+        assert ca1 == ca((42,))
+
+        ca9 = CA(1,2,3,4,5,6,7,8,9)
+        ca9.rotL()
+        assert ca9 == CA(2,3,4,5,6,7,8,9,1)
+        ca9.rotR()
+        assert ca9 == CA(1,2,3,4,5,6,7,8,9)
+        ca9.rotL(5)
+        assert ca9 == CA(6,7,8,9,1,2,3,4,5)
+        ca9.rotR(6)
+        assert ca9 == CA(9,1,2,3,4,5,6,7,8)
+
     def test_iterators(self) -> None:
         data: list[int] = [*range(100)]
         c: ca[int] = ca(data)
@@ -354,3 +373,67 @@ class TestCircularArray:
                 bar.pushR((ii, jj))
 
         assert  bar == expected  # if foo were a list, outer loop above never returns
+
+    def test_indexing(self) -> None:
+        baz: ca[int] = ca()
+        try:
+            bar = baz[0]
+            assert bar == 666
+        except IndexError as err:
+            assert isinstance(err, IndexError)
+            assert not baz
+        else:
+            assert False
+
+        foo = ca(range(1042)).map(lambda i: i*i)
+        for ii in range(0, 1042):
+            assert ii*ii == foo[ii]
+        for ii in range(-1042, 0):
+            assert foo[ii] == foo[1042+ii]
+        assert foo[0] == 0
+        assert foo[1041] == 1041*1041
+        assert foo[-1] == 1041*1041
+        assert foo[-1042] == 0
+        try:
+            bar = foo[1042]
+            assert bar == -1
+        except IndexError as err:
+            assert isinstance(err, IndexError)
+        else:
+            assert False
+        try:
+            bar = foo[-1043]
+            assert bar == -1
+        except IndexError as err:
+            assert isinstance(err, IndexError)
+        else:
+            assert False
+        try:
+            bar = foo[0]
+        except IndexError as err:
+            assert False
+        else:
+            assert bar == 0
+
+    def test_slicing(self) -> None:
+        baz: ca[int] = ca()
+        assert baz == ca[int]()
+        assert baz[1:-1] == baz
+        assert baz[42:666:17] == baz
+
+        foo = ca(range(101))
+        foo[5] = 666
+        assert foo[5] == 666
+        foo[10:21:5] = 42, 42, 42
+        bar = foo[9:22]
+        assert bar == CA(9, 42, 11, 12, 13, 14, 42, 16, 17, 18, 19, 42, 21)
+
+        baz = ca(range(11))
+        assert baz == CA(0,1,2,3,4,5,6,7,8,9,10)
+        baz[5::2] = baz[0:3]
+        assert baz == CA(0,1,2,3,4,0,6,1,8,2,10)
+        baz[0:3] = baz[3:0:-1]
+        assert baz == CA(3,2,1,3,4,0,6,1,8,2,10)
+        del baz[6:10:2]
+        assert baz == CA(3,2,1,3,4,0,1,2,10)
+

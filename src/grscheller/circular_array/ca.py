@@ -27,11 +27,10 @@ class ca[D](Sequence[D]):
     * amortized O(1) pushing and popping from either end
     * O(1) random access any element
     * will resize itself as needed
+    * sliceable
     * makes defensive copies of contents for the purposes of iteration
-    * not sliceable
     * in boolean context returns true if not empty, false if empty
     * in comparisons compare identity before equality (like Python built-ins do)
-      * as Python tuples, lists, and dicts do
     * raises `IndexError` for out-of-bounds indexing
     * raises `ValueError` for popping from or folding an empty `ca`
     * raises `TypeError` if more than 2 arguments are passed to constructor
@@ -112,13 +111,13 @@ class ca[D](Sequence[D]):
         return self._cnt
 
     @overload
-    def __getitem__(self, index: int, /) -> D: ...
+    def __getitem__(self, idx: int, /) -> D: ...
     @overload
-    def __getitem__(self, slicei: slice, /) -> ca[D]: ...
+    def __getitem__(self, idx: slice, /) -> ca[D]: ...
 
-    def __getitem__(self, idx: int|slice, /) -> D|ca[D]|Never:
+    def __getitem__(self, idx: int|slice, /) -> D|ca[D]:
         if isinstance(idx, slice):
-            raise NotImplementedError
+            return ca(list(self)[idx])
 
         cnt = self._cnt
         if 0 <= idx < cnt:
@@ -127,6 +126,8 @@ class ca[D](Sequence[D]):
             return cast(D, self._data[(self._front + cnt + idx) % self._cap])
         else:
             if cnt > 0:
+                foo = [1, 2, 3]
+                foo.__setitem__
                 msg1 = 'Out of bounds: '
                 msg2 = f'index = {idx} not between {-cnt} and {cnt-1} '
                 msg3 = 'while getting value from a ca.'
@@ -135,21 +136,53 @@ class ca[D](Sequence[D]):
                 msg0 = 'Trying to get a value from an empty ca.'
                 raise IndexError(msg0)
 
-    def __setitem__(self, index: int, value: D, /) -> None:
+    @overload
+    def __setitem__(self, idx: int, vals: D, /) -> None: ...
+    @overload
+    def __setitem__(self, idx: slice, vals: Iterable[D], /) -> None: ...
+
+    def __setitem__(self, idx: int|slice, vals: D|Iterable[D], /) -> None:
+        if isinstance(idx, slice):
+            if isinstance(vals, Iterable):
+                data = list(self)
+                data[idx] = vals
+                _ca = ca(data)
+                self._data, self._cnt, self._cap, self._front, self._rear = \
+                            _ca._data, _ca._cnt, _ca._cap, _ca._front, _ca._rear
+                return
+            else:
+                msg = 'must assign iterable to extended slice'
+                foo = [1,2,3]
+                foo.__delitem__(2)
+                raise TypeError(msg)
+
         cnt = self._cnt
-        if 0 <= index < cnt:
-            self._data[(self._front + index) % self._cap] = value
-        elif -cnt <= index < 0:
-            self._data[(self._front + cnt + index) % self._cap] = value
+        if 0 <= idx < cnt:
+            self._data[(self._front + idx) % self._cap] = cast(D, vals)
+        elif -cnt <= idx < 0:
+            self._data[(self._front + cnt + idx) % self._cap] = cast(D, vals)
         else:
             if cnt > 0:
                 msg1 = 'Out of bounds: '
-                msg2 = f'index = {index} not between {-cnt} and {cnt-1} '
+                msg2 = f'index = {idx} not between {-cnt} and {cnt-1} '
                 msg3 = 'while setting value from a ca.'
                 raise IndexError(msg1 + msg2 + msg3)
             else:
                 msg0 = 'Trying to set a value from an empty ca.'
                 raise IndexError(msg0)
+
+    @overload
+    def __delitem__(self, idx: int) -> None: ...
+    @overload
+    def __delitem__(self, idx: slice) -> None: ...
+
+    def __delitem__(self, idx: int|slice) -> None:
+        data = list(self)
+        del data[idx]
+        _ca = ca(data)
+        self._data, self._cnt, self._cap, self._front, self._rear = \
+                    _ca._data, _ca._cnt, _ca._cap, _ca._front, _ca._rear
+        return
 
     def __eq__(self, other: object, /) -> bool:
         if self is other:
@@ -283,6 +316,22 @@ class ca[D](Sequence[D]):
 
         return tuple(ds)
 
+    def rotL(self, n: int=1) -> None:
+        """Rotate ca arguments left n times."""
+        if self._cnt < 2:
+            return
+        while n > 0:
+            self.pushR(self.popL())
+            n -= 1
+
+    def rotR(self, n: int=1) -> None:
+        """Rotate ca arguments right n times."""
+        if self._cnt < 2:
+            return
+        while n > 0:
+            self.pushL(self.popR())
+            n -= 1
+
     def map[U](self, f: Callable[[D], U], /) -> ca[U]:
         """Apply function f over contents, returns new `ca` instance.
 
@@ -376,3 +425,4 @@ class ca[D](Sequence[D]):
 def CA[U](*ds: U) -> ca[U]:
     """Function to produce a `ca` array from a variable number of arguments."""
     return ca(ds)
+
