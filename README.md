@@ -16,7 +16,7 @@ a "has-a" relationship when implementing other data structures.
 
 * O(1) pushes and pops either end.
 * O(1) indexing
-* does not support slicing
+* now fully supports slicing!
 
 ### Usage
 
