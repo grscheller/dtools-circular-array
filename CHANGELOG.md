@@ -11,6 +11,14 @@ PyPI grscheller.circular-array project.
 
 ## Releases and Important Milestones
 
+### Version 3.8.0 - PyPI release date 2025-01-03
+
+* now circular-array indexing methods fully support slicing
+  * `__getitem__`
+  * `__setitem__`
+  * `__delitem__`
+* added rotL(n) and rotR(n) methods
+
 ### Version 3.7.1 - PyPI release date 2024-11-18
 
 * for internal changes
