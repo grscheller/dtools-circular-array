@@ -17,7 +17,7 @@ from __future__ import annotations
 from collections.abc import Callable, Iterable, Iterator, Sequence
 from typing import Any, cast, Never, overload
 
-__all__ = ['ca', 'CA']
+__all__ = [ 'ca', 'CA' ]
 
 class ca[D](Sequence[D]):
     """
@@ -31,6 +31,7 @@ class ca[D](Sequence[D]):
     * makes defensive copies of contents for the purposes of iteration
     * in boolean context returns true if not empty, false if empty
     * in comparisons compare identity before equality (like Python built-ins do)
+    * lowercase class name choosen to match built-ins like `list` and `tuple`
     * raises `IndexError` for out-of-bounds indexing
     * raises `ValueError` for popping from or folding an empty `ca`
     * raises `TypeError` if more than 2 arguments are passed to constructor
@@ -422,7 +423,7 @@ class ca[D](Sequence[D]):
             if self._cnt == 0:
                 self._front, self._rear = 0, self._cap - 1
 
-def CA[U](*ds: U) -> ca[U]:
+def CA[D](*ds: D) -> ca[D]:
     """Function to produce a `ca` array from a variable number of arguments."""
     return ca(ds)
 
