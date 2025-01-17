@@ -34,7 +34,7 @@ class ca[D](Sequence[D]):
     * lowercase class name choosen to match built-ins like `list` and `tuple`
     * raises `IndexError` for out-of-bounds indexing
     * raises `ValueError` for popping from or folding an empty `ca`
-    * raises `TypeError` if more than 2 arguments are passed to constructor
+    * raises `TypeError` if 2 or more arguments are passed to constructor
 
     """
     __slots__ = '_data', '_cnt', '_cap', '_front', '_rear'
