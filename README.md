@@ -4,7 +4,7 @@ Python module implementing an indexable, double sided,
 auto-resizing queue data structure.
 
 * **Repositories**
-  * [grscheller.circular-array][1] project on *PyPI*
+  * [dtools.circular-array][1] project on *PyPI*
   * [Source code][2] on *GitHub*
 * **Detailed documentation**
   * [Detailed API documentation][3] on *GH-Pages*
@@ -21,7 +21,7 @@ a "has-a" relationship when implementing other data structures.
 ### Usage
 
 ```python
-from grscheller.circular_array.ca import CA
+from dtools.circular_array.ca import CA
 
 ca = CA(1, 2, 3)
 assert ca.popL() == 1
@@ -57,6 +57,6 @@ assert len(ca) == 0
 
 ---
 
-[1]: https://pypi.org/project/grscheller.circular-array
-[2]: https://github.com/grscheller/circular-array
-[3]: https://grscheller.github.io/grscheller-pypi-namespace-docs/circular-array/
+[1]: https://pypi.org/project/dtools.circular-array
+[2]: https://github.com/grscheller/dtools-circular-array
+[3]: https://grscheller.github.io/dtools-namespace-docs/circular-array/

@@ -13,12 +13,12 @@
 # limitations under the License.
 
 from __future__ import annotations
-from grscheller.circular_array.ca import ca, CA
+from dtools.circular_array.ca import ca, CA
 
 class TestCircularArray:
     def test_mutate_returns_none(self) -> None:
         ca1: ca[int] = ca()
-        assert ca1.pushL(1) == None  # type: ignore # this is test!
+        assert ca1.pushL(1) == None
         ca1.pushL(0)
         ca1.pushR(2)
         ca1.pushR(3)

@@ -18,10 +18,10 @@ Package for an indexable circular array data structure.
 
 #### Modules
 
-* module grscheller.circular_array.ca: circular array Python data structure
+* module dtools.circular_array.ca: circular array Python data structure
 
 """
-__version__ = "3.8.1"
+__version__ = "3.9.0"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2025 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"

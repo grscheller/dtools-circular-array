@@ -11,6 +11,10 @@ PyPI grscheller.circular-array project.
 
 ## Releases and Important Milestones
 
+### Version 3.8.2 - PyPI release date 2025-10-??
+* Final release as grscheller.circular-array
+  * just a stub requiring dtools.circular-array
+
 ### Version 3.8.0 - PyPI release date 2025-01-03
 
 * now circular-array indexing methods fully support slicing

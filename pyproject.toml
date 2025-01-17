@@ -3,7 +3,7 @@ requires = ["flit_core>=3.4,<4"]
 build-backend = "flit_core.buildapi"
 
 [project]
-name = "grscheller.circular-array"
+name = "dt.circular-array"
 authors = [
     { name = "Geoffrey R. Scheller", email = "geoffrey@scheller.com" },
 ]
@@ -32,9 +32,9 @@ keywords = [
 test = ["pytest >=8.3.2"]
 
 [project.urls]
-Source = "https://github.com/grscheller/circular-array"
-Changelog = "https://github.com/grscheller/circular-array/blob/main/CHANGELOG.md"
-Documentation = "https://grscheller.github.io/grscheller-pypi-namespace-docs/circular-array"
+Source = "https://github.com/grscheller/dtools-circular-array"
+Changelog = "https://github.com/grscheller/dtools-circular-array/blob/main/CHANGELOG.md"
+Documentation = "https://grscheller.github.io/dtools-docs/circular-array"
 
 [tool.flit.sdist]
 exclude = ["dist", "docs", ".gitignore", ".mypy_cache"]
