@@ -60,3 +60,4 @@ assert len(ca) == 0
 [1]: https://pypi.org/project/dtools.circular-array
 [2]: https://github.com/grscheller/dtools-circular-array
 [3]: https://grscheller.github.io/dtools-namespace-docs/circular-array/
+
