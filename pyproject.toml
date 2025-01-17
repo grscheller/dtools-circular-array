@@ -3,7 +3,7 @@ requires = ["flit_core>=3.4,<4"]
 build-backend = "flit_core.buildapi"
 
 [project]
-name = "dt.circular-array"
+name = "dtools.circular-array"
 authors = [
     { name = "Geoffrey R. Scheller", email = "geoffrey@scheller.com" },
 ]
