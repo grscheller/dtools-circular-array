@@ -1,7 +1,7 @@
-# Python Circular Array Implementation
+# Developer Tools - Circular Array Implementation
 
-Python module implementing an indexable, double sided,
-auto-resizing queue data structure.
+Python module implementing a full featured, indexable,
+double sided, auto-resizing queue data structure.
 
 * **Repositories**
   * [dtools.circular-array][1] project on *PyPI*
@@ -16,7 +16,8 @@ a "has-a" relationship when implementing other data structures.
 
 * O(1) pushes and pops either end.
 * O(1) indexing
-* now fully supports slicing!
+* fully supports slicing
+* iterates over copies of the data allowing ca to mutate
 
 ### Usage
 
@@ -59,5 +60,5 @@ assert len(ca) == 0
 
 [1]: https://pypi.org/project/dtools.circular-array
 [2]: https://github.com/grscheller/dtools-circular-array
-[3]: https://grscheller.github.io/dtools-namespace-docs/circular-array/
+[3]: https://grscheller.github.io/dtools-docs/circular-array/
 
