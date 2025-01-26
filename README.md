@@ -9,6 +9,9 @@ double sided, auto-resizing queue data structure.
 * **Detailed documentation**
   * [Detailed API documentation][3] on *GH-Pages*
 
+This project is part of the
+[Developer Tools for Python][4] **dtools.** namespace project.
+
 ### Overview
 
 Useful if used directly as an improved version of a Python List or in
@@ -60,5 +63,6 @@ assert len(ca) == 0
 
 [1]: https://pypi.org/project/dtools.circular-array
 [2]: https://github.com/grscheller/dtools-circular-array
-[3]: https://grscheller.github.io/dtools-docs/circular-array/
+[3]: https://grscheller.github.io/dtools-docs/circular-array
+[4]: https://github.com/grscheller/dtools-docs
 
