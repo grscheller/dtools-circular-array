@@ -1,4 +1,4 @@
-# Copyright 2016-2025 Geoffrey R. Scheller
+# Copyright 2023-2025 Geoffrey R. Scheller
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,14 +14,14 @@
 
 """### Circular Array
 
-Package for an indexable circular array data structure.
+Package for an indexable, sliceable circular array data structure.
 
 #### Modules
 
-* module dtools.circular_array.ca: circular array Python data structure
+* module dtools.circular_array.ca: circular array data structure
 
 """
-__version__ = "3.9.0"
+__version__ = "3.9.1"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2025 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"

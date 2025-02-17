@@ -15,9 +15,14 @@
 """### Indexable circular array data structure module."""
 from __future__ import annotations
 from collections.abc import Callable, Iterable, Iterator, Sequence
-from typing import Any, cast, Never, overload
+from typing import Any, cast, Never, overload, TypeVar
 
 __all__ = [ 'ca', 'CA' ]
+
+D = TypeVar('D')
+L = TypeVar('L')
+R = TypeVar('R')
+U = TypeVar('U')
 
 class ca[D](Sequence[D]):
     """
