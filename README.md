@@ -1,7 +1,7 @@
-# Developer Tools - Circular Array Implementation
+# Developer Tools - Circular Array Data Structure
 
-Python module implementing a full featured, indexable,
-double sided, auto-resizing queue data structure.
+Python module implementing a full featured, indexable, sliceable,
+double sided, auto-resizing circular array data structure.
 
 * **Repositories**
   * [dtools.circular-array][1] project on *PyPI*

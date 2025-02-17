@@ -12,9 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""### Circular Array
+"""### Circular array data structure
 
-Package for an indexable, sliceable circular array data structure.
+Package for an indexable, sliceable, auto-resizing circular array data structure
+with amortized O(1) pushes and pops either end.
 
 #### Modules
 
