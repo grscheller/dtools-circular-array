@@ -1,4 +1,4 @@
-# Developer Tools - Circular Array Data Structure
+# Developer Tools - circular array data structure
 
 Python module implementing a full featured, indexable, sliceable,
 double sided, auto-resizing circular array data structure.
