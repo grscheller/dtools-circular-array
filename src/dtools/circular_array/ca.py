@@ -16,7 +16,7 @@
 
 from __future__ import annotations
 from collections.abc import Callable, Iterable, Iterator, Sequence
-from typing import Any, cast, Never, overload, TypeVar
+from typing import cast, Never, overload, TypeVar
 
 __all__ = ['ca', 'CA']
 
