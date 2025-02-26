@@ -22,7 +22,7 @@ with amortized O(1) pushes and pops either end.
 * module dtools.circular_array.ca: circular array data structure
 
 """
-__version__ = "3.9.1"
+__version__ = "3.9.1.1"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2025 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
