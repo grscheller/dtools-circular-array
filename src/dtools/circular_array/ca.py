@@ -27,8 +27,7 @@ U = TypeVar('U')
 
 
 class ca[D](Sequence[D]):
-    """
-    #### Indexable circular array data structure
+    """Indexable circular array data structure
 
     * generic, stateful data structure
     * amortized O(1) pushing and popping from either end
@@ -307,6 +306,7 @@ class ca[D](Sequence[D]):
         """Pop one value off the right side of the ca.
 
         * raises `ValueError` when called on an empty ca
+
         """
         if self._cnt > 0:
             d, self._data[self._rear], self._rear, self._cnt = (
