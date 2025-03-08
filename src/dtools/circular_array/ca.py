@@ -37,7 +37,7 @@ class ca[D](Sequence[D]):
     * makes defensive copies of contents for the purposes of iteration
     * in boolean context returns true if not empty, false if empty
     * in comparisons compare identity before equality (like Python built-ins do)
-    * lowercase class name choosen to match built-ins like `list` and `tuple`
+    * lowercase class name chosen to match built-ins like `list` and `tuple`
     * raises `IndexError` for out-of-bounds indexing
     * raises `ValueError` for popping from or folding an empty `ca`
     * raises `TypeError` if 2 or more arguments are passed to constructor
