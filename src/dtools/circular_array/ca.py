@@ -158,19 +158,18 @@ class ca[D](Sequence[D]):
         cnt = self._cnt
         if 0 <= idx < cnt:
             return cast(D, self._data[(self._front + idx) % self._cap])
-        elif -cnt <= idx < 0:
+
+        if -cnt <= idx < 0:
             return cast(D, self._data[(self._front + cnt + idx) % self._cap])
-        else:
-            if cnt > 0:
-                foo = [1, 2, 3]
-                foo.__setitem__
-                msg1 = 'Out of bounds: '
-                msg2 = f'index = {idx} not between {-cnt} and {cnt - 1} '
-                msg3 = 'while getting value from a ca.'
-                raise IndexError(msg1 + msg2 + msg3)
-            else:
-                msg0 = 'Trying to get a value from an empty ca.'
-                raise IndexError(msg0)
+
+        if cnt == 0:
+            msg0 = 'Trying to get a value from an empty ca.'
+            raise IndexError(msg0)
+
+        msg1 = 'Out of bounds: '
+        msg2 = f'index = {idx} not between {-cnt} and {cnt - 1} '
+        msg3 = 'while getting value from a ca.'
+        raise IndexError(msg1 + msg2 + msg3)
 
     @overload
     def __setitem__(self, idx: int, vals: D, /) -> None: ...
@@ -191,11 +190,9 @@ class ca[D](Sequence[D]):
                     _ca._rear,
                 )
                 return
-            else:
-                msg = 'must assign iterable to extended slice'
-                foo = [1, 2, 3]
-                foo.__delitem__(2)
-                raise TypeError(msg)
+
+            msg = 'must assign iterable to extended slice'
+            raise TypeError(msg)
 
         cnt = self._cnt
         if 0 <= idx < cnt:
@@ -204,13 +201,13 @@ class ca[D](Sequence[D]):
             self._data[(self._front + cnt + idx) % self._cap] = cast(D, vals)
         else:
             if cnt > 0:
-                msg1 = 'Out of bounds: '
-                msg2 = f'index = {idx} not between {-cnt} and {cnt - 1} '
-                msg3 = 'while setting value from a ca.'
-                raise IndexError(msg1 + msg2 + msg3)
-            else:
                 msg0 = 'Trying to set a value from an empty ca.'
                 raise IndexError(msg0)
+
+            msg1 = 'Out of bounds: '
+            msg2 = f'index = {idx} not between {-cnt} and {cnt - 1} '
+            msg3 = 'while setting value from a ca.'
+            raise IndexError(msg1 + msg2 + msg3)
 
     @overload
     def __delitem__(self, idx: int) -> None: ...
@@ -228,7 +225,6 @@ class ca[D](Sequence[D]):
             _ca._front,
             _ca._rear,
         )
-        return
 
     def __eq__(self, other: object, /) -> bool:
         if self is other:
@@ -428,19 +424,18 @@ class ca[D](Sequence[D]):
             if initial is None:
                 msg = 'Method foldL called on an empty ca without an initial value.'
                 raise ValueError(msg)
-            else:
-                return initial
+            return initial
         else:
             if initial is None:
                 acc = cast(L, self[0])  # in this case D = L
                 for idx in range(1, self._cnt):
                     acc = f(acc, self[idx])
                 return acc
-            else:
-                acc = initial
-                for d in self:
-                    acc = f(acc, d)
-                return acc
+
+            acc = initial
+            for d in self:
+                acc = f(acc, d)
+            return acc
 
     def foldR[R](self, f: Callable[[D, R], R], /, initial: R | None = None) -> R:
         """Right fold ca via function and optional initial value.
@@ -459,17 +454,17 @@ class ca[D](Sequence[D]):
                 raise ValueError(msg)
             else:
                 return initial
-        else:
-            if initial is None:
-                acc = cast(R, self[-1])  # in this case D = R
-                for idx in range(self._cnt - 2, -1, -1):
-                    acc = f(self[idx], acc)
-                return acc
-            else:
-                acc = initial
-                for d in reversed(self):
-                    acc = f(d, acc)
-                return acc
+
+        if initial is None:
+            acc = cast(R, self[-1])  # in this case D = R
+            for idx in range(self._cnt - 2, -1, -1):
+                acc = f(self[idx], acc)
+            return acc
+
+        acc = initial
+        for d in reversed(self):
+            acc = f(d, acc)
+        return acc
 
     def capacity(self) -> int:
         """Returns current capacity of the ca."""
@@ -479,7 +474,7 @@ class ca[D](Sequence[D]):
         """Empty the ca, keep current capacity."""
         self._data, self._front, self._rear = [None] * self._cap, 0, self._cap
 
-    def fractionFilled(self) -> float:
+    def fraction_filled(self) -> float:
         """Returns fractional capacity of the ca."""
         return self._cnt / self._cap
 

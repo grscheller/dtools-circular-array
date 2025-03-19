@@ -22,41 +22,41 @@ class TestCapacity:
         assert ca0.capacity() == 2
 
         ca0 = CA(1, 2)
-        assert ca0.fractionFilled() == 2/4
+        assert ca0.fraction_filled() == 2/4
 
         ca0.pushL(0)
-        assert ca0.fractionFilled() == 3/4
+        assert ca0.fraction_filled() == 3/4
 
         ca0.pushR(3)
-        assert ca0.fractionFilled() == 4/4
+        assert ca0.fraction_filled() == 4/4
 
         ca0.pushR(4)
-        assert ca0.fractionFilled() == 5/8
+        assert ca0.fraction_filled() == 5/8
 
         ca0.pushL(5)
-        assert ca0.fractionFilled() == 6/8
+        assert ca0.fraction_filled() == 6/8
 
         assert len(ca0) == 6
         assert ca0.capacity() == 8
 
         ca0.resize()
-        assert ca0.fractionFilled() == 6/8
+        assert ca0.fraction_filled() == 6/8
 
         ca0.resize(30)
-        assert ca0.fractionFilled() == 6/30
+        assert ca0.fraction_filled() == 6/30
 
         ca0.resize(3)
-        assert ca0.fractionFilled() == 6/8
+        assert ca0.fraction_filled() == 6/8
 
         ca0.popLD(0)
         ca0.popRD(0)
         ca0.popLD(0)
         ca0.popRD(0)
-        assert ca0.fractionFilled() == 2/8
+        assert ca0.fraction_filled() == 2/8
         ca0.resize(3)
-        assert ca0.fractionFilled() == 2/4
+        assert ca0.fraction_filled() == 2/4
         ca0.resize(7)
-        assert ca0.fractionFilled() == 2/7
+        assert ca0.fraction_filled() == 2/7
 
     def test_empty(self) -> None:
         c: ca[int] = ca()
