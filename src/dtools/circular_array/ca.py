@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""### Indexable circular array data structure module."""
+"""### Module for an indexable circular array data structure."""
 
 from __future__ import annotations
 from collections.abc import Callable, Iterable, Iterator, Sequence
@@ -20,7 +20,7 @@ from typing import cast, Never, overload, TypeVar
 
 __all__ = ['ca', 'CA']
 
-D = TypeVar('D')
+D = TypeVar('D')  # Not needed for mypy, hint for pdoc.
 L = TypeVar('L')
 R = TypeVar('R')
 U = TypeVar('U')
@@ -29,18 +29,18 @@ U = TypeVar('U')
 class ca[D](Sequence[D]):
     """Indexable circular array data structure
 
-    * generic, stateful data structure
-    * amortized O(1) pushing and popping from either end
-    * O(1) random access any element
-    * will resize itself as needed
-    * sliceable
-    * makes defensive copies of contents for the purposes of iteration
-    * in boolean context returns true if not empty, false if empty
-    * in comparisons compare identity before equality (like Python built-ins do)
-    * lowercase class name chosen to match built-ins like `list` and `tuple`
-    * raises `IndexError` for out-of-bounds indexing
-    * raises `ValueError` for popping from or folding an empty `ca`
-    * raises `TypeError` if 2 or more arguments are passed to constructor
+    - generic, stateful data structure
+    - amortized O(1) pushing and popping from either end
+    - O(1) random access any element
+    - will resize itself as needed
+    - sliceable
+    - makes defensive copies of contents for the purposes of iteration
+    - in boolean context returns true if not empty, false if empty
+    - in comparisons compare identity before equality (like Python built-ins do)
+    - lowercase class name chosen to match built-ins like `list` and `tuple`
+    - raises `IndexError` for out-of-bounds indexing
+    - raises `ValueError` for popping from or folding an empty `ca`
+    - raises `TypeError` if 2 or more arguments are passed to constructor
 
     """
 
@@ -232,7 +232,7 @@ class ca[D](Sequence[D]):
         if not isinstance(other, type(self)):
             return False
 
-        frontL, frontR, countL, countR, capacityL, capacityR = (
+        front1, front2, count1, count2, capacity1, capacity2 = (
             self._front,
             other._front,
             self._cnt,
@@ -241,18 +241,18 @@ class ca[D](Sequence[D]):
             other._cap,
         )
 
-        if countL != countR:
+        if count1 != count2:
             return False
 
-        for nn in range(countL):
+        for nn in range(count1):
             if (
-                self._data[(frontL + nn) % capacityL]
-                is other._data[(frontR + nn) % capacityR]
+                self._data[(front1 + nn) % capacity1]
+                is other._data[(front2 + nn) % capacity2]
             ):
                 continue
             if (
-                self._data[(frontL + nn) % capacityL]
-                != other._data[(frontR + nn) % capacityR]
+                self._data[(front1 + nn) % capacity1]
+                != other._data[(front2 + nn) % capacity2]
             ):
                 return False
         return True
@@ -276,7 +276,8 @@ class ca[D](Sequence[D]):
     def popL(self) -> D | Never:
         """Pop one value off the left side of the ca.
 
-        * raises `ValueError` when called on an empty ca
+        Raises `ValueError` when called on an empty ca.
+
         """
         if self._cnt > 1:
             d, self._data[self._front], self._front, self._cnt = (
@@ -301,7 +302,7 @@ class ca[D](Sequence[D]):
     def popR(self) -> D | Never:
         """Pop one value off the right side of the ca.
 
-        * raises `ValueError` when called on an empty ca
+        Raises `ValueError` when called on an empty ca.
 
         """
         if self._cnt > 0:
@@ -327,8 +328,9 @@ class ca[D](Sequence[D]):
     def popLD(self, default: D, /) -> D:
         """Pop one value from left, provide a mandatory default value.
 
-        * safe version of popL
-        * returns a default value in the event the `ca` is empty
+        - safe version of popL
+        - returns a default value in the event the `ca` is empty
+
         """
         try:
             return self.popL()
@@ -338,8 +340,9 @@ class ca[D](Sequence[D]):
     def popRD(self, default: D, /) -> D:
         """Pop one value from right, provide a mandatory default value.
 
-        * safe version of popR
-        * returns a default value in the event the `ca` is empty
+        - safe version of popR
+        - returns a default value in the event the `ca` is empty
+
         """
         try:
             return self.popR()
@@ -349,10 +352,11 @@ class ca[D](Sequence[D]):
     def popLT(self, max: int) -> tuple[D, ...]:
         """Pop multiple values from left side of ca.
 
-        * returns the results in a tuple of type `tuple[~D, ...]`
-        * returns an empty tuple if `ca` is empty
-        * pop no more that `max` values
-        * will pop less if `ca` becomes empty
+        - returns the results in a tuple of type `tuple[~D, ...]`
+        - returns an empty tuple if `ca` is empty
+        - pop no more that `max` values
+        - will pop less if `ca` becomes empty
+
         """
         ds: list[D] = []
 
@@ -369,10 +373,11 @@ class ca[D](Sequence[D]):
     def popRT(self, max: int) -> tuple[D, ...]:
         """Pop multiple values from right side of `ca`.
 
-        * returns the results in a tuple of type `tuple[~D, ...]`
-        * returns an empty tuple if `ca` is empty
-        * pop no more that `max` values
-        * will pop less if `ca` becomes empty
+        - returns the results in a tuple of type `tuple[~D, ...]`
+        - returns an empty tuple if `ca` is empty
+        - pop no more that `max` values
+        - will pop less if `ca` becomes empty
+
         """
         ds: list[D] = []
         while max > 0:
@@ -404,21 +409,23 @@ class ca[D](Sequence[D]):
     def map[U](self, f: Callable[[D], U], /) -> ca[U]:
         """Apply function f over contents, returns new `ca` instance.
 
-        * parameter `f` function of type `f[~D, ~U] -> ca[~U]`
-        * returns a new instance of type `ca[~U]`
+        - parameter `f` function of type `f[~D, ~U] -> ca[~U]`
+        - returns a new instance of type `ca[~U]`
+
         """
         return ca(map(f, self))
 
     def foldL[L](self, f: Callable[[L, D], L], /, initial: L | None = None) -> L:
         """Left fold ca via function and optional initial value.
 
-        * parameter `f` function of type `f[~L, ~D] -> ~L`
-          * the first argument to `f` is for the accumulated value.
-        * parameter `initial` is an optional initial value
-        * returns the reduced value of type `~L`
-          * note that `~L` and `~D` can be the same type
-          * if an initial value is not given then by necessity `~L = ~D`
-        * raises `ValueError` when called on an empty `ca` and `initial` not given
+        - parameter `f` function of type `f[~L, ~D] -> ~L`
+          - the first argument to `f` is for the accumulated value.
+        - parameter `initial` is an optional initial value
+        - returns the reduced value of type `~L`
+          - note that `~L` and `~D` can be the same type
+          - if an initial value is not given then by necessity `~L = ~D`
+        - raises `ValueError` when called on an empty `ca` and `initial` not given
+
         """
         if self._cnt == 0:
             if initial is None:
@@ -440,13 +447,14 @@ class ca[D](Sequence[D]):
     def foldR[R](self, f: Callable[[D, R], R], /, initial: R | None = None) -> R:
         """Right fold ca via function and optional initial value.
 
-        * parameter `f` function of type `f[~D, ~R] -> ~R`
-          * the second argument to f is for the accumulated value
-        * parameter `initial` is an optional initial value
-        * returns the reduced value of type `~R`
-          * note that `~R` and `~D` can be the same type
-          * if an initial value is not given then by necessity `~R = ~D`
-        * raises `ValueError` when called on an empty `ca` and `initial` not given
+        - parameter `f` function of type `f[~D, ~R] -> ~R`
+          - the second argument to f is for the accumulated value
+        - parameter `initial` is an optional initial value
+        - returns the reduced value of type `~R`
+          - note that `~R` and `~D` can be the same type
+          - if an initial value is not given then by necessity `~R = ~D`
+        - raises `ValueError` when called on an empty `ca` and `initial` not given
+
         """
         if self._cnt == 0:
             if initial is None:
@@ -479,9 +487,10 @@ class ca[D](Sequence[D]):
         return self._cnt / self._cap
 
     def resize(self, minimum_capacity: int = 2) -> None:
-        """Compact `ca` and resize to `min_cap` if necessary.
+        """Compact `ca` and resize to `minimum_capacity` if necessary.
 
-        * to just compact the `ca`, do not provide a min_cap
+        To just compact the `ca`, do not provide a minimum capacity.
+
         """
         self._compact_storage_capacity()
         if (min_cap := minimum_capacity) > self._cap:
@@ -491,5 +500,10 @@ class ca[D](Sequence[D]):
 
 
 def CA[D](*ds: D) -> ca[D]:
-    """Function to produce a `ca` array from a variable number of arguments."""
+    """Function to produce a `ca` array from a variable number of arguments.
+        
+    Upper case function name used to stand out in place of builtin syntax
+    by used by builtins, like `[]` for list or '{}' for dict.
+
+    """
     return ca(ds)
