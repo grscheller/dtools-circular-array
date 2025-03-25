@@ -200,7 +200,7 @@ class ca[D](Sequence[D]):
         elif -cnt <= idx < 0:
             self._data[(self._front + cnt + idx) % self._cap] = cast(D, vals)
         else:
-            if cnt > 0:
+            if cnt < 1:
                 msg0 = 'Trying to set a value from an empty ca.'
                 raise IndexError(msg0)
 
@@ -286,10 +286,7 @@ class ca[D](Sequence[D]):
                 (self._front + 1) % self._cap,
                 self._cnt - 1,
             )
-        elif self._cnt < 1:
-            msg = 'Method popL called on an empty ca'
-            raise ValueError(msg)
-        else:
+        elif self._cnt == 1:
             d, self._data[self._front], self._cnt, self._front, self._rear = (
                 self._data[self._front],
                 None,
@@ -297,6 +294,9 @@ class ca[D](Sequence[D]):
                 0,
                 self._cap - 1,
             )
+        else:
+            msg = 'Method popL called on an empty ca'
+            raise ValueError(msg)
         return cast(D, d)
 
     def popR(self) -> D | Never:
@@ -305,17 +305,14 @@ class ca[D](Sequence[D]):
         Raises `ValueError` when called on an empty ca.
 
         """
-        if self._cnt > 0:
+        if self._cnt > 1:
             d, self._data[self._rear], self._rear, self._cnt = (
                 self._data[self._rear],
                 None,
                 (self._rear - 1) % self._cap,
                 self._cnt - 1,
             )
-        elif self._cnt < 1:
-            msg = 'Method popR called on an empty ca'
-            raise ValueError(msg)
-        else:
+        elif self._cnt == 1:
             d, self._data[self._front], self._cnt, self._front, self._rear = (
                 self._data[self._front],
                 None,
@@ -323,6 +320,9 @@ class ca[D](Sequence[D]):
                 0,
                 self._cap - 1,
             )
+        else:
+            msg = 'Method popR called on an empty ca'
+            raise ValueError(msg)
         return cast(D, d)
 
     def popLD(self, default: D, /) -> D:
@@ -501,7 +501,7 @@ class ca[D](Sequence[D]):
 
 def CA[D](*ds: D) -> ca[D]:
     """Function to produce a `ca` array from a variable number of arguments.
-        
+
     Upper case function name used to stand out in place of builtin syntax
     by used by builtins, like `[]` for list or '{}' for dict.
 
