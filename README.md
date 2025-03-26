@@ -3,26 +3,26 @@
 Python module implementing a full featured, indexable, sliceable,
 double sided, auto-resizing circular array data structure.
 
-* **Repositories**
-  * [dtools.circular-array][1] project on *PyPI*
-  * [Source code][2] on *GitHub*
-* **Detailed documentation**
-  * [Detailed API documentation][3] on *GH-Pages*
+- **Repositories**
+  - [dtools.circular-array][1] project on *PyPI*
+  - [Source code][2] on *GitHub*
+- **Detailed documentation**
+  - [Detailed API documentation][3] on *GH-Pages*
 
 This project is part of the
 [Developer Tools for Python][4] **dtools.** namespace project.
 
-### Overview
+## Overview
 
 Useful if used directly as an improved version of a Python List or in
 a "has-a" relationship when implementing other data structures.
 
-* O(1) pushes and pops either end.
-* O(1) indexing
-* fully supports slicing
-* iterates over copies of the data allowing ca to mutate
+- O(1) pushes and pops either end.
+- O(1) indexing
+- fully supports slicing
+- iterates over copies of the data allowing ca to mutate
 
-### Usage
+## Usage
 
 ```python
 from dtools.circular_array.ca import CA
@@ -59,10 +59,9 @@ assert ca.popLD(42) == 42
 assert len(ca) == 0
 ```
 
----
+______________________________________________________________________
 
 [1]: https://pypi.org/project/dtools.circular-array
 [2]: https://github.com/grscheller/dtools-circular-array
 [3]: https://grscheller.github.io/dtools-docs/circular-array
 [4]: https://github.com/grscheller/dtools-docs
-
