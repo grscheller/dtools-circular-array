@@ -30,6 +30,7 @@ class ca[D](Sequence[D]):
     """Indexable circular array data structure
 
     - generic, stateful data structure
+    - lowercase class name chosen to match built-ins like `list` and `tuple`
     - amortized O(1) pushing and popping from either end
     - O(1) random access any element
     - will resize itself as needed
@@ -37,7 +38,6 @@ class ca[D](Sequence[D]):
     - makes defensive copies of contents for the purposes of iteration
     - in boolean context returns true if not empty, false if empty
     - in comparisons compare identity before equality (like Python built-ins do)
-    - lowercase class name chosen to match built-ins like `list` and `tuple`
     - raises `IndexError` for out-of-bounds indexing
     - raises `ValueError` for popping from or folding an empty `ca`
     - raises `TypeError` if 2 or more arguments are passed to constructor
@@ -432,17 +432,17 @@ class ca[D](Sequence[D]):
                 msg = 'Method foldL called on an empty ca without an initial value.'
                 raise ValueError(msg)
             return initial
-        else:
-            if initial is None:
-                acc = cast(L, self[0])  # in this case D = L
-                for idx in range(1, self._cnt):
-                    acc = f(acc, self[idx])
-                return acc
 
-            acc = initial
-            for d in self:
-                acc = f(acc, d)
+        if initial is None:
+            acc = cast(L, self[0])  # in this case D = L
+            for idx in range(1, self._cnt):
+                acc = f(acc, self[idx])
             return acc
+
+        acc = initial
+        for d in self:
+            acc = f(acc, d)
+        return acc
 
     def foldR[R](self, f: Callable[[D, R], R], /, initial: R | None = None) -> R:
         """Right fold ca via function and optional initial value.
@@ -460,8 +460,7 @@ class ca[D](Sequence[D]):
             if initial is None:
                 msg = 'Method foldR called on an empty ca without an initial value.'
                 raise ValueError(msg)
-            else:
-                return initial
+            return initial
 
         if initial is None:
             acc = cast(R, self[-1])  # in this case D = R
@@ -502,8 +501,8 @@ class ca[D](Sequence[D]):
 def CA[D](*ds: D) -> ca[D]:
     """Function to produce a `ca` array from a variable number of arguments.
 
-    Upper case function name used to stand out in place of builtin syntax
-    by used by builtins, like `[]` for list or '{}' for dict.
+    Upper case function name used to stand out in place of syntactic sugar
+    used by builtins, like `[]` for list or '{}' for dict or set.
 
     """
     return ca(ds)
