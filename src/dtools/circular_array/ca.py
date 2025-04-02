@@ -30,14 +30,15 @@ class ca[D](Sequence[D]):
     """Indexable circular array data structure
 
     - generic, stateful data structure
-    - lowercase class name chosen to match built-ins like `list` and `tuple`
+    - lowercase class name chosen to match nomenclature for builtins
+      - like `list` and `tuple`
     - amortized O(1) pushing and popping from either end
     - O(1) random access any element
     - will resize itself as needed
     - sliceable
     - makes defensive copies of contents for the purposes of iteration
     - in boolean context returns true if not empty, false if empty
-    - in comparisons compare identity before equality (like Python built-ins do)
+    - in comparisons compare identity before equality (like Python builtins do)
     - raises `IndexError` for out-of-bounds indexing
     - raises `ValueError` for popping from or folding an empty `ca`
     - raises `TypeError` if 2 or more arguments are passed to constructor
@@ -257,7 +258,7 @@ class ca[D](Sequence[D]):
                 return False
         return True
 
-    def pushL(self, *ds: D) -> None:
+    def pushl(self, *ds: D) -> None:
         """Push data from the left onto the ca."""
         for d in ds:
             if self._cnt == self._cap:
@@ -265,7 +266,7 @@ class ca[D](Sequence[D]):
             self._front = (self._front - 1) % self._cap
             self._data[self._front], self._cnt = d, self._cnt + 1
 
-    def pushR(self, *ds: D) -> None:
+    def pushr(self, *ds: D) -> None:
         """Push data from the right onto the ca."""
         for d in ds:
             if self._cnt == self._cap:
@@ -273,7 +274,7 @@ class ca[D](Sequence[D]):
             self._rear = (self._rear + 1) % self._cap
             self._data[self._rear], self._cnt = d, self._cnt + 1
 
-    def popL(self) -> D | Never:
+    def popl(self) -> D | Never:
         """Pop one value off the left side of the ca.
 
         Raises `ValueError` when called on an empty ca.
@@ -295,11 +296,11 @@ class ca[D](Sequence[D]):
                 self._cap - 1,
             )
         else:
-            msg = 'Method popL called on an empty ca'
+            msg = 'Method popl called on an empty ca'
             raise ValueError(msg)
         return cast(D, d)
 
-    def popR(self) -> D | Never:
+    def popr(self) -> D | Never:
         """Pop one value off the right side of the ca.
 
         Raises `ValueError` when called on an empty ca.
@@ -321,35 +322,35 @@ class ca[D](Sequence[D]):
                 self._cap - 1,
             )
         else:
-            msg = 'Method popR called on an empty ca'
+            msg = 'Method popr called on an empty ca'
             raise ValueError(msg)
         return cast(D, d)
 
-    def popLD(self, default: D, /) -> D:
+    def popld(self, default: D, /) -> D:
         """Pop one value from left, provide a mandatory default value.
 
-        - safe version of popL
+        - safe version of popl
         - returns a default value in the event the `ca` is empty
 
         """
         try:
-            return self.popL()
+            return self.popl()
         except ValueError:
             return default
 
-    def popRD(self, default: D, /) -> D:
+    def poprd(self, default: D, /) -> D:
         """Pop one value from right, provide a mandatory default value.
 
-        - safe version of popR
+        - safe version of popr
         - returns a default value in the event the `ca` is empty
 
         """
         try:
-            return self.popR()
+            return self.popr()
         except ValueError:
             return default
 
-    def popLT(self, max: int) -> tuple[D, ...]:
+    def poplt(self, max: int) -> tuple[D, ...]:
         """Pop multiple values from left side of ca.
 
         - returns the results in a tuple of type `tuple[~D, ...]`
@@ -362,7 +363,7 @@ class ca[D](Sequence[D]):
 
         while max > 0:
             try:
-                ds.append(self.popL())
+                ds.append(self.popl())
             except ValueError:
                 break
             else:
@@ -370,7 +371,7 @@ class ca[D](Sequence[D]):
 
         return tuple(ds)
 
-    def popRT(self, max: int) -> tuple[D, ...]:
+    def poprt(self, max: int) -> tuple[D, ...]:
         """Pop multiple values from right side of `ca`.
 
         - returns the results in a tuple of type `tuple[~D, ...]`
@@ -382,7 +383,7 @@ class ca[D](Sequence[D]):
         ds: list[D] = []
         while max > 0:
             try:
-                ds.append(self.popR())
+                ds.append(self.popr())
             except ValueError:
                 break
             else:
@@ -390,20 +391,20 @@ class ca[D](Sequence[D]):
 
         return tuple(ds)
 
-    def rotL(self, n: int = 1) -> None:
+    def rotl(self, n: int = 1) -> None:
         """Rotate ca arguments left n times."""
         if self._cnt < 2:
             return
         while n > 0:
-            self.pushR(self.popL())
+            self.pushr(self.popl())
             n -= 1
 
-    def rotR(self, n: int = 1) -> None:
+    def rotr(self, n: int = 1) -> None:
         """Rotate ca arguments right n times."""
         if self._cnt < 2:
             return
         while n > 0:
-            self.pushL(self.popR())
+            self.pushl(self.popr())
             n -= 1
 
     def map[U](self, f: Callable[[D], U], /) -> ca[U]:
@@ -415,7 +416,7 @@ class ca[D](Sequence[D]):
         """
         return ca(map(f, self))
 
-    def foldL[L](self, f: Callable[[L, D], L], /, initial: L | None = None) -> L:
+    def foldl[L](self, f: Callable[[L, D], L], /, initial: L | None = None) -> L:
         """Left fold ca via function and optional initial value.
 
         - parameter `f` function of type `f[~L, ~D] -> ~L`
@@ -444,7 +445,7 @@ class ca[D](Sequence[D]):
             acc = f(acc, d)
         return acc
 
-    def foldR[R](self, f: Callable[[D, R], R], /, initial: R | None = None) -> R:
+    def foldr[R](self, f: Callable[[D, R], R], /, initial: R | None = None) -> R:
         """Right fold ca via function and optional initial value.
 
         - parameter `f` function of type `f[~D, ~R] -> ~R`
@@ -458,7 +459,7 @@ class ca[D](Sequence[D]):
         """
         if self._cnt == 0:
             if initial is None:
-                msg = 'Method foldR called on an empty ca without an initial value.'
+                msg = 'Method foldr called on an empty ca without an initial value.'
                 raise ValueError(msg)
             return initial
 

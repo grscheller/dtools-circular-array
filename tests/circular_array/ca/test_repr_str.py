@@ -15,8 +15,10 @@
 from __future__ import annotations
 from dtools.circular_array.ca import ca, CA
 
-class Test_repr:
+class TestRepr:
+    """Functionality testing"""
     def test_repr(self) -> None:
+        """Functionality test"""
         ca0: ca[int] = ca()
         assert repr(ca0) == 'CA()'
         foo: ca[int] = eval('CA()')
@@ -29,40 +31,40 @@ class Test_repr:
         assert ca2 == ca1
         assert ca2 is not ca1
 
-        ca1.pushR(1)
-        ca1.pushL('foo')
+        ca1.pushr(1)
+        ca1.pushl('foo')
         assert repr(ca1) == "CA('foo', 1)"
         ca2 = eval(repr(ca1))
         assert ca2 == ca1
         assert ca2 is not ca1
 
-        assert ca1.popLD('bar') == 'foo'
-        ca1.pushR(2)
-        ca1.pushR(3)
-        ca1.pushR(4)
-        ca1.pushR(5)
-        assert ca1.popL() == 1
-        ca1.pushL(42)
-        ca1.popR()
+        assert ca1.popld('bar') == 'foo'
+        ca1.pushr(2)
+        ca1.pushr(3)
+        ca1.pushr(4)
+        ca1.pushr(5)
+        assert ca1.popl() == 1
+        ca1.pushl(42)
+        ca1.popr()
         assert repr(ca1) == 'CA(42, 2, 3, 4)'
         ca2 = eval(repr(ca1))
         assert ca2 == ca1
         assert ca2 is not ca1
 
         ca3: ca[int] = CA(1, 10, 0, 42)
-        ca3.pushR(2, 100, 3)
-        assert ca3.popL() == 1
-        assert ca3.popR() == 3
-        ca3.pushL(9, 8)
-        assert ca3.popRT(2) == (100, 2)
-        ca3.pushR(1, 2, 3)
+        ca3.pushr(2, 100, 3)
+        assert ca3.popl() == 1
+        assert ca3.popr() == 3
+        ca3.pushl(9, 8)
+        assert ca3.poprt(2) == (100, 2)
+        ca3.pushr(1, 2, 3)
         assert repr(ca3) == 'CA(8, 9, 10, 0, 42, 1, 2, 3)'
 
         ca4: ca[int] = ca([1, 10, 0, 42])
-        ca4.pushR(2, 100, 3)
-        assert ca4.popL() == 1
-        assert ca4.popR() == 3
-        ca4.pushL(9, 8)
-        assert ca4.popRT(2) == (100, 2)
-        ca4.pushR(1, 2, 3)
+        ca4.pushr(2, 100, 3)
+        assert ca4.popl() == 1
+        assert ca4.popr() == 3
+        ca4.pushl(9, 8)
+        assert ca4.poprt(2) == (100, 2)
+        ca4.pushr(1, 2, 3)
         assert repr(ca4) == 'CA(8, 9, 10, 0, 42, 1, 2, 3)'

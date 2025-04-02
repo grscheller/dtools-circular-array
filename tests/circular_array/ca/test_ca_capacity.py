@@ -15,67 +15,71 @@
 from __future__ import annotations
 from dtools.circular_array.ca import ca, CA
 
-class TestCapacity:
 
+class TestCapacity:
+    """Functionality testing"""
     def test_capacity_original(self) -> None:
+        """Functionality test"""
         ca0: ca[int] = ca()
         assert ca0.capacity() == 2
 
         ca0 = CA(1, 2)
-        assert ca0.fraction_filled() == 2/4
+        assert ca0.fraction_filled() == 2 / 4
 
-        ca0.pushL(0)
-        assert ca0.fraction_filled() == 3/4
+        ca0.pushl(0)
+        assert ca0.fraction_filled() == 3 / 4
 
-        ca0.pushR(3)
-        assert ca0.fraction_filled() == 4/4
+        ca0.pushr(3)
+        assert ca0.fraction_filled() == 4 / 4
 
-        ca0.pushR(4)
-        assert ca0.fraction_filled() == 5/8
+        ca0.pushr(4)
+        assert ca0.fraction_filled() == 5 / 8
 
-        ca0.pushL(5)
-        assert ca0.fraction_filled() == 6/8
+        ca0.pushl(5)
+        assert ca0.fraction_filled() == 6 / 8
 
         assert len(ca0) == 6
         assert ca0.capacity() == 8
 
         ca0.resize()
-        assert ca0.fraction_filled() == 6/8
+        assert ca0.fraction_filled() == 6 / 8
 
         ca0.resize(30)
-        assert ca0.fraction_filled() == 6/30
+        assert ca0.fraction_filled() == 6 / 30
 
         ca0.resize(3)
-        assert ca0.fraction_filled() == 6/8
+        assert ca0.fraction_filled() == 6 / 8
 
-        ca0.popLD(0)
-        ca0.popRD(0)
-        ca0.popLD(0)
-        ca0.popRD(0)
-        assert ca0.fraction_filled() == 2/8
+        ca0.popld(0)
+        ca0.poprd(0)
+        ca0.popld(0)
+        ca0.poprd(0)
+        assert ca0.fraction_filled() == 2 / 8
         ca0.resize(3)
-        assert ca0.fraction_filled() == 2/4
+        assert ca0.fraction_filled() == 2 / 4
         ca0.resize(7)
-        assert ca0.fraction_filled() == 2/7
+        assert ca0.fraction_filled() == 2 / 7
 
     def test_empty(self) -> None:
+        """Functionality test"""
         c: ca[int] = ca()
         assert c == ca()
         assert c.capacity() == 2
-        c.pushL(1, 2, 3, 4, 5)
+        c.pushl(1, 2, 3, 4, 5)
         assert c.capacity() == 8
-        assert c.popLT(2) == (5, 4)
+        assert c.poplt(2) == (5, 4)
         c.resize()
         assert c.capacity() == 5
         c.resize(11)
         assert c.capacity() == 11
         assert len(c) == 3
-        c.pushL(*range(8))
+        c.pushl(*range(8))
         assert c.capacity() == 11
-        c.pushR(*range(2))
+        c.pushr(*range(2))
         assert c.capacity() == 22
 
     def test_one(self) -> None:
+        """Functionality test"""
         c = CA(42)
         assert c.capacity() == 3
         c.resize()
@@ -83,26 +87,26 @@ class TestCapacity:
         c.resize(8)
         assert c.capacity() == 8
         assert len(c) == 1
-        popped = c.popLD(0)
+        popped = c.popld(0)
         assert popped == 42
         assert len(c) == 0
         assert c.capacity() == 8
 
         try:
-            c.popL()
+            c.popl()
         except ValueError as ve:
-            str(ve) == 'foofoo'
+            assert str(ve) == 'Method popl called on an empty ca'
         else:
             assert False
 
         try:
-            c.popR()
+            c.popr()
         except ValueError as ve:
-            str(ve) == 'foofoo'
+            assert str(ve) == 'Method popr called on an empty ca'
         else:
             assert False
 
-        c.pushR(popped)
+        c.pushr(popped)
         assert len(c) == 1
         assert c.capacity() == 8
         c.resize(5)
