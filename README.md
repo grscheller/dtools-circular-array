@@ -42,34 +42,34 @@ syntactic sugar like `[]` or `{}`.
     from dtools.circular_array.ca import CA
     
     ca = CA(1, 2, 3)
-    assert ca.popL() == 1
-    assert ca.popR() == 3
-    ca.pushR(42, 0)
-    ca.pushL(0, 1)
+    assert ca.popl() == 1
+    assert ca.popr() == 3
+    ca.pushr(42, 0)
+    ca.pushl(0, 1)
     assert repr(ca) == 'CA(1, 0, 2, 42, 0)'
     assert str(ca) == '(|1, 0, 2, 42, 0|)'
     
-    ca = CA(*range(1,11))
+    ca = ca(range(1,11))
     assert repr(ca) == 'CA(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)'
     assert str(ca) == '(|1, 2, 3, 4, 5, 6, 7, 8, 9, 10|)'
     assert len(ca) == 10
-    tup3 = ca.popLT(3)
-    tup4 = ca.popRT(4)
+    tup3 = ca.poplt(3)
+    tup4 = ca.poprt(4)
     assert tup3 == (1, 2, 3)
     assert tup4 == (10, 9, 8, 7)
     
     assert ca == CA(4, 5, 6)
-    four, *rest = ca.popFT(1000)
+    four, *rest = ca.popft(1000)
     assert four == 4
     assert rest == [5, 6]
     assert len(ca) == 0
     
-    ca = CA(1, 2, 3)
-    assert ca.popLD(42) == 1
-    assert ca.popRD(42) == 3
-    assert ca.popLD(42) == 2
-    assert ca.popRD(42) == 42
-    assert ca.popLD(42) == 42
+    ca = ca([1, 2, 3])
+    assert ca.popld(42) == 1
+    assert ca.poprd(42) == 3
+    assert ca.popld(42) == 2
+    assert ca.poprd(42) == 42
+    assert ca.popld(42) == 42
     assert len(ca) == 0
 ```
 

@@ -9,6 +9,22 @@ PyPI grscheller.circular-array project.
 
 ## Releases and Important Milestones
 
+### Version 3.10.1 - PyPI release date 2025-04-03
+
+- Major API changes
+  - class name still `ca`
+    - initializer takes 1 or 0 iterables
+      - like Python builtin types `list` or `tuple`
+    - factory function `CA` provided to create a `ca` from mult args
+      - like `[]` or `{}`
+  - otherwise, method names are all snake_case compatible
+    - examples  
+      - popL -> popl
+      - pushR -> pushr
+      - fractionFilled -> fraction_filled
+- updated pyproject.toml
+  - to better match other dtools namespace projects
+
 ### Version 3.9.1 - PyPI release date 2025-02-16
 
 - Fixed pdoc issues with new typing notation

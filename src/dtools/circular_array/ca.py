@@ -38,10 +38,9 @@ class ca[D](Sequence[D]):
     - sliceable
     - makes defensive copies of contents for the purposes of iteration
     - in boolean context returns true if not empty, false if empty
-    - in comparisons compare identity before equality (like Python builtins do)
+    - in comparisons compare identity before equality (like builtins)
     - raises `IndexError` for out-of-bounds indexing
     - raises `ValueError` for popping from or folding an empty `ca`
-    - raises `TypeError` if 2 or more arguments are passed to constructor
 
     """
 
@@ -503,7 +502,7 @@ def CA[D](*ds: D) -> ca[D]:
     """Function to produce a `ca` array from a variable number of arguments.
 
     Upper case function name used to stand out in place of syntactic sugar
-    used by builtins, like `[]` for list or '{}' for dict or set.
+    used by builtins, like `[]` for list or `{}` for dict or set.
 
     """
     return ca(ds)

@@ -22,9 +22,9 @@ classifiers = [
 dependencies = []
 dynamic = ["version", "description"]
 keywords = [
-    "circular array", "circle array", "CA",
+    "circular array", "circle array", "ca",
     "double ended queue", "dequeue", "dqueue",
-    "pop", "push", "popL", "popR", "pushL", "pushR", "indexable",
+    "pop", "push", "popl", "popr", "pushl", "pushr", "indexable",
     "auto-resizing", "auto resizing", "resizing"
 ]
 
@@ -37,13 +37,10 @@ Changelog = "https://github.com/grscheller/dtools-circular-array/blob/main/CHANG
 Documentation = "https://grscheller.github.io/dtools-docs/circular-array"
 
 [tool.flit.sdist]
-exclude = ["dist", "docs", ".gitignore", ".mypy_cache"]
+exclude = ["dist", "tests", ".gitignore", ".mypy_cache", ".pytest_cache"]
 
 [tool.pytest.ini_options]
 consider_namespace_packages = true
-
-[tool.mypy]
-enable_incomplete_feature = ["NewGenericSyntax"]
 
 [tool.pylsp-mypy]
 enabled = true
@@ -51,8 +48,22 @@ live-mode = true
 strict = true
 report_progress = true
 
+[tool.mypy]
+enable_incomplete_feature = ["NewGenericSyntax"]
+implicit_reexport = false
+local_partial_types = true
+warn_redundant_casts = true
+warn_return_any = true
+warn_unused_configs = true
+
 [tool.ruff]
 target-version = "py313"
+ 
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+
+[tool.ruff.lint.flake8-quotes]
+docstring-quotes = "double"
 
 [tool.ruff.format]
 quote-style = "single"

@@ -14,15 +14,16 @@
 
 """### Developer Tools - circular array data structure
 
-Package for an indexable, sliceable, auto-resizing circular array data structure
-with amortized O(1) pushes and pops either end.
+Package for an indexable, sliceable, auto-resizing circular array
+data structure with amortized O(1) pushes and pops either end.
 
 #### Modules
 
 * module dtools.circular_array.ca: circular array data structure
 
 """
-__version__ = "3.10.0.1"
-__author__ = "Geoffrey R. Scheller"
-__copyright__ = "Copyright (c) 2023-2025 Geoffrey R. Scheller"
-__license__ = "Apache License 2.0"
+
+__version__ = '3.10.1'
+__author__ = 'Geoffrey R. Scheller'
+__copyright__ = 'Copyright (c) 2023-2025 Geoffrey R. Scheller'
+__license__ = 'Apache License 2.0'
