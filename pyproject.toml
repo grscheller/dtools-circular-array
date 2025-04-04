@@ -4,9 +4,7 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "dtools.circular-array"
-authors = [
-    { name = "Geoffrey R. Scheller", email = "geoffrey@scheller.com" },
-]
+authors = [{ name = "Geoffrey R. Scheller", email = "geoffrey@scheller.com" }]
 license = { file = "LICENSE" }
 readme = "README.md"
 requires-python = ">=3.12"
@@ -17,15 +15,27 @@ classifiers = [
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3.13",
-    "Typing :: Typed"
+    "Typing :: Typed",
 ]
 dependencies = []
 dynamic = ["version", "description"]
 keywords = [
-    "circular array", "circle array", "ca",
-    "double ended queue", "dequeue", "dqueue",
-    "pop", "push", "popl", "popr", "pushl", "pushr", "indexable",
-    "auto-resizing", "auto resizing", "resizing"
+    "circular array",
+    "circle array",
+    "ca",
+    "double ended queue",
+    "dequeue",
+    "dqueue",
+    "pop",
+    "push",
+    "popl",
+    "popr",
+    "pushl",
+    "pushr",
+    "indexable",
+    "auto-resizing",
+    "auto resizing",
+    "resizing",
 ]
 
 [project.optional-dependencies]
@@ -58,7 +68,7 @@ warn_unused_configs = true
 
 [tool.ruff]
 target-version = "py313"
- 
+
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
 
