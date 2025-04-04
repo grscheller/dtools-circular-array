@@ -41,36 +41,35 @@ syntactic sugar like `[]` or `{}`.
 ```python
     from dtools.circular_array.ca import CA
     
-    ca = CA(1, 2, 3)
-    assert ca.popl() == 1
-    assert ca.popr() == 3
-    ca.pushr(42, 0)
-    ca.pushl(0, 1)
-    assert repr(ca) == 'CA(1, 0, 2, 42, 0)'
-    assert str(ca) == '(|1, 0, 2, 42, 0|)'
+    ca1 = ca(1, 2, 3)
+    assert ca1.popl() == 1
+    assert ca1.popr() == 3
+    ca1.pushr(42, 0)
+    ca1.pushl(0, 1)
+    assert repr(ca1) == 'ca(1, 0, 2, 42, 0)'
+    assert str(ca1) == '(|1, 0, 2, 42, 0|)'
     
-    ca = ca(range(1,11))
-    assert repr(ca) == 'CA(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)'
-    assert str(ca) == '(|1, 2, 3, 4, 5, 6, 7, 8, 9, 10|)'
-    assert len(ca) == 10
-    tup3 = ca.poplt(3)
-    tup4 = ca.poprt(4)
+    ca2 = CA(range(1,11))
+    assert repr(ca2) == 'ca(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)'
+    assert str(ca2) == '(|1, 2, 3, 4, 5, 6, 7, 8, 9, 10|)'
+    assert len(ca2) == 10
+    tup3 = ca2.poplt(3)
+    tup4 = ca2.poprt(4)
     assert tup3 == (1, 2, 3)
     assert tup4 == (10, 9, 8, 7)
-    
-    assert ca == CA(4, 5, 6)
+    assert ca2 == CA(4, 5, 6)
     four, *rest = ca.popft(1000)
     assert four == 4
     assert rest == [5, 6]
-    assert len(ca) == 0
+    assert len(ca2) == 0
     
-    ca = ca([1, 2, 3])
-    assert ca.popld(42) == 1
-    assert ca.poprd(42) == 3
-    assert ca.popld(42) == 2
-    assert ca.poprd(42) == 42
-    assert ca.popld(42) == 42
-    assert len(ca) == 0
+    ca3 = CA([1, 2, 3])
+    assert ca3.popld(42) == 1
+    assert ca3.poprd(42) == 3
+    assert ca3.popld(42) == 2
+    assert ca3.poprd(42) == 42
+    assert ca3.popld(42) == 42
+    assert len(ca2) == 0
 ```
 
 ______________________________________________________________________

@@ -9,6 +9,15 @@ PyPI grscheller.circular-array project.
 
 ## Releases and Important Milestones
 
+### Version 3.10.1 - PyPI release date 2025-04-TBD
+
+- Major API change 
+  - swapped names `ca` and `CA`
+    - class name now `CA`
+    - factory function name now `ca`
+  - class initializer taking `1` or `0` iterables much more flexible
+    - do not have to deal with Python converting splats to lists
+  
 ### Version 3.10.1 - PyPI release date 2025-04-03
 
 - Major API changes
