@@ -57,7 +57,7 @@ class TestCircularArray:
         try:
             ca0.popl()
         except ValueError as ve:
-            assert str(ve) == 'Method popl called on an empty ca'
+            assert str(ve) == 'Method popl called on an empty CA'
         else:
             assert False
         pushed1 = '0'
@@ -133,9 +133,7 @@ class TestCircularArray:
             assert False
 
         data2: list[str] = []
-        c0 = ca(
-            data2,
-        )
+        c0 = CA(data2)
         for _ in c0:
             assert False
         for _ in reversed(c0):
@@ -177,7 +175,7 @@ class TestCircularArray:
         c0: CA[int] = ca(1, 2, 3, 10)
         c1 = CA(c0)
         c2 = c1.map(lambda x: str(x * x - 1))
-        assert c2 == CA('0', '3', '8', '99')
+        assert c2 == ca('0', '3', '8', '99')
         assert c1 != c2
         assert c1 == c0
         assert c1 is not c0
@@ -275,13 +273,13 @@ class TestCircularArray:
         assert rest == [97, 96, 95]
         assert len(ca1) == 85
 
-        ca2 = ca(ca1)
+        ca2 = CA(ca1)
         assert len(ca1.poprt(0)) == 0
         assert ca1 == ca2
 
     def test_fold(self) -> None:
         """Functionality test"""
-        ca1 = ca(range(1, 101))
+        ca1 = CA(range(1, 101))
         assert ca1.foldl(lambda acc, d: acc + d) == 5050
         assert ca1.foldr(lambda d, acc: d + acc) == 5050
 
@@ -302,7 +300,7 @@ class TestCircularArray:
         assert ca0.popr() == 3
         ca0.pushr(42, 0)
         ca0.pushl(0, 1)
-        assert repr(ca0) == 'CA(1, 0, 2, 42, 0)'
+        assert repr(ca0) == 'ca(1, 0, 2, 42, 0)'
         assert str(ca0) == '(|1, 0, 2, 42, 0|)'
 
         ca0 = CA(range(1, 11))
@@ -380,7 +378,7 @@ class TestCircularArray:
 
     def test_state_caching(self) -> None:
         """Guarantee test"""
-        expected = CA(
+        expected = ca(
             (0, 0),
             (0, 1),
             (0, 2),
