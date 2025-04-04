@@ -18,7 +18,7 @@ from __future__ import annotations
 from collections.abc import Callable, Iterable, Iterator, Sequence
 from typing import cast, Never, overload, TypeVar
 
-__all__ = ['ca', 'CA']
+__all__ = ['CA', 'ca']
 
 D = TypeVar('D')  # Not needed for mypy, hint for pdoc.
 L = TypeVar('L')
@@ -26,7 +26,7 @@ R = TypeVar('R')
 U = TypeVar('U')
 
 
-class ca[D](Sequence[D]):
+class CA[D](Sequence[D]):
     """Indexable circular array data structure
 
     - generic, stateful data structure
@@ -52,7 +52,7 @@ class ca[D](Sequence[D]):
                 [None] + cast(list[D | None], list(*dss)) + [None]
             )
         else:
-            msg = f'ca expected at most 1 argument, got {len(dss)}'
+            msg = f'CA expected at most 1 argument, got {len(dss)}'
             raise TypeError(msg)
         self._cap = cap = len(self._data)
         self._cnt = cap - 2
@@ -76,7 +76,7 @@ class ca[D](Sequence[D]):
             self._front, self._cap = self._front + self._cap, 2 * self._cap
 
     def _compact_storage_capacity(self) -> None:
-        """Compact the ca."""
+        """Compact the CA."""
         match self._cnt:
             case 0:
                 self._cap, self._front, self._rear, self._data = 2, 0, 1, [None, None]
@@ -135,7 +135,7 @@ class ca[D](Sequence[D]):
             yield cast(D, current_state[position])
 
     def __repr__(self) -> str:
-        return 'CA(' + ', '.join(map(repr, self)) + ')'
+        return 'ca(' + ', '.join(map(repr, self)) + ')'
 
     def __str__(self) -> str:
         return '(|' + ', '.join(map(str, self)) + '|)'
@@ -149,11 +149,11 @@ class ca[D](Sequence[D]):
     @overload
     def __getitem__(self, idx: int, /) -> D: ...
     @overload
-    def __getitem__(self, idx: slice, /) -> ca[D]: ...
+    def __getitem__(self, idx: slice, /) -> CA[D]: ...
 
-    def __getitem__(self, idx: int | slice, /) -> D | ca[D]:
+    def __getitem__(self, idx: int | slice, /) -> D | CA[D]:
         if isinstance(idx, slice):
-            return ca(list(self)[idx])
+            return CA(list(self)[idx])
 
         cnt = self._cnt
         if 0 <= idx < cnt:
@@ -163,12 +163,12 @@ class ca[D](Sequence[D]):
             return cast(D, self._data[(self._front + cnt + idx) % self._cap])
 
         if cnt == 0:
-            msg0 = 'Trying to get a value from an empty ca.'
+            msg0 = 'Trying to get a value from an empty CA.'
             raise IndexError(msg0)
 
         msg1 = 'Out of bounds: '
         msg2 = f'index = {idx} not between {-cnt} and {cnt - 1} '
-        msg3 = 'while getting value from a ca.'
+        msg3 = 'while getting value from a CA.'
         raise IndexError(msg1 + msg2 + msg3)
 
     @overload
@@ -181,7 +181,7 @@ class ca[D](Sequence[D]):
             if isinstance(vals, Iterable):
                 data = list(self)
                 data[idx] = vals
-                _ca = ca(data)
+                _ca = CA(data)
                 self._data, self._cnt, self._cap, self._front, self._rear = (
                     _ca._data,
                     _ca._cnt,
@@ -201,12 +201,12 @@ class ca[D](Sequence[D]):
             self._data[(self._front + cnt + idx) % self._cap] = cast(D, vals)
         else:
             if cnt < 1:
-                msg0 = 'Trying to set a value from an empty ca.'
+                msg0 = 'Trying to set a value from an empty CA.'
                 raise IndexError(msg0)
 
             msg1 = 'Out of bounds: '
             msg2 = f'index = {idx} not between {-cnt} and {cnt - 1} '
-            msg3 = 'while setting value from a ca.'
+            msg3 = 'while setting value from a CA.'
             raise IndexError(msg1 + msg2 + msg3)
 
     @overload
@@ -217,7 +217,7 @@ class ca[D](Sequence[D]):
     def __delitem__(self, idx: int | slice) -> None:
         data = list(self)
         del data[idx]
-        _ca = ca(data)
+        _ca = CA(data)
         self._data, self._cnt, self._cap, self._front, self._rear = (
             _ca._data,
             _ca._cnt,
@@ -258,7 +258,7 @@ class ca[D](Sequence[D]):
         return True
 
     def pushl(self, *ds: D) -> None:
-        """Push data from the left onto the ca."""
+        """Push data from the left onto the CA."""
         for d in ds:
             if self._cnt == self._cap:
                 self._double_storage_capacity()
@@ -266,7 +266,7 @@ class ca[D](Sequence[D]):
             self._data[self._front], self._cnt = d, self._cnt + 1
 
     def pushr(self, *ds: D) -> None:
-        """Push data from the right onto the ca."""
+        """Push data from the right onto the CA."""
         for d in ds:
             if self._cnt == self._cap:
                 self._double_storage_capacity()
@@ -274,9 +274,9 @@ class ca[D](Sequence[D]):
             self._data[self._rear], self._cnt = d, self._cnt + 1
 
     def popl(self) -> D | Never:
-        """Pop one value off the left side of the ca.
+        """Pop one value off the left side of the CA.
 
-        Raises `ValueError` when called on an empty ca.
+        Raises `ValueError` when called on an empty CA.
 
         """
         if self._cnt > 1:
@@ -295,14 +295,14 @@ class ca[D](Sequence[D]):
                 self._cap - 1,
             )
         else:
-            msg = 'Method popl called on an empty ca'
+            msg = 'Method popl called on an empty CA'
             raise ValueError(msg)
         return cast(D, d)
 
     def popr(self) -> D | Never:
-        """Pop one value off the right side of the ca.
+        """Pop one value off the right side of the CA.
 
-        Raises `ValueError` when called on an empty ca.
+        Raises `ValueError` when called on an empty CA.
 
         """
         if self._cnt > 1:
@@ -321,7 +321,7 @@ class ca[D](Sequence[D]):
                 self._cap - 1,
             )
         else:
-            msg = 'Method popr called on an empty ca'
+            msg = 'Method popr called on an empty CA'
             raise ValueError(msg)
         return cast(D, d)
 
@@ -329,7 +329,7 @@ class ca[D](Sequence[D]):
         """Pop one value from left, provide a mandatory default value.
 
         - safe version of popl
-        - returns a default value in the event the `ca` is empty
+        - returns a default value in the event the `CA` is empty
 
         """
         try:
@@ -341,7 +341,7 @@ class ca[D](Sequence[D]):
         """Pop one value from right, provide a mandatory default value.
 
         - safe version of popr
-        - returns a default value in the event the `ca` is empty
+        - returns a default value in the event the `CA` is empty
 
         """
         try:
@@ -349,34 +349,34 @@ class ca[D](Sequence[D]):
         except ValueError:
             return default
 
-    def poplt(self, max: int) -> tuple[D, ...]:
-        """Pop multiple values from left side of ca.
+    def poplt(self, maximum: int) -> tuple[D, ...]:
+        """Pop multiple values from left side of `CA`.
 
         - returns the results in a tuple of type `tuple[~D, ...]`
-        - returns an empty tuple if `ca` is empty
+        - returns an empty tuple if `CA` is empty
         - pop no more that `max` values
-        - will pop less if `ca` becomes empty
+        - will pop less if `CA` becomes empty
 
         """
         ds: list[D] = []
 
-        while max > 0:
+        while maximum > 0:
             try:
                 ds.append(self.popl())
             except ValueError:
                 break
             else:
-                max -= 1
+                maximum -= 1
 
         return tuple(ds)
 
     def poprt(self, max: int) -> tuple[D, ...]:
-        """Pop multiple values from right side of `ca`.
+        """Pop multiple values from right side of `CA`.
 
         - returns the results in a tuple of type `tuple[~D, ...]`
-        - returns an empty tuple if `ca` is empty
+        - returns an empty tuple if `CA` is empty
         - pop no more that `max` values
-        - will pop less if `ca` becomes empty
+        - will pop less if `CA` becomes empty
 
         """
         ds: list[D] = []
@@ -391,7 +391,7 @@ class ca[D](Sequence[D]):
         return tuple(ds)
 
     def rotl(self, n: int = 1) -> None:
-        """Rotate ca arguments left n times."""
+        """Rotate `CA` arguments left n times."""
         if self._cnt < 2:
             return
         while n > 0:
@@ -399,24 +399,24 @@ class ca[D](Sequence[D]):
             n -= 1
 
     def rotr(self, n: int = 1) -> None:
-        """Rotate ca arguments right n times."""
+        """Rotate `CA` arguments right n times."""
         if self._cnt < 2:
             return
         while n > 0:
             self.pushl(self.popr())
             n -= 1
 
-    def map[U](self, f: Callable[[D], U], /) -> ca[U]:
-        """Apply function f over contents, returns new `ca` instance.
+    def map[U](self, f: Callable[[D], U], /) -> CA[U]:
+        """Apply function f over contents, returns new `CA` instance.
 
-        - parameter `f` function of type `f[~D, ~U] -> ca[~U]`
-        - returns a new instance of type `ca[~U]`
+        - parameter `f` function of type `f[~D, ~U] -> CA[~U]`
+        - returns a new instance of type `CA[~U]`
 
         """
-        return ca(map(f, self))
+        return CA(map(f, self))
 
     def foldl[L](self, f: Callable[[L, D], L], /, initial: L | None = None) -> L:
-        """Left fold ca via function and optional initial value.
+        """Left fold `CA` via function and optional initial value.
 
         - parameter `f` function of type `f[~L, ~D] -> ~L`
           - the first argument to `f` is for the accumulated value.
@@ -429,7 +429,7 @@ class ca[D](Sequence[D]):
         """
         if self._cnt == 0:
             if initial is None:
-                msg = 'Method foldL called on an empty ca without an initial value.'
+                msg = 'Method foldl called on an empty `CA` without an initial value.'
                 raise ValueError(msg)
             return initial
 
@@ -445,7 +445,7 @@ class ca[D](Sequence[D]):
         return acc
 
     def foldr[R](self, f: Callable[[D, R], R], /, initial: R | None = None) -> R:
-        """Right fold ca via function and optional initial value.
+        """Right fold `CA` via function and optional initial value.
 
         - parameter `f` function of type `f[~D, ~R] -> ~R`
           - the second argument to f is for the accumulated value
@@ -453,12 +453,12 @@ class ca[D](Sequence[D]):
         - returns the reduced value of type `~R`
           - note that `~R` and `~D` can be the same type
           - if an initial value is not given then by necessity `~R = ~D`
-        - raises `ValueError` when called on an empty `ca` and `initial` not given
+        - raises `ValueError` when called on an empty `CA` and `initial` not given
 
         """
         if self._cnt == 0:
             if initial is None:
-                msg = 'Method foldr called on an empty ca without an initial value.'
+                msg = 'Method foldr called on empty `CA` without initial value.'
                 raise ValueError(msg)
             return initial
 
@@ -474,21 +474,21 @@ class ca[D](Sequence[D]):
         return acc
 
     def capacity(self) -> int:
-        """Returns current capacity of the ca."""
+        """Returns current capacity of the `CA`."""
         return self._cap
 
     def empty(self) -> None:
-        """Empty the ca, keep current capacity."""
+        """Empty the `CA`, keep current capacity."""
         self._data, self._front, self._rear = [None] * self._cap, 0, self._cap
 
     def fraction_filled(self) -> float:
-        """Returns fractional capacity of the ca."""
+        """Returns fractional capacity of the `CA`."""
         return self._cnt / self._cap
 
     def resize(self, minimum_capacity: int = 2) -> None:
-        """Compact `ca` and resize to `minimum_capacity` if necessary.
+        """Compact `CA` and resize to `minimum_capacity` if necessary.
 
-        To just compact the `ca`, do not provide a minimum capacity.
+        To just compact the `CA`, do not provide a minimum capacity.
 
         """
         self._compact_storage_capacity()
@@ -498,11 +498,6 @@ class ca[D](Sequence[D]):
                 self._front, self._rear = 0, self._cap - 1
 
 
-def CA[D](*ds: D) -> ca[D]:
-    """Function to produce a `ca` array from a variable number of arguments.
-
-    Upper case function name used to stand out in place of syntactic sugar
-    used by builtins, like `[]` for list or `{}` for dict or set.
-
-    """
-    return ca(ds)
+def ca[D](*ds: D) -> CA[D]:
+    """Function to produce a `CA` array from a variable number of arguments."""
+    return CA(ds)

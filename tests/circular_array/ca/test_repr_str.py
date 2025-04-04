@@ -19,21 +19,21 @@ class TestRepr:
     """Functionality testing"""
     def test_repr(self) -> None:
         """Functionality test"""
-        ca0: ca[int] = ca()
-        assert repr(ca0) == 'CA()'
-        foo: ca[int] = eval('CA()')
-        bar: ca[int] = eval(repr(ca0))
+        ca0: CA[int] = CA()
+        assert repr(ca0) == 'ca()'
+        foo: CA[int] = eval('ca()')
+        bar: CA[int] = eval(repr(ca0))
         assert foo == bar
 
-        ca1: ca[str|int] = ca()
-        assert repr(ca1) == 'CA()'
-        ca2: ca[int|str] = eval(repr(ca1))
+        ca1: CA[str|int] = CA()
+        assert repr(ca1) == 'ca()'
+        ca2: CA[int|str] = eval(repr(ca1))
         assert ca2 == ca1
         assert ca2 is not ca1
 
         ca1.pushr(1)
         ca1.pushl('foo')
-        assert repr(ca1) == "CA('foo', 1)"
+        assert repr(ca1) == "ca('foo', 1)"
         ca2 = eval(repr(ca1))
         assert ca2 == ca1
         assert ca2 is not ca1
@@ -46,25 +46,25 @@ class TestRepr:
         assert ca1.popl() == 1
         ca1.pushl(42)
         ca1.popr()
-        assert repr(ca1) == 'CA(42, 2, 3, 4)'
+        assert repr(ca1) == 'ca(42, 2, 3, 4)'
         ca2 = eval(repr(ca1))
         assert ca2 == ca1
         assert ca2 is not ca1
 
-        ca3: ca[int] = CA(1, 10, 0, 42)
+        ca3: CA[int] = ca(1, 10, 0, 42)
         ca3.pushr(2, 100, 3)
         assert ca3.popl() == 1
         assert ca3.popr() == 3
         ca3.pushl(9, 8)
         assert ca3.poprt(2) == (100, 2)
         ca3.pushr(1, 2, 3)
-        assert repr(ca3) == 'CA(8, 9, 10, 0, 42, 1, 2, 3)'
+        assert repr(ca3) == 'ca(8, 9, 10, 0, 42, 1, 2, 3)'
 
-        ca4: ca[int] = ca([1, 10, 0, 42])
+        ca4: CA[int] = CA([1, 10, 0, 42])
         ca4.pushr(2, 100, 3)
         assert ca4.popl() == 1
         assert ca4.popr() == 3
         ca4.pushl(9, 8)
         assert ca4.poprt(2) == (100, 2)
         ca4.pushr(1, 2, 3)
-        assert repr(ca4) == 'CA(8, 9, 10, 0, 42, 1, 2, 3)'
+        assert repr(ca4) == 'ca(8, 9, 10, 0, 42, 1, 2, 3)'

@@ -20,10 +20,10 @@ class TestCapacity:
     """Functionality testing"""
     def test_capacity_original(self) -> None:
         """Functionality test"""
-        ca0: ca[int] = ca()
+        ca0: CA[int] = CA()
         assert ca0.capacity() == 2
 
-        ca0 = CA(1, 2)
+        ca0 = ca(1, 2)
         assert ca0.fraction_filled() == 2 / 4
 
         ca0.pushl(0)
@@ -62,7 +62,7 @@ class TestCapacity:
 
     def test_empty(self) -> None:
         """Functionality test"""
-        c: ca[int] = ca()
+        c: CA[int] = ca()
         assert c == ca()
         assert c.capacity() == 2
         c.pushl(1, 2, 3, 4, 5)
@@ -80,7 +80,7 @@ class TestCapacity:
 
     def test_one(self) -> None:
         """Functionality test"""
-        c = CA(42)
+        c = ca(42)
         assert c.capacity() == 3
         c.resize()
         assert c.capacity() == 3
@@ -95,14 +95,14 @@ class TestCapacity:
         try:
             c.popl()
         except ValueError as ve:
-            assert str(ve) == 'Method popl called on an empty ca'
+            assert str(ve) == 'Method popl called on an empty CA'
         else:
             assert False
 
         try:
             c.popr()
         except ValueError as ve:
-            assert str(ve) == 'Method popr called on an empty ca'
+            assert str(ve) == 'Method popr called on an empty CA'
         else:
             assert False
 
