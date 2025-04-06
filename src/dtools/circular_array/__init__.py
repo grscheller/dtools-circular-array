@@ -17,13 +17,18 @@
 Package for an indexable, sliceable, auto-resizing circular array
 data structure with amortized O(1) pushes and pops either end.
 
-#### Modules
+#### Circular Array Data Structure
 
-* module dtools.circular_array.ca: circular array data structure
+* *module* dtools.circular_array.ca
+  * circular array data structure
+* *class* dtools.circular_array.ca.CA
+  * initializer takes 1 or 0 iterables
+* *function* dtools.circular_array.ca.ca
+  * factory function taking a variable number of arguments
 
 """
 
-__version__ = '3.10.1.3'
+__version__ = '3.11.0'
 __author__ = 'Geoffrey R. Scheller'
 __copyright__ = 'Copyright (c) 2023-2025 Geoffrey R. Scheller'
 __license__ = 'Apache License 2.0'

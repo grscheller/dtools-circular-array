@@ -9,14 +9,23 @@ PyPI grscheller.circular-array project.
 
 ## Releases and Important Milestones
 
-### Version 3.10.1 - PyPI release date 2025-04-TBD
+### Version 3.11.0 - PyPI release date 2025-04-TBD
 
 - Major API change 
   - swapped names `ca` and `CA`
     - class name now `CA`
-    - factory function name now `ca`
-  - class initializer taking `1` or `0` iterables much more flexible
-    - do not have to deal with Python converting splats to lists
+    - factory function taking variable number of arguments is now `ca`
+  - class initializer still takes `1` or `0` iterables
+    - still want this class to behave like a builtin
+    - but got tired fighting linters
+    - maybe being "Pythonic" means
+      - that only builtins should break naming conventions
+      - naming conventions being
+        - snake_case for functions and method names
+        - CamelCase for class names
+      - perhaps a visual distinction is useful to tell when you
+         - are dealing with user/library Python code
+         - C code presenting itself as a Python class
   
 ### Version 3.10.1 - PyPI release date 2025-04-03
 

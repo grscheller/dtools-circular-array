@@ -20,10 +20,10 @@ from typing import cast, Never, overload, TypeVar
 
 __all__ = ['CA', 'ca']
 
-D = TypeVar('D')  # Not needed for mypy, hint for pdoc.
-L = TypeVar('L')
-R = TypeVar('R')
-U = TypeVar('U')
+D = TypeVar('D')  # type: ignore[unused-ignore]  # Needed only for pdoc
+L = TypeVar('L')  # type: ignore[unused-ignore]  # documentation generation.
+R = TypeVar('R')  # type: ignore[unused-ignore]  # Otherwise, not needed
+U = TypeVar('U')  # type: ignore[unused-ignore]  # by either MyPy or Python.
 
 
 class CA[D](Sequence[D]):
