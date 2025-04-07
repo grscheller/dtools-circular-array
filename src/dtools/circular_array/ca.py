@@ -15,7 +15,7 @@
 """### Module for an indexable circular array data structure."""
 
 from __future__ import annotations
-from collections.abc import Callable, Iterable, Iterator, Sequence
+from collections.abc import Callable, Iterable, Iterator
 from typing import cast, Never, overload, TypeVar
 
 __all__ = ['CA', 'ca']
@@ -23,11 +23,11 @@ __all__ = ['CA', 'ca']
 D = TypeVar('D')  # Needed only for pdoc documentation generation. Otherwise,
 L = TypeVar('L')  # ignored by both MyPy and Python. Makes linters unhappy
 R = TypeVar('R')  # when these are used on function and method signatures due
-U = TypeVar('U')  # to "redefined-outer-name" warnings. Functions and methods
+U = TypeVar('U')  # to "redefined-outer-name" warnings. Function and method
 T = TypeVar('T')  # signatures do not support variance and bounds constraints.
 
 
-class CA[D](Sequence[D]):
+class CA[D]():
     """Indexable circular array data structure
 
     - generic, stateful data structure
@@ -487,7 +487,7 @@ class CA[D](Sequence[D]):
     def resize(self, minimum_capacity: int = 2) -> None:
         """Compact `CA` and resize to `minimum_capacity` if necessary.
 
-        To just compact the `CA`, do not provide a minimum capacity.
+        * to just compact the `CA`, do not provide a minimum capacity
 
         """
         self._compact_storage_capacity()

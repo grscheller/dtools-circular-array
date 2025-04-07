@@ -9,7 +9,12 @@ PyPI grscheller.circular-array project.
 
 ## Releases and Important Milestones
 
-### Version 3.11.0 - PyPI release date 2025-04-TBD
+### Version 3.12.0 - PyPI release date 2025-04-07
+
+- API change 
+  - class CA[D] no longer inherits from Sequence[D]
+
+### Version 3.11.0 - PyPI release date 2025-04-06
 
 - Major API change 
   - swapped names `ca` and `CA`
