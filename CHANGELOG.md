@@ -13,6 +13,7 @@ PyPI grscheller.circular-array project.
 
 - API change 
   - class CA[D] no longer inherits from Sequence[D]
+  - typing improvements
 
 ### Version 3.11.0 - PyPI release date 2025-04-06
 
@@ -31,6 +32,7 @@ PyPI grscheller.circular-array project.
       - perhaps a visual distinction is useful to tell when you
          - are dealing with user/library Python code
          - C code presenting itself as a Python class
+  - typing improvements
   
 ### Version 3.10.1 - PyPI release date 2025-04-03
 

@@ -30,7 +30,7 @@ Circular array data structure.
 
 """
 
-__version__ = '3.12.0'
+__version__ = '3.12.0.1'
 __author__ = 'Geoffrey R. Scheller'
 __copyright__ = 'Copyright (c) 2023-2025 Geoffrey R. Scheller'
 __license__ = 'Apache License 2.0'
