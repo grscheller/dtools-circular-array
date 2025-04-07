@@ -20,10 +20,11 @@ from typing import cast, Never, overload, TypeVar
 
 __all__ = ['CA', 'ca']
 
-D = TypeVar('D')  # type: ignore[unused-ignore]  # Needed only for pdoc
-L = TypeVar('L')  # type: ignore[unused-ignore]  # documentation generation.
-R = TypeVar('R')  # type: ignore[unused-ignore]  # Otherwise, not needed
-U = TypeVar('U')  # type: ignore[unused-ignore]  # by either MyPy or Python.
+D = TypeVar('D')  # Needed only for pdoc documentation generation. Otherwise,
+L = TypeVar('L')  # ignored by both MyPy and Python. Makes linters unhappy
+R = TypeVar('R')  # when these are used on function and method signatures due
+U = TypeVar('U')  # to "redefined-outer-name" warnings. Functions and methods
+T = TypeVar('T')  # signatures do not support variance and bounds constraints.
 
 
 class CA[D](Sequence[D]):
@@ -349,7 +350,7 @@ class CA[D](Sequence[D]):
         except ValueError:
             return default
 
-    def poplt(self, maximum: int) -> tuple[D, ...]:
+    def poplt(self, maximum: int, /) -> tuple[D, ...]:
         """Pop multiple values from left side of `CA`.
 
         - returns the results in a tuple of type `tuple[~D, ...]`
@@ -370,7 +371,7 @@ class CA[D](Sequence[D]):
 
         return tuple(ds)
 
-    def poprt(self, max: int) -> tuple[D, ...]:
+    def poprt(self, maximum: int, /) -> tuple[D, ...]:
         """Pop multiple values from right side of `CA`.
 
         - returns the results in a tuple of type `tuple[~D, ...]`
@@ -380,31 +381,29 @@ class CA[D](Sequence[D]):
 
         """
         ds: list[D] = []
-        while max > 0:
+        while maximum > 0:
             try:
                 ds.append(self.popr())
             except ValueError:
                 break
             else:
-                max -= 1
+                maximum -= 1
 
         return tuple(ds)
 
-    def rotl(self, n: int = 1) -> None:
+    def rotl(self, n: int = 1, /) -> None:
         """Rotate `CA` arguments left n times."""
         if self._cnt < 2:
             return
-        while n > 0:
+        for _ in range(n, 0, -1):
             self.pushr(self.popl())
-            n -= 1
 
-    def rotr(self, n: int = 1) -> None:
+    def rotr(self, n: int = 1, /) -> None:
         """Rotate `CA` arguments right n times."""
         if self._cnt < 2:
             return
-        while n > 0:
+        for _ in range(n, 0, -1):
             self.pushl(self.popr())
-            n -= 1
 
     def map[U](self, f: Callable[[D], U], /) -> CA[U]:
         """Apply function f over contents, returns new `CA` instance.
@@ -498,6 +497,6 @@ class CA[D](Sequence[D]):
                 self._front, self._rear = 0, self._cap - 1
 
 
-def ca[D](*ds: D) -> CA[D]:
+def ca[T](*ds: T) -> CA[T]:
     """Function to produce a `CA` array from a variable number of arguments."""
     return CA(ds)

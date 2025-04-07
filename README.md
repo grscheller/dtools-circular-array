@@ -39,7 +39,7 @@ syntactic sugar like `[]` or `{}`.
 #### Usage
 
 ```python
-    from dtools.circular_array.ca import CA
+    from dtools.circular_array.ca import CA, ca
     
     ca1 = ca(1, 2, 3)
     assert ca1.popl() == 1
