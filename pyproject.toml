@@ -17,7 +17,6 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Typing :: Typed",
 ]
-dependencies = []
 dynamic = ["version", "description"]
 keywords = [
     "circular array",
@@ -34,9 +33,12 @@ keywords = [
     "auto resizing",
     "resizing",
 ]
+dependencies = []
 
 [project.optional-dependencies]
-test = ["pytest >=8.3.5"]
+test = [
+    "pytest >=8.3.5",
+]
 
 [project.urls]
 Source = "https://github.com/grscheller/dtools-circular-array"
