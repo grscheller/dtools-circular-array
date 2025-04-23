@@ -9,6 +9,11 @@ PyPI grscheller.circular-array project.
 
 ## Releases and Important Milestones
 
+### Version 3.12.1 - PyPI release date 2025-04-22
+
+- docstring changes
+- pyproject.toml standardization
+
 ### Version 3.12.0 - PyPI release date 2025-04-07
 
 - API change 
