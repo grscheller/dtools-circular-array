@@ -4,10 +4,18 @@ PyPI grscheller.circular-array project.
 
 - first digit - major event, epoch, or paradigm shift
 - second digit - breaking API changes, major changes
-- third digit - bug fixes, API additions, breaking API in dev env
-- forth digit - commit count changes/regressions (dev environment only)
+- third digit - bug fixes, API additions
 
 ## Releases and Important Milestones
+
+### Version 3.13.0 - PyPI release date 2025-05-06
+
+- version no longer determined dynamically
+  - version now set in pyproject.toml
+  - no longer doing 4 part development versioning
+  - version will either denote
+    - the current PyPI release - if no substantive changes made
+    - the next PyPI release - what development is working toward
 
 ### Version 3.12.1 - PyPI release date 2025-04-22
 

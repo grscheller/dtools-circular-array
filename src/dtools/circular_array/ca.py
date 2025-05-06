@@ -12,40 +12,42 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""### Module for an indexable circular array data structure."""
+"""### An indexable circular array data structure."""
 
 from __future__ import annotations
+
 from collections.abc import Callable, Iterable, Iterator
 from typing import cast, Never, overload, TypeVar
 
 __all__ = ['CA', 'ca']
 
-D = TypeVar('D')  # Needed only for pdoc documentation generation. Otherwise,
-L = TypeVar('L')  # ignored by both MyPy and Python. Makes linters unhappy
-R = TypeVar('R')  # when these are used on function and method signatures due
-U = TypeVar('U')  # to "redefined-outer-name" warnings. Function and method
-T = TypeVar('T')  # signatures do not support variance and bounds constraints.
+D = TypeVar('D')
 
 
-class CA[D]():
+class CA[D]:
     """Indexable circular array data structure
 
     - generic, stateful data structure
-    - lowercase class name chosen to match nomenclature for builtins
-      - like `list` and `tuple`
     - amortized O(1) pushing and popping from either end
     - O(1) random access any element
     - will resize itself as needed
     - sliceable
     - makes defensive copies of contents for the purposes of iteration
-    - in boolean context returns true if not empty, false if empty
-    - in comparisons compare identity before equality (like builtins)
+    - in boolean context returns
+      - `True` when not empty
+      - `False` when empty
+    - in comparisons compare identity before equality
+      - like builtins do
     - raises `IndexError` for out-of-bounds indexing
     - raises `ValueError` for popping from or folding an empty `ca`
 
     """
 
     __slots__ = '_data', '_cnt', '_cap', '_front', '_rear'
+
+    L = TypeVar('L')
+    R = TypeVar('R')
+    U = TypeVar('U')
 
     def __init__(self, *dss: Iterable[D]) -> None:
         if len(dss) < 2:
@@ -497,6 +499,6 @@ class CA[D]():
                 self._front, self._rear = 0, self._cap - 1
 
 
-def ca[T](*ds: T) -> CA[T]:
+def ca[D](*ds: D) -> CA[D]:
     """Function to produce a `CA` array from a variable number of arguments."""
     return CA(ds)

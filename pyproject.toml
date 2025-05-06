@@ -5,6 +5,7 @@ build-backend = "flit_core.buildapi"
 [project]
 name = "dtools.circular-array"
 authors = [{ name = "Geoffrey R. Scheller", email = "geoffrey@scheller.com" }]
+version = "3.13.0"
 license = { file = "LICENSE" }
 readme = "README.md"
 requires-python = ">=3.12"
@@ -17,21 +18,14 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Typing :: Typed",
 ]
-dynamic = ["version", "description"]
+dynamic = ["description"]
 keywords = [
     "circular array",
-    "circle array",
-    "CA",
     "dequeue",
-    "dqueue",
-    "FIFO",
-    "LIFO",
     "pop",
     "push",
     "indexable",
-    "auto-resizing",
     "auto resizing",
-    "resizing",
 ]
 dependencies = []
 

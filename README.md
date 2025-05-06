@@ -17,24 +17,25 @@ namespace project.
 - O(1) amortized pushes and pops either end.
 - O(1) indexing
 - fully supports slicing
-- safely mutates while iterating over copies of previous state
+- safely mutates over previous state
 
 ### Module circular_array
 
-A full featured, auto resizing circular array. Python package containing
-a module implementing a full featured, indexable, sliceable, double
-sided, auto-resizing circular array data structure.
+A full featured auto resizing circular array data structure. Double
+sided, indexable, sliceable, and iterable. When iterated, uses cached
+copies of its present state so that the circular array itself can safely
+be mutated.
 
-Useful either if used directly as an improved version of a Python List
-or in a "has-a" relationship when implementing other data structures.
+Useful either if used directly like a Python list, or in a "has-a"
+relationship when implementing other data structures.
 
 - *module* dtools.circular_array
-  - *class* ca: circular array data structure
-  - *function* CA: factory function to produce a ca from data
+  - *class* CA: circular array data structure
+  - *function* ca: factory function to produce a CA from data
 
-Above nomenclature modeled after of a builtin data type like `list`, where
-`ca` takes an optional iterator as an argument and CA is all caps to represent
-syntactic sugar like `[]` or `{}`.
+Above nomenclature modeled after builtin data types like `list`, where
+`CA` and `ca` correspond respectfully to `list` and  `[]` in their use
+cases.
 
 #### Usage
 

@@ -19,15 +19,14 @@ data structure with amortized O(1) pushes and pops either end.
 
 Circular array data structure.
 
-- *module* dtools.circular_array
+- *module* dtools.circular_array.ca
   - *class* dtools.circular_array.ca.CA
     - initializer takes up to 1 iterable
   - *function* dtools.circular_array.ca.ca
-    - factory function taking a variable number of arguments
+    - constructs a `CA` from a variable number of arguments
 
 """
 
-__version__ = '3.12.1'
 __author__ = 'Geoffrey R. Scheller'
 __copyright__ = 'Copyright (c) 2023-2025 Geoffrey R. Scheller'
 __license__ = 'Apache License 2.0'
