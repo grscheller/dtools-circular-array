@@ -9,8 +9,8 @@ structure,
 - **Detailed documentation**
   - [Detailed API documentation][3] on *GH-Pages*
 
-This project is part of the [Developer Tools for Python][4] **dtools.**
-namespace project.
+This project is part of the [Developer Tools for Python][4] **dtools**
+namespace projects.
 
 ## Overview
 
@@ -72,8 +72,6 @@ cases.
     assert ca3.popld(42) == 42
     assert len(ca2) == 0
 ```
-
-______________________________________________________________________
 
 [1]: https://pypi.org/project/dtools.circular-array
 [2]: https://github.com/grscheller/dtools-circular-array
