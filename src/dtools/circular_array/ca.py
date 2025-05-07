@@ -38,7 +38,7 @@ class CA[D]:
       - `False` when empty
     - in comparisons compare identity before equality, like builtins do
     - raises `IndexError` for out-of-bounds indexing
-    - raises `ValueError` for popping from or folding an empty `ca`
+    - raises `ValueError` for popping from or folding an empty `CA`
 
     """
 

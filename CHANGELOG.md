@@ -11,6 +11,7 @@ PyPI grscheller.circular-array project.
 ### Version 3.13.0 - PyPI release date 2025-05-06
 
 - version no longer determined dynamically
+  - made all non-splatted method parameters position only
   - version now set in pyproject.toml
   - no longer doing 4 part development versioning
   - version will either denote
