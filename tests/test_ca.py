@@ -217,12 +217,12 @@ class TestCircularArray:
             assert True
         else:
             assert False
-        assert c1.foldl(lambda x, y: x + y, initial=42) == 42
-        assert c1.foldl(lambda x, y: x + y, initial=0) == 0
+        assert c1.foldl(lambda x, y: x + y, 42) == 42
+        assert c1.foldl(lambda x, y: x + y, 0) == 0
 
         c3: CA[int] = CA(range(1, 11))
         assert c3.foldl(lambda x, y: x + y) == 55
-        assert c3.foldl(lambda x, y: x + y, initial=10) == 65
+        assert c3.foldl(lambda x, y: x + y, 10) == 65
 
         c4: CA[int] = CA((0, 1, 2, 3, 4))
 
@@ -242,11 +242,11 @@ class TestCircularArray:
             assert True
         else:
             assert False
-        assert c1.foldr(lambda x, y: x * y, initial=42) == 42
+        assert c1.foldr(lambda x, y: x * y, 42) == 42
 
         c2: CA[int] = CA(range(1, 6))
         assert c2.foldr(lambda x, y: x * y) == 120
-        assert c2.foldr(lambda x, y: x * y, initial=10) == 1200
+        assert c2.foldr(lambda x, y: x * y, 10) == 1200
 
         def f(v: int, vs: list[int]) -> list[int]:
             vs.append(v)

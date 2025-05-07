@@ -36,8 +36,7 @@ class CA[D]:
     - in boolean context returns
       - `True` when not empty
       - `False` when empty
-    - in comparisons compare identity before equality
-      - like builtins do
+    - in comparisons compare identity before equality, like builtins do
     - raises `IndexError` for out-of-bounds indexing
     - raises `ValueError` for popping from or folding an empty `ca`
 
@@ -79,7 +78,6 @@ class CA[D]:
             self._front, self._cap = self._front + self._cap, 2 * self._cap
 
     def _compact_storage_capacity(self) -> None:
-        """Compact the CA."""
         match self._cnt:
             case 0:
                 self._cap, self._front, self._rear, self._data = 2, 0, 1, [None, None]
@@ -217,7 +215,7 @@ class CA[D]:
     @overload
     def __delitem__(self, idx: slice, /) -> None: ...
 
-    def __delitem__(self, idx: int | slice) -> None:
+    def __delitem__(self, idx: int | slice, /) -> None:
         data = list(self)
         del data[idx]
         _ca = CA(data)
@@ -261,7 +259,11 @@ class CA[D]:
         return True
 
     def pushl(self, *ds: D) -> None:
-        """Push data from the left onto the CA."""
+        """Push left.
+
+        - push data from the left onto the CA
+
+        """
         for d in ds:
             if self._cnt == self._cap:
                 self._double_storage_capacity()
@@ -269,7 +271,11 @@ class CA[D]:
             self._data[self._front], self._cnt = d, self._cnt + 1
 
     def pushr(self, *ds: D) -> None:
-        """Push data from the right onto the CA."""
+        """Push right.
+
+        - push data from the right onto the CA
+
+        """
         for d in ds:
             if self._cnt == self._cap:
                 self._double_storage_capacity()
@@ -277,9 +283,10 @@ class CA[D]:
             self._data[self._rear], self._cnt = d, self._cnt + 1
 
     def popl(self) -> D | Never:
-        """Pop one value off the left side of the CA.
+        """Pop left.
 
-        Raises `ValueError` when called on an empty CA.
+        - pop one value off the left side of the `CA`
+        - raises `ValueError` when called on an empty `CA`
 
         """
         if self._cnt > 1:
@@ -303,9 +310,10 @@ class CA[D]:
         return cast(D, d)
 
     def popr(self) -> D | Never:
-        """Pop one value off the right side of the CA.
+        """Pop right
 
-        Raises `ValueError` when called on an empty CA.
+        - pop one value off the right side of the `CA`
+        - raises `ValueError` when called on an empty `CA`
 
         """
         if self._cnt > 1:
@@ -332,7 +340,7 @@ class CA[D]:
         """Pop one value from left, provide a mandatory default value.
 
         - safe version of popl
-        - returns a default value in the event the `CA` is empty
+        - returns the default value if `CA` is empty
 
         """
         try:
@@ -344,7 +352,7 @@ class CA[D]:
         """Pop one value from right, provide a mandatory default value.
 
         - safe version of popr
-        - returns a default value in the event the `CA` is empty
+        - returns the default value if `CA` is empty
 
         """
         try:
@@ -355,9 +363,8 @@ class CA[D]:
     def poplt(self, maximum: int, /) -> tuple[D, ...]:
         """Pop multiple values from left side of `CA`.
 
-        - returns the results in a tuple of type `tuple[~D, ...]`
-        - returns an empty tuple if `CA` is empty
-        - pop no more that `max` values
+        - returns the results in a tuple of type
+        - pop no more that `maximum` values
         - will pop less if `CA` becomes empty
 
         """
@@ -376,9 +383,8 @@ class CA[D]:
     def poprt(self, maximum: int, /) -> tuple[D, ...]:
         """Pop multiple values from right side of `CA`.
 
-        - returns the results in a tuple of type `tuple[~D, ...]`
-        - returns an empty tuple if `CA` is empty
-        - pop no more that `max` values
+        - returns the results in a tuple
+        - pop no more that `maximum` values
         - will pop less if `CA` becomes empty
 
         """
@@ -394,34 +400,31 @@ class CA[D]:
         return tuple(ds)
 
     def rotl(self, n: int = 1, /) -> None:
-        """Rotate `CA` arguments left n times."""
+        """Rotate `CA` components to the left n times."""
         if self._cnt < 2:
             return
         for _ in range(n, 0, -1):
             self.pushr(self.popl())
 
     def rotr(self, n: int = 1, /) -> None:
-        """Rotate `CA` arguments right n times."""
+        """Rotate `CA` components to the right n times."""
         if self._cnt < 2:
             return
         for _ in range(n, 0, -1):
             self.pushl(self.popr())
 
     def map[U](self, f: Callable[[D], U], /) -> CA[U]:
-        """Apply function f over contents, returns new `CA` instance.
+        """Apply function `f` over the `CA` contents,
 
-        - parameter `f` function of type `f[~D, ~U] -> CA[~U]`
-        - returns a new instance of type `CA[~U]`
+        - returns a new `CA` instance
 
         """
         return CA(map(f, self))
 
-    def foldl[L](self, f: Callable[[L, D], L], /, initial: L | None = None) -> L:
-        """Left fold `CA` via function and optional initial value.
+    def foldl[L](self, f: Callable[[L, D], L], initial: L | None = None, /) -> L:
+        """Left fold `CA` with function `f` and an optional `initial` value.
 
-        - parameter `f` function of type `f[~L, ~D] -> ~L`
-          - the first argument to `f` is for the accumulated value.
-        - parameter `initial` is an optional initial value
+        - first argument to `f` is for the accumulated value
         - returns the reduced value of type `~L`
           - note that `~L` and `~D` can be the same type
           - if an initial value is not given then by necessity `~L = ~D`
@@ -445,12 +448,10 @@ class CA[D]:
             acc = f(acc, d)
         return acc
 
-    def foldr[R](self, f: Callable[[D, R], R], /, initial: R | None = None) -> R:
-        """Right fold `CA` via function and optional initial value.
+    def foldr[R](self, f: Callable[[D, R], R], initial: R | None = None, /) -> R:
+        """Right fold `CA` with function `f` and an optional `initial` value.
 
-        - parameter `f` function of type `f[~D, ~R] -> ~R`
-          - the second argument to f is for the accumulated value
-        - parameter `initial` is an optional initial value
+        - second argument to f is for the accumulated value
         - returns the reduced value of type `~R`
           - note that `~R` and `~D` can be the same type
           - if an initial value is not given then by necessity `~R = ~D`
