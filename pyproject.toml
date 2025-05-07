@@ -38,7 +38,7 @@ test = [
 Homepage = "https://github.com/grscheller/dtools-docs"
 Source = "https://github.com/grscheller/dtools-circular-array"
 Changelog = "https://github.com/grscheller/dtools-circular-array/blob/main/CHANGELOG.md"
-Documentation = "https://grscheller.github.io/dtools-docs/circular-array"
+Documentation = "https://github.com/grscheller/dtools-docs/blob/main/README.md"
 
 [tool.flit.sdist]
 exclude = ["dist", "tests", ".gitignore", ".mypy_cache", ".pytest_cache"]
