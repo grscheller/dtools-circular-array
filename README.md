@@ -75,5 +75,5 @@ cases.
 
 [1]: https://pypi.org/project/dtools.circular-array
 [2]: https://github.com/grscheller/dtools-circular-array
-[3]: https://grscheller.github.io/dtools-docs/circular-array
-[4]: https://github.com/grscheller/dtools-docs/blob/main/README.md
+[3]: https://grscheller.github.io/dtools-namespace-projects/circular-array
+[4]: https://github.com/grscheller/dtools-namespace-projects/blob/main/README.md
