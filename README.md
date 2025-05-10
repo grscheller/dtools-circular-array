@@ -30,8 +30,11 @@ Useful either if used directly like a Python list, or in a "has-a"
 relationship when implementing other data structures.
 
 - *module* dtools.circular_array
-  - *class* CA: circular array data structure
-  - *function* ca: factory function to produce a CA from data
+  - *class* `CA:` circular array data structure
+    - initializer takes 1 or 0 iterators
+    - like `list` or `set`
+  - *function* `ca`: produces a `CA` from function's arguments
+    - similar use case as syntactic constructs `[]` or `{}`
 
 Above nomenclature modeled after builtin data types like `list`, where
 `CA` and `ca` correspond respectfully to `list` and  `[]` in their use
@@ -58,8 +61,8 @@ cases.
     tup4 = ca2.poprt(4)
     assert tup3 == (1, 2, 3)
     assert tup4 == (10, 9, 8, 7)
-    assert ca2 == CA(4, 5, 6)
-    four, *rest = ca.popft(1000)
+    assert ca2 == ca(4, 5, 6)
+    four, *rest = ca2.poplt(1000)
     assert four == 4
     assert rest == [5, 6]
     assert len(ca2) == 0
