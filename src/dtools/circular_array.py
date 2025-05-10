@@ -12,9 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""### An indexable circular array data structure."""
+"""### An indexable circular array data structure.
+
+An indexable, sliceable, auto-resizing circular array
+data structure with amortized O(1) pushes and pops either end.
+
+"""
 
 from __future__ import annotations
+
+__author__ = 'Geoffrey R. Scheller'
+__copyright__ = 'Copyright (c) 2023-2025 Geoffrey R. Scheller'
+__license__ = 'Apache License 2.0'
 
 from collections.abc import Callable, Iterable, Iterator
 from typing import cast, Never, overload, TypeVar
@@ -27,7 +36,7 @@ D = TypeVar('D')
 class CA[D]:
     """Indexable circular array data structure
 
-    - generic, stateful data structure
+    - generic, stateful, invariant data structure
     - amortized O(1) pushing and popping from either end
     - O(1) random access any element
     - will resize itself as needed

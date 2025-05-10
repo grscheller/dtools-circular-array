@@ -8,6 +8,13 @@ PyPI grscheller.circular-array project.
 
 ## Releases and Important Milestones
 
+### Version 3.13.1 - PyPI release date 2025-05-10
+
+- Made package just a single module
+  - dtools.circular_array.ca -> dtools.circular_array
+    - dtools/circular_array.ca.py -> dtools/circular_array.py
+  - docstring consolidations/updates
+
 ### Version 3.13.0 - PyPI release date 2025-05-06
 
 - version no longer determined dynamically

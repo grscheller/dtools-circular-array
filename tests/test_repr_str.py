@@ -13,7 +13,8 @@
 # limitations under the License.
 
 from __future__ import annotations
-from dtools.circular_array.ca import ca, CA
+
+from dtools.circular_array import ca, CA
 
 class TestRepr:
     """Functionality testing"""

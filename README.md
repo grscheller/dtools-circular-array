@@ -43,7 +43,7 @@ cases.
 #### Usage
 
 ```python
-    from dtools.circular_array.ca import CA, ca
+    from dtools.circular_array import CA, ca
     
     ca1 = ca(1, 2, 3)
     assert ca1.popl() == 1
