@@ -2,11 +2,21 @@
 
 PyPI grscheller.circular-array project.
 
-- first digit - major event, epoch, or paradigm shift
-- second digit - breaking API changes, major changes
-- third digit - bug fixes, API additions
+- Strict 3 digit semantic versioning (adopted 2025-05-19)
+  - MAJOR version for incompatible API changes
+  - MINOR version for backward compatible added functionality
+  - PATCH version for backward compatible bug fixes
 
 ## Releases and Important Milestones
+
+### Adapting strict Semantic from this point on - date 2025-05-19
+
+- [Semantic Versioning 2.0.0](https://semver.org/)
+- see top of file
+- previous versioning scheme used
+  - first digit - major event, epoch, or paradigm shift
+  - second digit - breaking API changes, major changes
+  - third digit - bug fixes, API additions
 
 ### Version 3.14.0 - PyPI release date 2025-05-10
 
