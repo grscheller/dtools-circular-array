@@ -12,10 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""### An indexable circular array data structure.
+"""An indexable circular array data structure.
 
-An indexable, sliceable, auto-resizing circular array
-data structure with amortized O(1) pushes and pops either end.
+- generic, stateful, invariant data structure
+- amortized O(1) pushing and popping from either end
+- O(1) random access any element
+- will resize itself as needed
+- sliceable
+- makes defensive copies of contents for the purposes of iteration
+- in boolean context returns
+    - `True` when not empty
+    - `False` when empty
+- in comparisons compare identity before equality, like builtins do
 
 """
 
@@ -36,7 +44,6 @@ D = TypeVar('D')
 class CA[D]:
     """Indexable circular array data structure
 
-    - generic, stateful, invariant data structure
     - amortized O(1) pushing and popping from either end
     - O(1) random access any element
     - will resize itself as needed
