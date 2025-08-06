@@ -1,4 +1,8 @@
-# Developer Tools - Circular Array
+# Developer Tools - Circular Array **DEPRICATED**
+
+Please use PyPI project
+[pythonic-fp-circularray](https://pypi.org/project/pythonic-fp-circulararray/)
+instead.
 
 Python package containing a module implementing a circular array data
 structure, This project is part of the [Developer Tools for Python][4]
